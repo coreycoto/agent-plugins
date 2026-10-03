@@ -1,2 +1,7 @@
-# agent-plugins
-A personal collection of Agent Plugins
+# [Agent Plugins](https://agent-plugins.org)
+
+My personal collection of Agent Plugins. Under active development. _Caveat creator_.
+
+## Plugins
+
+TK
