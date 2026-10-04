@@ -1,0 +1,52 @@
+{
+  "name": "agent-plugins",
+  "interface": {
+    "displayName": "Agent Plugins"
+  },
+  "plugins": [
+    {
+      "name": "communication",
+      "source": {
+        "source": "local",
+        "path": "./plugins/communication"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "product-development",
+      "source": {
+        "source": "local",
+        "path": "./plugins/product-development"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "product-management",
+      "source": {
+        "source": "local",
+        "path": "./plugins/product-management"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "project-management",
+      "source": {
+        "source": "local",
+        "path": "./plugins/project-management"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

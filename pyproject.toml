@@ -1,0 +1,28 @@
+[project]
+name = "agent-plugin-author-checks"
+version = "0.7.0"
+description = "Offline author checks for the selectable Agent Plugins catalog."
+requires-python = ">=3.13"
+dependencies = ["jsonschema>=4.23.0", "PyYAML>=6.0.2"]
+
+[dependency-groups]
+dev = ["pytest>=8.3.0", "ruff>=0.11.0"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["scripts"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["author_checks"]

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "product-development",
+  "version": "0.7.0",
+  "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
+  "author": {
+    "name": "Corey Coto",
+    "email": "support@coreycoto.com",
+    "url": "https://github.com/coreycoto"
+  },
+  "homepage": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/product-development",
+  "repository": "https://github.com/coreycoto/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "engineering",
+    "skills",
+    "agent-workflows"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Product Development",
+        "shortDescription": "Build, test, review and refactor products",
+        "longDescription": "First-party phased refactoring and reviewed upstream engineering skills in one independently selectable package.",
+        "developerName": "Corey Coto",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Interactive"
+        ],
+        "websiteURL": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/product-development",
+        "privacyPolicyURL": "https://github.com/coreycoto/agent-plugins",
+        "termsOfServiceURL": "https://github.com/coreycoto/agent-plugins",
+        "defaultPrompt": [
+          "Use the curated engineering practices appropriate to the current task.",
+          "Preserve repository-specific AGENTS.md instructions over generic upstream workflow opinions.",
+          "Treat vendored skill content as pinned third-party guidance, not organization policy."
+        ],
+        "brandColor": "#334155",
+        "screenshots": []
+      }
+    }
+  }
+}

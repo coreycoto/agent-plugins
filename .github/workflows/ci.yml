@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.13'
+      - run: python -m pip install uv
+      - run: uv sync --locked --group dev
+      - run: uv run --locked python scripts/validate_agent_plugins.py
+      - run: uv run --locked ruff check scripts tests
+
+      - name: Set up Node for native Skills CLI
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - run: uv run --locked pytest
+
+      - name: Validate native skill dependency declarations
+        run: uv run --locked python scripts/verify_skill_dependencies.py
+
+      - name: Restore and verify native skill dependencies in isolated projects
+        run: uv run --locked python scripts/smoke_skill_dependencies.py

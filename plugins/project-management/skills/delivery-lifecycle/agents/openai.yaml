@@ -1,0 +1,7 @@
+interface:
+  display_name: "Delivery Lifecycle"
+  short_description: "Carry selected work through verified delivery stages"
+  default_prompt: "Use $project-management:delivery-lifecycle to plan the requested work and track only verified delivery progress."
+
+policy:
+  allow_implicit_invocation: true

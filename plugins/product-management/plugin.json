@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "product-management",
+  "version": "0.7.0",
+  "description": "Reusable workflows for customer problem discovery, product-opportunity prioritization, and evidence-based product requirements and roadmaps.",
+  "author": {
+    "name": "coreycoto"
+  },
+  "homepage": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/product-management",
+  "repository": "https://github.com/coreycoto/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "product-management",
+    "product-discovery",
+    "prioritization",
+    "customer-evidence",
+    "product-requirements",
+    "roadmap"
+  ]
+}
