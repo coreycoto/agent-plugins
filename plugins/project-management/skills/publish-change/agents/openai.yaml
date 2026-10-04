@@ -1,0 +1,7 @@
+interface:
+  display_name: "Publish Change"
+  short_description: "Prepare a reviewed change for the repository's delivery process"
+  default_prompt: "Use $project-management:publish-change to prepare the requested change for review or release under repository policy."
+
+policy:
+  allow_implicit_invocation: true

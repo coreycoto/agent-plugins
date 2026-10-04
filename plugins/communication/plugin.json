@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "communication",
+  "version": "0.7.0",
+  "description": "Clear agent communication and evidence-preserving document writing and editing.",
+  "author": {
+    "name": "Corey Coto",
+    "url": "https://github.com/coreycoto"
+  },
+  "repository": "https://github.com/coreycoto/agent-plugins",
+  "homepage": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/communication",
+  "license": "MIT",
+  "keywords": [
+    "communication",
+    "writing",
+    "editing"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Communication",
+        "shortDescription": "Clear answers, documents and editorial work",
+        "defaultPrompt": [
+          "Write clearly for the intended audience while preserving meaning and evidence."
+        ]
+      }
+    }
+  }
+}

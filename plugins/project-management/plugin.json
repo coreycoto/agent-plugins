@@ -1,0 +1,46 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "project-management",
+  "version": "0.7.0",
+  "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
+  "author": {
+    "name": "Corey Coto",
+    "email": "support@coreycoto.com",
+    "url": "https://github.com/coreycoto"
+  },
+  "homepage": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/project-management",
+  "repository": "https://github.com/coreycoto/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "github",
+    "project-management",
+    "workflow"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Project Management",
+        "shortDescription": "Portable planning and delivery workflows",
+        "longDescription": "Reusable project planning, backlog governance, queue and relationship guidance. GitHub composition uses gh-steward; ordinary lifecycle operations use the available client connector or native GitHub CLI under repository policy.",
+        "developerName": "Corey Coto",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive",
+          "Write"
+        ],
+        "websiteURL": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/project-management",
+        "privacyPolicyURL": "https://github.com/coreycoto/agent-plugins",
+        "termsOfServiceURL": "https://github.com/coreycoto/agent-plugins",
+        "defaultPrompt": [
+          "Use the project's own policy for portable planning, governance, and delivery.",
+          "Use gh-steward for composed GitHub planning; use native gh or an existing connector for ordinary GitHub operations."
+        ],
+        "brandColor": "#334155",
+        "composerIcon": "./assets/project-management.svg",
+        "logo": "./assets/project-management.svg",
+        "screenshots": []
+      }
+    }
+  }
+}
