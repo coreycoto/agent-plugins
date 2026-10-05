@@ -20,6 +20,14 @@ from manager import digest, encode, plugin_manifest, read, role_assets, safe_pat
 RECEIPT = ".agent-plugin-projection-{plugin}.json"
 
 
+def instruction_string(value: str) -> str:
+    # Escape each physical line separately. This keeps TOML readable without
+    # confusing literal backslash-n text with actual newlines or closing quotes.
+    lines = [json.dumps(line, ensure_ascii=False)[1:-1].replace("\x7f", "\\u007f")
+             for line in value.split("\n")]
+    return '"""\n' + "\n".join(lines) + '"""'
+
+
 def projection(project: dict) -> dict[str, bytes]:
     schema = json.loads((REPOSITORY / "schemas/codex-agent-projection.schema.json").read_bytes())
     validate(project, schema)
@@ -50,13 +58,12 @@ def projection(project: dict) -> dict[str, bytes]:
             f"# Generated from {owner}; do not edit.\n"
             f"# Source revision: {project['sourceRevision']}; source role: {source_name}.\n"
         )
-        # TOML basic strings support these JSON string escapes, including newlines.
-        # Encoding strings avoids delimiter injection from project instructions.
         filename = overlay.get("file", name + ".toml")
         if filename in files:
             raise ValueError("Two role aliases cannot share an output file.")
         files[filename] = (header + "".join(
-            f"{key} = {json.dumps(value, ensure_ascii=False)}\n" for key, value in role.items()
+            f"{key} = {instruction_string(value) if key == 'developer_instructions' else json.dumps(value, ensure_ascii=False)}\n"
+            for key, value in role.items()
         )).encode()
     files[RECEIPT.format(plugin=project["plugin"])] = encode({
         "schemaVersion": 1, "source": owner,

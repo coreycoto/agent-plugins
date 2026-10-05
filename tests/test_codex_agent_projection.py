@@ -52,6 +52,23 @@ def test_project_can_tighten_writer_or_preserve_existing_permission_profile() ->
     assert reader["default_permissions"] == "project-read" and "sandbox_mode" not in reader
 
 
+@pytest.mark.parametrize("instructions", [
+    'Keep """ quoted text.\nmodel = "injected"\nReturn evidence 🚀.\n',
+    'Literal \\n and C:\\new\\tools; trailing backslash \\\nNext line.',
+    '\nLeading newline, tab\tand CRLF\r\nDEL\x7f and trailing spaces.  ',
+])
+def test_readable_multiline_instructions_round_trip_without_field_injection(instructions: str) -> None:
+    project = descriptor()
+    project["roles"]["bounded_implementation"]["appendInstructions"] = instructions
+    files = projection(project)
+    rendered = files["bounded_implementation.toml"].decode()
+    role = tomllib.loads(rendered)
+    source = tomllib.loads((Path(__file__).parents[1] / "plugins/product-development/com.openai/agents/pd_implementer.toml").read_text())
+    assert role["developer_instructions"] == source["developer_instructions"] + "\nProject instructions:\n" + instructions
+    assert role["model"] == "gpt-6.1-sol" and role["name"] == "bounded_implementation"
+    assert 'developer_instructions = """\n' in rendered
+
+
 @pytest.mark.parametrize("field,value", [
     ("model", "gpt-5.4"), ("sandbox_mode", "danger-full-access"),
     ("config_file", "../../other.toml"),
