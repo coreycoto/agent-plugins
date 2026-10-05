@@ -45,32 +45,33 @@ def onboard(manager: Manager, session: str, capabilities: dict,
     method = form_method(capabilities)
     if not eligible or method is None:
         return {"result": "conflict" if not eligible else "form_unavailable", **manager.status(session)}
-    preview = "\n".join(
-        f"{scope}: {plans[scope]['state']}, {plans[scope]['installedVersion'] or 'not installed'} "
-        f"→ {manager.version}; {plans[scope]['target']}" for scope in eligible)
-    roles = "\n".join(f"{role['name']}: {role['model']} ({role['effort']})" for role in manager.roles)
+    preview = []
+    for scope in eligible:
+        plan = plans[scope]
+        target = Path(plan["target"])
+        destination = f"~/{target.relative_to(Path.home())}" if target.is_relative_to(Path.home()) else str(target)
+        action = f"Update {plan['installedVersion']} to {manager.version}" if plan["installedVersion"] else f"Install {manager.version}"
+        label = "All repositories" if scope == "user" else "This repository"
+        preview.append(f"{label}: {action}\n{destination}")
+    roles = "\n".join(
+        f"{role['name'].removeprefix('pd_').replace('_', ' ').capitalize()}: {role['model']}"
+        for role in manager.roles)
+    destinations = "\n".join(preview)
     params = {
         "mode": "form",
         "message": (
-            f"Install or upgrade Product Development's generated Codex roles?\n{roles}\n\n{preview}\n\n"
-            "The plugin remains the authored source. This writes the listed role TOMLs, an ownership "
-            "marker and a local .gitignore in the selected scope, plus private install metadata and "
-            "backups under that scope's agent-plugin-state/product-development/. Native role-selection "
-            "receipts are stored in the shared Codex state directory. Existing configuration, project "
-            "trust and other role definitions are preserved. Project scope requires an already-trusted "
-            "repository. A restart is required afterward; this form cannot restart the desktop app."
+            f"Set up Product Development agents\n\n{roles}\nAll agents are read-only.\n\n"
+            f"{destinations}\n\nRestart Codex after setup."
         ),
         "requestedSchema": {
             "type": "object", "properties": {
-                "scope": {"type": "string", "title": "Installation scope",
-                          "description": "user shares the roles across repositories; project installs only here; later makes no changes.",
+                "scope": {"type": "string", "title": "Where should these agents be available?",
                           "oneOf": [{"const": scope, "title": title} for scope, title in (
                               ("user", "Shared across my repositories"),
                               ("project", "This repository only"),
                               ("later", "Set up later"),
                           ) if scope in eligible or scope == "later"]},
-                "confirm": {"type": "boolean", "title": "Approve the listed role installation or upgrade",
-                            "description": "Check only to approve writes in the selected scope.",
+                "confirm": {"type": "boolean", "title": "Install or update these agents",
                             "default": False},
             }, "required": ["scope", "confirm"],
         },
