@@ -127,6 +127,16 @@ class Manager:
             return self.repo / ".codex/agents/product-development"
         raise AgentError("Project installation requires a repository working directory.")
 
+    def project_trusted(self) -> bool:
+        """Read shared trust on every plan; project files cannot approve themselves."""
+        config = self.home / "config.toml"
+        if self.repo is None or not config.exists():
+            return False
+        settings = tomllib.loads(read(config).decode())
+        projects = settings.get("projects", {})
+        entry = projects.get(str(self.repo)) if isinstance(projects, dict) else None
+        return isinstance(entry, dict) and entry.get("trust_level") == "trusted"
+
     def snapshot(self, target: Path) -> dict:
         safe_path(target)
         if not target.exists():
@@ -191,6 +201,9 @@ class Manager:
             other = self.snapshot(self.target("project" if scope == "user" else "user")) if self.repo else {"state": "missing"}
             if conflicts or other["state"] != "missing":
                 snap = {**snap, "state": "conflict", "reason": "Resolve duplicate role scopes or existing registrations first."}
+            if scope == "project" and not self.project_trusted():
+                snap = {**snap, "state": "conflict", "reason":
+                        "Project scope requires an explicitly trusted repository in shared Codex configuration."}
             plans[scope] = {
                 "scope": scope, "target": str(target), "state": snap["state"],
                 "version": self.version, "installedVersion": snap.get("marker", {}).get("version"),

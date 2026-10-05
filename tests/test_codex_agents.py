@@ -35,6 +35,12 @@ def install(manager: Manager, scope="user", session="install-session") -> dict:
     return onboard(manager, session, {"extensions": {"openai/form": {}}}, choose(scope))
 
 
+def trust_project(manager: Manager) -> None:
+    manager.home.mkdir(parents=True, exist_ok=True)
+    (manager.home / "config.toml").write_text(
+        f"[projects.{json.dumps(str(manager.repo))}]\ntrust_level = \"trusted\"\n")
+
+
 def upgrade_source(manager: Manager, number="0.8.1") -> Manager:
     path = manager.root / "plugin.json"
     data = json.loads(path.read_bytes())
@@ -69,10 +75,12 @@ def test_shared_install_preserves_unrelated_config_and_roles(manager: Manager) -
 
 
 def test_project_scope_does_not_write_user_configuration(manager: Manager) -> None:
+    trust_project(manager)
     original = tree(manager.cwd)
+    original_user = tree(manager.home)
     result = install(manager, "project")
     assert result["result"] == "installed"
-    assert not manager.home.exists()
+    assert tree(manager.home) == original_user
     assert not (manager.cwd / ".codex/config.toml").exists()
     assert len(list((manager.cwd / ".codex/agents").rglob("*.toml"))) == 3
     assert all(manager.cwd.joinpath(path).read_bytes() == data for path, data in original.items())
@@ -106,6 +114,7 @@ def test_missing_form_capability_defers_without_side_effects(manager: Manager) -
     ({"elicitation": {"form": {}}}, "elicitation/create"),
 ])
 def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, capabilities, method) -> None:
+    trust_project(manager)
     def check(actual_method, params):
         assert actual_method == method
         assert str(manager.target("user")) in params["message"]
@@ -115,6 +124,51 @@ def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, c
         assert ("mode" in params) == (method == "elicitation/create")
         return {"action": "decline"}
     assert onboard(manager, "session", capabilities, check)["result"] == "deferred"
+
+
+@pytest.mark.parametrize("trust", [None, "untrusted"])
+def test_project_requires_shared_trust_before_offer_or_install(manager: Manager, trust) -> None:
+    if trust is not None:
+        trust_project(manager)
+        config = manager.home / "config.toml"
+        config.write_text(config.read_text().replace('"trusted"', '"untrusted"'))
+    before = tree(manager.root.parent)
+    def reject_project_choice(_method, params):
+        assert params["requestedSchema"]["properties"]["scope"]["enum"] == ["user", "later"]
+        return choose("project")()
+    result = onboard(manager, "session", {"extensions": {"openai/form": {}}}, reject_project_choice)
+    assert result["result"] == "deferred"
+    assert manager.plans()["project"]["state"] == "conflict"
+    assert tree(manager.root.parent) == before
+
+
+def test_project_local_configuration_cannot_grant_its_own_trust(manager: Manager) -> None:
+    config = manager.cwd / ".codex/config.toml"
+    config.parent.mkdir()
+    config.write_text(f"[projects.{json.dumps(str(manager.repo))}]\ntrust_level = \"trusted\"\n")
+    assert manager.plans()["project"]["state"] == "conflict"
+    assert not manager.project_trusted()
+
+
+def test_project_trust_revoked_during_form_invalidates_plan(manager: Manager) -> None:
+    trust_project(manager)
+    def revoke(*_):
+        config = manager.home / "config.toml"
+        config.write_text(config.read_text().replace('"trusted"', '"untrusted"'))
+        return choose("project")()
+    with pytest.raises(AgentError, match="plan changed"):
+        onboard(manager, "session", {"extensions": {"openai/form": {}}}, revoke)
+    assert not manager.target("project").exists()
+    assert not manager.state_dir("project").exists()
+
+
+def test_trusted_repository_root_covers_nested_working_directory(manager: Manager) -> None:
+    trust_project(manager)
+    nested = manager.cwd / "nested"
+    nested.mkdir()
+    scoped = Manager(manager.root, manager.home, nested)
+    assert scoped.repo == manager.repo and scoped.project_trusted()
+    assert install(scoped, "project")["result"] == "installed"
 
 
 def test_upgrade_backs_up_owned_files_outside_discovery_tree(manager: Manager) -> None:
@@ -286,6 +340,31 @@ def test_non_codex_client_cannot_prompt_or_install(manager: Manager, monkeypatch
         "cwd": str(manager.cwd), "session_id": "session"}})
     assert result["structuredContent"]["result"] == "client_unsupported"
     assert not manager.home.exists()
+
+
+@pytest.mark.parametrize("request_id", [2, "pd-form-1", "unrelated-request"])
+def test_mcp_form_cancellation_only_matches_its_active_requests(manager: Manager, monkeypatch, request_id) -> None:
+    monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
+    requests = [
+        {"id": 1, "method": "initialize", "params": {
+            "clientInfo": {"name": "codex-test"}, "capabilities": {"extensions": {"openai/form": {}}}}},
+        {"id": 2, "method": "tools/call", "params": {"name": "codex_agents_onboard", "arguments": {
+            "cwd": str(manager.cwd), "session_id": "session"}}},
+        {"method": "notifications/cancelled", "params": {"requestId": request_id}},
+    ]
+    if request_id == "unrelated-request":
+        requests.append({"id": "pd-form-1", "result": choose("user")()})
+    output = io.StringIO()
+    input_stream = io.StringIO("\n".join(json.dumps(r) for r in requests) + "\n")
+    assert Server(input_stream, output).run() == 0
+    messages = [json.loads(line) for line in output.getvalue().splitlines()]
+    result = next(m["result"]["structuredContent"] for m in messages if m.get("id") == 2)
+    if request_id == "unrelated-request":
+        assert result["result"] == "installed"
+        assert manager.plans()["user"]["state"] == "ready"
+    else:
+        assert result["result"] == "deferred"
+        assert not manager.home.exists()
 
 
 def test_catalog_and_hooks_are_bundled_and_onboarding_is_discoverable() -> None:

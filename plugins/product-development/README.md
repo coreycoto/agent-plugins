@@ -61,7 +61,9 @@ repository, or later. It generates roles beneath:
 These are generated projections, with a local `.gitignore` and ownership marker,
 not additional authored sources to maintain in each repo. The native loader
 discovers the TOMLs. No `config.toml`, project trust or unrelated roles are
-modified. Project installation requires a trusted repository. Existing explicit
+modified. Project installation requires an explicit trusted entry for the
+repository root in shared Codex configuration; the installer never grants trust.
+Existing explicit
 registrations, duplicate scopes, symlinks and locally edited owned files stop
 the installer for resolution. The plan is rechecked after the form and under
 an installation lock. Upgrades retain private backups outside the agents
@@ -89,6 +91,14 @@ to confirm selection in the same session that installed the files. These
 receipts confirm selection, not an independently measured model-policy reload.
 Avoid costly verification-only subagents: confirm selection when delegation is
 authorized and useful to the task.
+
+Live CLI delegation needs a persistent parent session in qualified Codex 0.160.0;
+an ephemeral parent has no rollout to fork. A useful read-only installer review
+verified `pd_explorer` selection with GPT-6 Luna, high reasoning and read-only
+permissions through native child-session metadata. Desktop rich-form rendering
+and role selection remain separate gates. The current Desktop chat's spawn
+interface does not expose a custom-role selector; installing files or restarting
+alone does not establish that this interface can select them.
 
 References: [portable plugin packaging](https://developers.openai.com/plugins/build/plugins),
 [native hooks and their trust/connection semantics](https://learn.chatgpt.com/docs/hooks),

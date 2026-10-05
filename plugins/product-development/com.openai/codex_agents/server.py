@@ -87,6 +87,7 @@ class Server:
         self.client_name = ""
         self.next_id = 0
         self.deferred = set()
+        self.active_request_id = None
 
     def send(self, payload: dict) -> None:
         self.output.write(json.dumps({"jsonrpc": "2.0", **payload}) + "\n")
@@ -101,7 +102,12 @@ class Server:
             if message.get("id") == request_id:
                 return message.get("result", {"action": "cancel"})
             if message.get("method") == "notifications/cancelled":
-                return {"action": "cancel"}
+                cancellation = message.get("params")
+                cancelled_id = cancellation.get("requestId") if isinstance(cancellation, dict) else None
+                if cancelled_id == request_id or (
+                    self.active_request_id is not None and cancelled_id == self.active_request_id
+                ):
+                    return {"action": "cancel"}
             if "id" in message and "method" in message:
                 if message["method"] == "ping":
                     self.send({"id": message["id"], "result": {}})
@@ -164,6 +170,7 @@ class Server:
                 request = json.loads(line)
                 if "id" not in request:
                     continue
+                self.active_request_id = request["id"]
                 result = self.dispatch(request["method"], request.get("params", {}))
                 self.send({"id": request["id"], "result": result})
             except Exception as error:
@@ -173,6 +180,8 @@ class Server:
                         "message": str(error) if isinstance(error, AgentError) else
                                    "The role operation could not complete; inspect configuration and owned files before retrying.",
                     }})
+            finally:
+                self.active_request_id = None
         return 0
 
 
