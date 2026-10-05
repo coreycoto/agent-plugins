@@ -13,7 +13,7 @@ package = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["scripts"]
+pythonpath = ["scripts", "plugins/product-development/com.openai/codex_agents"]
 addopts = "-q"
 
 [tool.ruff]

@@ -19,7 +19,7 @@
       "name": "product-development",
       "source": {
         "source": "local",
-        "path": "./plugins/product-development"
+        "path": "./plugins/product-development/com.openai/codex-package"
       },
       "policy": {
         "installation": "AVAILABLE"

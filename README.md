@@ -11,11 +11,15 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The initial catalog release is prepared at **0.7.0**. Plugin release versions
+The initial catalog release is prepared at **0.7.0**; Product Development's
+Codex role extension is prepared at **0.8.0**. Plugin release versions
 are separate from the Agent Plugins 1.0.0 manifest specification. Packages are
 independently selectable; adding the catalog does not install every plugin.
 
 For Codex, add the `agent-plugins` marketplace from a reviewed revision and select a package.
+The Product Development entry selects its generated Codex compatibility package
+because CLI 0.160.0 skips portable-package hooks. Other clients can acquire the
+authored portable package directly from `plugins/product-development`.
 Vercel Skills CLI can install individual skills. Optional upstream skills use
 the CLI's native `skills-lock.json` format and are restored into the consumer's
 `.agents/skills/`. Each package README gives the initialization and verification
@@ -26,7 +30,15 @@ Project Management uses [gh-steward](https://github.com/coreycoto/gh-steward) fo
 qualified GitHub composition and durable execution. Ordinary GitHub operations
 use native `gh` or the client connector. Tool installation, authentication and
 task authorization remain separate checks. This catalog distributes skills,
-client metadata and author checks; it has no Python consumer workflow runtime.
+client metadata and author checks. Product Development additionally bundles a
+local Python Codex onboarding adapter; GitHub workflow execution stays in gh-steward.
+
+Product Development's bundled `SessionStart` hook announces purpose-specific
+Luna, Sol 6.1 and Astra roles and checks installation/upgrade state. Its native
+MCP form offers shared-user or project installation with ownership checks.
+Generated files and live session usability are reported separately. See the
+[Codex role extension](plugins/product-development/README.md#codex-role-extension)
+for requirements, consent, upgrade behavior and restart verification.
 
 Local clients may track the latest stable release through a qualified update
 adapter. Resolve each release to an exact commit, preserve package selection and

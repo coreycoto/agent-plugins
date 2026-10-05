@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "product-development",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
   "author": {
     "name": "Corey Coto",
@@ -19,10 +19,12 @@
   ],
   "extensions": {
     "com.openai": {
+      "hooks": "./com.openai/hooks/hooks.json",
+      "onboardingSkill": "./skills/manage-codex-agents/SKILL.md",
       "interface": {
         "displayName": "Product Development",
         "shortDescription": "Build, test, review and refactor products",
-        "longDescription": "First-party phased refactoring and reviewed upstream engineering skills in one independently selectable package.",
+        "longDescription": "Phased refactoring, purpose-specific Codex roles with native install and upgrade forms, and reviewed upstream engineering skills.",
         "developerName": "Corey Coto",
         "category": "Developer Tools",
         "capabilities": [

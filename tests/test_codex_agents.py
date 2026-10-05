@@ -1,0 +1,310 @@
+from __future__ import annotations
+
+import io
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+import manager as manager_module
+import pytest
+from build_codex_package import check
+from manager import MARKER, AgentError, Manager
+from server import Server, onboard
+
+PLUGIN = Path(__file__).resolve().parents[1] / "plugins/product-development"
+
+
+@pytest.fixture
+def manager(tmp_path: Path) -> Manager:
+    package = tmp_path / "plugin"
+    shutil.copytree(PLUGIN, package, ignore=shutil.ignore_patterns("__pycache__"))
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / ".git").mkdir()
+    return Manager(package, tmp_path / "user/.codex", repo)
+
+
+def choose(scope: str, confirm: object = True):
+    return lambda *_: {"action": "accept", "content": {"scope": scope, "confirm": confirm}}
+
+
+def install(manager: Manager, scope="user", session="install-session") -> dict:
+    return onboard(manager, session, {"extensions": {"openai/form": {}}}, choose(scope))
+
+
+def upgrade_source(manager: Manager, number="0.8.1") -> Manager:
+    path = manager.root / "plugin.json"
+    data = json.loads(path.read_bytes())
+    data["version"] = number
+    path.write_text(json.dumps(data))
+    role = manager.root / "com.openai/agents/pd_reviewer.toml"
+    role.write_text(role.read_text() + '\n# Revised reviewed asset.\n')
+    return Manager(manager.root, manager.home, manager.cwd)
+
+
+def tree(root: Path) -> dict[str, bytes]:
+    return {str(path.relative_to(root)): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+
+
+def test_shared_install_preserves_unrelated_config_and_roles(manager: Manager) -> None:
+    directory = manager.home / "agents"
+    directory.mkdir(parents=True)
+    directory.chmod(0o755)
+    unrelated = directory / "other.toml"
+    unrelated.write_text('name = "other"\n')
+    config = manager.home / "config.toml"
+    original = b'# preserve comments\nmodel = "gpt-6.1-sol"\n[agents]\nmax_threads = 4\n'
+    config.write_bytes(original)
+    result = install(manager)
+    assert result["result"] == "installed" and result["restartRequired"]
+    assert config.read_bytes() == original
+    assert unrelated.read_text() == 'name = "other"\n'
+    assert directory.stat().st_mode & 0o777 == 0o755
+    assert len(list(manager.target("user").glob("*.toml"))) == 3
+    assert not manager.target("project").exists()
+    assert manager.status("install-session")["session"]["verification"] == "pending"
+
+
+def test_project_scope_does_not_write_user_configuration(manager: Manager) -> None:
+    original = tree(manager.cwd)
+    result = install(manager, "project")
+    assert result["result"] == "installed"
+    assert not manager.home.exists()
+    assert not (manager.cwd / ".codex/config.toml").exists()
+    assert len(list((manager.cwd / ".codex/agents").rglob("*.toml"))) == 3
+    assert all(manager.cwd.joinpath(path).read_bytes() == data for path, data in original.items())
+    assert manager.plans()["project"]["state"] == "ready"
+
+
+@pytest.mark.parametrize("response", [
+    {"action": "decline"}, {"action": "cancel"},
+    {"action": "accept", "content": {"scope": "later", "confirm": False}},
+    {"action": "accept", "content": {"scope": "user", "confirm": 1}},
+    {"action": "accept", "content": {"scope": "user", "confirm": False}},
+    {"action": "accept", "content": {"scope": "elsewhere", "confirm": True}},
+    {"action": "accept", "content": {"scope": "user", "confirm": True, "extra": True}},
+])
+def test_no_valid_form_consent_means_no_writes(manager: Manager, response: dict) -> None:
+    before = tree(manager.root.parent)
+    result = onboard(manager, "session", {"extensions": {"openai/form": {}}}, lambda *_: response)
+    assert result["result"] == "deferred"
+    assert tree(manager.root.parent) == before
+    assert not manager.home.exists()
+
+
+def test_missing_form_capability_defers_without_side_effects(manager: Manager) -> None:
+    result = onboard(manager, "session", {}, lambda *_: pytest.fail("no form capability"))
+    assert result["result"] == "form_unavailable"
+    assert not manager.home.exists()
+
+
+@pytest.mark.parametrize("capabilities,method", [
+    ({"extensions": {"openai/form": {}}}, "openai/form"),
+    ({"elicitation": {"form": {}}}, "elicitation/create"),
+])
+def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, capabilities, method) -> None:
+    def check(actual_method, params):
+        assert actual_method == method
+        assert str(manager.target("user")) in params["message"]
+        assert str(manager.target("project")) in params["message"]
+        assert all(role["model"] in params["message"] for role in manager.roles)
+        assert params["requestedSchema"]["properties"]["scope"]["enum"] == ["user", "project", "later"]
+        assert ("mode" in params) == (method == "elicitation/create")
+        return {"action": "decline"}
+    assert onboard(manager, "session", capabilities, check)["result"] == "deferred"
+
+
+def test_upgrade_backs_up_owned_files_outside_discovery_tree(manager: Manager) -> None:
+    install(manager)
+    before = tree(manager.target("user"))
+    newer = upgrade_source(manager)
+    result = install(newer, session="upgrade-session")
+    assert result["result"] == "upgraded"
+    assert tree(Path(result["backup"])) == before
+    assert not Path(result["backup"]).is_relative_to(manager.home / "agents")
+    assert len(list((manager.home / "agents").rglob("*.toml"))) == 3
+    assert newer.plans()["user"]["state"] == "ready"
+    repeated = onboard(newer, "session", {}, lambda *_: pytest.fail("already registered"))
+    assert repeated["result"] == "registered"
+
+
+def test_locally_edited_owned_role_blocks_upgrade_without_overwrite(manager: Manager) -> None:
+    install(manager)
+    role = manager.target("user") / "pd_reviewer.toml"
+    role.write_text(role.read_text() + '\n# Personal edit to retain.\n')
+    before = tree(manager.home)
+    newer = upgrade_source(manager)
+    assert install(newer)["result"] == "conflict"
+    assert tree(manager.home) == before
+
+
+@pytest.mark.parametrize("explicit", [True, False])
+def test_existing_role_name_blocks_install(manager: Manager, explicit: bool) -> None:
+    manager.home.mkdir(parents=True)
+    if explicit:
+        path = manager.home / "config.toml"
+        path.write_text('[agents.pd_reviewer]\nconfig_file = "personal.toml"\n')
+    else:
+        path = manager.home / "agents/personal.toml"
+        path.parent.mkdir()
+        path.write_text('name = "pd_reviewer"\n')
+    before = tree(manager.home)
+    assert install(manager)["result"] == "conflict"
+    assert tree(manager.home) == before
+
+
+def test_downgrade_is_not_offered(manager: Manager) -> None:
+    install(manager)
+    older = upgrade_source(manager, "0.7.0")
+    before = tree(manager.home)
+    assert install(older)["result"] == "conflict"
+    assert older.plans()["user"]["state"] == "downgrade_blocked"
+    assert tree(manager.home) == before
+
+
+def test_form_time_drift_invalidates_plan_before_any_role_write(manager: Manager) -> None:
+    def race(*_):
+        target = manager.target("user")
+        target.mkdir(parents=True)
+        (target / "keep.txt").write_text("Unowned file created during review.")
+        return choose("user")()
+    with pytest.raises(AgentError, match="plan changed"):
+        onboard(manager, "session", {"extensions": {"openai/form": {}}}, race)
+    assert tree(manager.target("user")) == {"keep.txt": b"Unowned file created during review."}
+    assert not manager.state_dir().exists()
+
+
+def test_upgrade_publication_failure_restores_previous_install(manager: Manager, monkeypatch) -> None:
+    install(manager)
+    before = tree(manager.target("user"))
+    newer = upgrade_source(manager)
+    rename = os.rename
+    def fail_stage(source, destination):
+        if Path(source).name.startswith("stage-"):
+            raise OSError("Simulated filesystem failure")
+        return rename(source, destination)
+    monkeypatch.setattr(os, "rename", fail_stage)
+    with pytest.raises(OSError, match="Simulated"):
+        install(newer)
+    assert tree(manager.target("user")) == before
+    assert not (manager.state_dir() / "install.lock").exists()
+
+
+def test_staging_time_conflict_preserves_new_unowned_target(manager: Manager, monkeypatch) -> None:
+    original_write = manager_module.private_write
+    def race(path, data):
+        original_write(path, data)
+        if path.name == MARKER:
+            target = manager.target("user")
+            target.mkdir(parents=True)
+            (target / "keep.txt").write_text("Keep the file created during staging.")
+    monkeypatch.setattr(manager_module, "private_write", race)
+    with pytest.raises(AgentError, match="changed during staging"):
+        install(manager)
+    assert tree(manager.target("user")) == {"keep.txt": b"Keep the file created during staging."}
+
+
+def test_install_lock_prevents_overlapping_write(manager: Manager) -> None:
+    state = manager.state_dir()
+    state.mkdir(parents=True)
+    (state / "install.lock").mkdir()
+    with pytest.raises(AgentError, match="Another install"):
+        install(manager)
+    assert not manager.target("user").exists()
+    assert (state / "install.lock").exists()
+
+
+def test_symlink_target_and_escaping_source_are_rejected(manager: Manager, tmp_path: Path) -> None:
+    target = manager.target("user")
+    target.parent.mkdir(parents=True)
+    target.symlink_to(tmp_path / "outside", target_is_directory=True)
+    with pytest.raises(AgentError, match="Symlink"):
+        install(manager)
+    target.unlink()
+    asset = manager.root / "com.openai/agents/pd_explorer.toml"
+    outside = tmp_path / "outside.toml"
+    asset.rename(outside)
+    asset.symlink_to(outside)
+    with pytest.raises(ValueError):
+        Manager(manager.root, manager.home, manager.cwd)
+
+
+def test_native_selection_receipt_requires_different_session_and_current_assets(manager: Manager) -> None:
+    install(manager)
+    event = {"session_id": "install-session", "agent_type": "pd_explorer", "agent_id": "child-1"}
+    assert not manager.record_start(event)
+    event["session_id"] = "fresh-session"
+    assert manager.record_start(event)
+    status = manager.status("fresh-session")
+    assert status["session"]["nativeRoleSelections"] == ["pd_explorer"]
+    assert status["session"]["verification"] == "role_selection_observed"
+    assert manager.status("other-session")["session"]["verification"] == "pending"
+    newer = upgrade_source(manager)
+    assert newer.status("fresh-session")["session"]["verification"] == "pending"
+
+
+def test_hook_handles_missing_server_and_does_not_leak_config(manager: Manager) -> None:
+    manager.home.mkdir(parents=True)
+    (manager.home / "config.toml").write_text('private_value = "fixture-private-value"\n')
+    event = {"hook_event_name": "SessionStart", "cwd": str(manager.cwd), "session_id": "session"}
+    result = subprocess.run([sys.executable, str(PLUGIN / "com.openai/codex_agents/hook.py")],
+                            input=json.dumps(event), text=True, capture_output=True, check=True,
+                            env={**os.environ, "CODEX_HOME": str(manager.home), "PYTHONDONTWRITEBYTECODE": "1"})
+    output = json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert "pd_explorer" in output and "unverified" in output
+    assert "fixture-private-value" not in output
+    assert not manager.target("user").exists()
+
+
+def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypatch) -> None:
+    monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
+    call = {"method": "tools/call", "params": {"name": "codex_agents_onboard", "arguments": {
+        "cwd": str(manager.cwd), "session_id": "session"}}}
+    input_stream = io.StringIO("\n".join(json.dumps(message) for message in [
+        {"id": 1, "method": "initialize", "params": {
+            "clientInfo": {"name": "codex-test"}, "capabilities": {"extensions": {"openai/form": {}}}}},
+        {"id": 2, **call}, {"id": "pd-form-1", "result": {"action": "decline"}},
+        {"id": 3, **call},
+    ]) + "\n")
+    output = io.StringIO()
+    assert Server(input_stream, output).run() == 0
+    messages = [json.loads(line) for line in output.getvalue().splitlines()]
+    forms = [message for message in messages if message.get("method") == "openai/form"]
+    assert len(forms) == 1 and "mode" not in forms[0]["params"]
+    assert messages[-1]["result"]["structuredContent"]["result"] == "deferred"
+    assert not manager.home.exists()
+
+
+def test_non_codex_client_cannot_prompt_or_install(manager: Manager, monkeypatch) -> None:
+    monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
+    server = Server(io.StringIO(), io.StringIO())
+    server.dispatch("initialize", {"clientInfo": {"name": "other-client"}, "capabilities": {"extensions": {"openai/form": {}}}})
+    result = server.dispatch("tools/call", {"name": "codex_agents_onboard", "arguments": {
+        "cwd": str(manager.cwd), "session_id": "session"}})
+    assert result["structuredContent"]["result"] == "client_unsupported"
+    assert not manager.home.exists()
+
+
+def test_catalog_and_hooks_are_bundled_and_onboarding_is_discoverable() -> None:
+    manifest = json.loads((PLUGIN / "plugin.json").read_bytes())
+    extension = manifest["extensions"]["com.openai"]
+    assert (PLUGIN / extension["onboardingSkill"]).is_file()
+    hooks = json.loads((PLUGIN / extension["hooks"]).read_bytes())["hooks"]
+    assert any(hook["type"] == "command" for row in hooks["SessionStart"] for hook in row["hooks"])
+    assert any(hook["type"] == "mcp_tool" for row in hooks["SessionStart"] for hook in row["hooks"])
+    assert "SubagentStart" in hooks
+    assert MARKER not in {path.name for path in PLUGIN.rglob("*")}
+
+
+def test_codex_compatibility_package_matches_authored_source() -> None:
+    package = PLUGIN / "com.openai/codex-package"
+    assert check(PLUGIN, package)
+    assert not (package / "plugin.json").exists()  # 0.160 must select its legacy hook loader.
+    manifest = json.loads((package / ".codex-plugin/plugin.json").read_bytes())
+    assert manifest["name"] == "product-development"
+    assert (package / manifest["hooks"]).is_file()
+    mcp = json.loads((package / ".mcp.json").read_bytes())["mcpServers"]["product-development-agents"]
+    assert mcp["cwd"] == "." and "${PLUGIN_ROOT}" not in " ".join(mcp["args"])

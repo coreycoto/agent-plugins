@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "roles": [
+    {
+      "name": "pd_explorer",
+      "file": "pd_explorer.toml",
+      "routing": "Focused codebase exploration and evidence gathering."
+    },
+    {
+      "name": "pd_reviewer",
+      "file": "pd_reviewer.toml",
+      "routing": "Correctness review, regression analysis and missing test coverage."
+    },
+    {
+      "name": "pd_architecture_adviser",
+      "file": "pd_architecture_adviser.toml",
+      "routing": "Explicit escalation for difficult architecture tradeoffs or unresolved competing explanations."
+    }
+  ]
+}

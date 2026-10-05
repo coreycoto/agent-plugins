@@ -103,6 +103,25 @@ def validate_portable_plugin(root: Path, schema: dict[str, object]) -> list[str]
                     continue  # The package containment error above already rejects it.
                 errors.extend(_validate_skill(path))
     settings = _openai_settings(manifest)
+    mcp = root / "mcp.json"
+    if mcp.exists() or mcp.is_symlink():
+        try:
+            payload = _read_manifest_file(mcp)
+            mcp_schema = json.loads((Path(__file__).resolve().parents[2] / "schemas/agent-plugins-1.0.0.mcp.schema.json").read_text())
+            errors.extend(f"{mcp}: {error.message}" for error in Draft202012Validator(mcp_schema).iter_errors(payload))
+        except RuntimeError as error:
+            errors.append(str(error))
+    onboarding = settings.get("onboardingSkill")
+    if onboarding is not None:
+        try:
+            if not isinstance(onboarding, str) or not onboarding.startswith("./skills/"):
+                raise ValueError("onboardingSkill must reference a packaged skill")
+            path = root / onboarding
+            path.resolve(strict=True).relative_to(root.resolve())
+            if path.name != "SKILL.md" or not path.is_file():
+                raise ValueError("onboardingSkill must reference SKILL.md")
+        except (OSError, ValueError):
+            errors.append(f"{root}: invalid onboardingSkill reference")
     for field in ("apps", "hooks"):
         value = settings.get(field)
         if value is None:

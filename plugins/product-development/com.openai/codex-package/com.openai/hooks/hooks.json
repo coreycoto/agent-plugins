@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/hook.py\"",
+            "timeout": 10,
+            "statusMessage": "Checking Product Development roles"
+          },
+          {
+            "type": "mcp_tool",
+            "server": "product-development-agents",
+            "tool": "codex_agents_onboard",
+            "input": {
+              "cwd": "${cwd}",
+              "session_id": "${session_id}",
+              "source": "${source}"
+            },
+            "timeout": 30,
+            "statusMessage": "Checking Codex role installation and upgrades"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "pd_explorer|pd_reviewer|pd_architecture_adviser",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/hook.py\"",
+            "timeout": 10,
+            "statusMessage": "Recording native Codex role selection"
+          }
+        ]
+      }
+    ]
+  }
+}

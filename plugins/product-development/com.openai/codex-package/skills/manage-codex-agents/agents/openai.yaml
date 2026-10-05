@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Codex Agents"
+  short_description: "Install and verify packaged Codex roles"
+  default_prompt: "Use $manage-codex-agents to check and configure Product Development's Codex roles."
