@@ -41,10 +41,27 @@ agent, not a parent-session profile. Installing the plugin does not opt into
 automatic delegation, grant provider access, or change the parent model.
 
 Requirements: local Codex custom-agent support (qualified against CLI 0.160.0),
-Python 3.11+, an enabled bundled MCP server and reviewed/trusted hooks. Installing
-a plugin does not automatically trust its hook definition. Review it in Codex;
-repeat review when an upgrade changes the definition. Cloud and ChatGPT Work
-discovery are not qualified by this local pilot.
+Python 3.11+ and an enabled bundled MCP server. Manual setup works before hook
+approval; automatic checks require reviewed/trusted hooks. Cloud and ChatGPT
+Work discovery are not qualified by this local pilot.
+
+Start with the plugin's **Setup** action, or `$manage-codex-agents` in the current
+chat. The declared onboarding skill guides the user through one setup workflow:
+
+1. Review the three bundled hooks in Codex's **Review hooks** dialog (Desktop
+   composer hook button), or `/hooks` in the CLI. They announce available agents,
+   check installation/upgrades, and record local native agent selection.
+2. Install or update agents through the existing form, only when needed.
+3. Restart after role files change, then verify discovery. Already current
+   agents do not need another installation or restart.
+
+Installing the plugin registers its hooks, but does not approve them. The
+onboarding extension launches a skill; it does not provide an action to open or
+approve native hook review. The user approves the exact definitions in Codex;
+an installer form cannot grant hook trust. Manual setup remains available if
+review is deferred, with automatic checks reported as pending. An upgrade that
+introduces or changes a hook requires another native review; unchanged trusted
+definitions do not. No second hook installer or settings screen is needed.
 
 At `SessionStart`, the command hook announces roles/routing and disk state.
 The MCP hook checks for an install or upgrade and prompts if needed. Setup
