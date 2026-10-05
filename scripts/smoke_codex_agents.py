@@ -111,7 +111,9 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         rpc.initialize()
         rpc.call("plugin/install", {"marketplacePath": str(marketplace), "pluginName": plugin})
         detail = rpc.call("plugin/read", {"marketplacePath": str(marketplace), "pluginName": plugin})["plugin"]
-        assert len(detail["hooks"]) == 3
+        native_manifest = json.loads((package / ".codex-plugin/plugin.json").read_bytes())
+        authored_hooks = json.loads((package / native_manifest["hooks"]).read_bytes())["hooks"]
+        assert len(detail["hooks"]) == sum(len(row["hooks"]) for rows in authored_hooks.values() for row in rows)
         assert detail["onboardingSkill"]["name"].endswith(":manage-codex-agents")
     finally:
         rpc.close()

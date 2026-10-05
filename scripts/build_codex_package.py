@@ -41,9 +41,9 @@ def projection(source: Path) -> dict[str, bytes]:
         "cwd": ".", "env_vars": ["CODEX_HOME"],
     } for name, server in portable_mcp["mcpServers"].items()}}
     files = {".codex-plugin/plugin.json": encoded(legacy), ".mcp.json": encoded(mcp)}
-    for directory in ("skills", "com.openai/agents", "com.openai/hooks", "assets", "licenses"):
+    for directory in ("skills", "com.openai", "assets", "licenses"):
         for path in sorted((source / directory).rglob("*")):
-            if path.is_file() and "__pycache__" not in path.parts:
+            if path.is_file() and "__pycache__" not in path.parts and not path.is_relative_to(source / "com.openai/codex-package"):
                 if path.is_symlink():
                     raise ValueError("Generated packages require regular source files.")
                 files[str(path.relative_to(source))] = path.read_bytes()
