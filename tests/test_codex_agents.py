@@ -11,6 +11,7 @@ from pathlib import Path
 import manager as manager_module
 import pytest
 from build_codex_package import check
+from jsonschema import ValidationError, validate
 from manager import MARKER, AgentError, Manager
 from server import Server, onboard
 
@@ -110,6 +111,9 @@ def test_missing_form_capability_defers_without_side_effects(manager: Manager) -
 
 
 @pytest.mark.parametrize("capabilities,method", [
+    ({"extensions": {"openai/elicitation": {"form": {}}}}, "openai/elicitation/create"),
+    ({"extensions": {"openai/form": {}, "openai/elicitation": {"form": {}}}}, "openai/elicitation/create"),
+    ({"extensions": {"openai/form": {}}, "elicitation": {"form": {}}}, "elicitation/create"),
     ({"extensions": {"openai/form": {}}}, "openai/form"),
     ({"elicitation": {"form": {}}}, "elicitation/create"),
 ])
@@ -120,10 +124,42 @@ def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, c
         assert str(manager.target("user")) in params["message"]
         assert str(manager.target("project")) in params["message"]
         assert all(role["model"] in params["message"] for role in manager.roles)
-        assert params["requestedSchema"]["properties"]["scope"]["enum"] == ["user", "project", "later"]
-        assert ("mode" in params) == (method == "elicitation/create")
+        assert [option["const"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"]] == ["user", "project", "later"]
+        assert all(option["title"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"])
+        assert ("mode" in params) == (method != "openai/form")
+        if "mode" in params:
+            assert params["mode"] == "form"
         return {"action": "decline"}
     assert onboard(manager, "session", capabilities, check)["result"] == "deferred"
+
+
+@pytest.mark.parametrize("invalid", [
+    {"scope": "user"},
+    {"scope": "user", "confirm": 1},
+    {"scope": "user", "confirm": True, "extra": True},
+])
+def test_documented_form_schema_does_not_coerce_or_default_consent(manager: Manager, invalid: dict) -> None:
+    before = tree(manager.root.parent)
+    def inspect_schema(method, params):
+        assert method == "openai/elicitation/create"
+        schema = params["requestedSchema"]
+        assert schema["properties"]["confirm"]["default"] is False
+        validate({"scope": "user", "confirm": True}, schema)
+        validate({"scope": "later", "confirm": False}, schema)
+        if "extra" in invalid:
+            # MCP's form-schema subset has no additionalProperties constraint.
+            # The installer independently rejects unknown submitted fields.
+            validate(invalid, schema)
+        else:
+            with pytest.raises(ValidationError):
+                validate(invalid, schema)
+        with pytest.raises(ValidationError):
+            validate({"scope": "project", "confirm": True}, schema)
+        return {"action": "accept", "content": invalid}
+    result = onboard(manager, "session", {"extensions": {"openai/elicitation": {"form": {}}}}, inspect_schema)
+    assert result["result"] == "deferred"
+    assert result["formMethod"] == "openai/elicitation/create"
+    assert tree(manager.root.parent) == before
 
 
 @pytest.mark.parametrize("trust", [None, "untrusted"])
@@ -134,7 +170,7 @@ def test_project_requires_shared_trust_before_offer_or_install(manager: Manager,
         config.write_text(config.read_text().replace('"trusted"', '"untrusted"'))
     before = tree(manager.root.parent)
     def reject_project_choice(_method, params):
-        assert params["requestedSchema"]["properties"]["scope"]["enum"] == ["user", "later"]
+        assert [option["const"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"]] == ["user", "later"]
         return choose("project")()
     result = onboard(manager, "session", {"extensions": {"openai/form": {}}}, reject_project_choice)
     assert result["result"] == "deferred"

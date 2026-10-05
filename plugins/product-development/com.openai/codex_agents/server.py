@@ -24,11 +24,15 @@ ARGUMENTS = {
 
 def form_method(capabilities: dict) -> str | None:
     extensions = capabilities.get("extensions", {})
-    if isinstance(extensions, dict) and "openai/form" in extensions:
-        return "openai/form"
+    if isinstance(extensions, dict):
+        elicitation = extensions.get("openai/elicitation", {})
+        if isinstance(elicitation, dict) and isinstance(elicitation.get("form"), dict):
+            return "openai/elicitation/create"
     elicitation = capabilities.get("elicitation", {})
     if isinstance(elicitation, dict) and isinstance(elicitation.get("form"), dict):
         return "elicitation/create"
+    if isinstance(extensions, dict) and "openai/form" in extensions:
+        return "openai/form"
     return None
 
 
@@ -61,22 +65,29 @@ def onboard(manager: Manager, session: str, capabilities: dict,
             "type": "object", "properties": {
                 "scope": {"type": "string", "title": "Installation scope",
                           "description": "user shares the roles across repositories; project installs only here; later makes no changes.",
-                          "enum": [*eligible, "later"]},
+                          "oneOf": [{"const": scope, "title": title} for scope, title in (
+                              ("user", "Shared across my repositories"),
+                              ("project", "This repository only"),
+                              ("later", "Set up later"),
+                          ) if scope in eligible or scope == "later"]},
                 "confirm": {"type": "boolean", "title": "Approve the listed role installation or upgrade",
-                            "description": "Check only to approve writes in the selected scope."},
-            }, "required": ["scope", "confirm"], "additionalProperties": False,
+                            "description": "Check only to approve writes in the selected scope.",
+                            "default": False},
+            }, "required": ["scope", "confirm"],
         },
     }
-    if method == "elicitation/create":
+    if method != "openai/form":
         params["mode"] = "form"
     response = request_form(method, params)
     answer = response.get("content")
     if response.get("action") != "accept" or not isinstance(answer, dict):
-        return {"result": "deferred", "reason": "Form declined or cancelled; no role files changed."}
+        return {"result": "deferred", "formMethod": method,
+                "reason": "Form declined or cancelled; no role files changed."}
     if set(answer) != {"scope", "confirm"} or answer.get("confirm") is not True or answer.get("scope") not in eligible:
-        return {"result": "deferred", "reason": "No valid affirmative installation choice; no role files changed."}
+        return {"result": "deferred", "formMethod": method,
+                "reason": "No valid affirmative installation choice; no role files changed."}
     scope = answer["scope"]
-    return manager.apply(scope, plans[scope]["fingerprint"], session)
+    return {"formMethod": method, **manager.apply(scope, plans[scope]["fingerprint"], session)}
 
 
 class Server:

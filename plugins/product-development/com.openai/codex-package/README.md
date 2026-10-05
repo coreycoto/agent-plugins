@@ -43,9 +43,13 @@ repeat review when an upgrade changes the definition. Cloud and ChatGPT Work
 discovery are not qualified by this local pilot.
 
 At `SessionStart`, the command hook announces roles/routing and disk state.
-The MCP hook checks for an install or upgrade and prompts if needed. It uses
-the negotiated Codex **`openai/form`** method for a rich form, with standard
-MCP `elicitation/create` form fallback. Without form support it defers without
+The MCP hook checks for an install or upgrade and prompts if needed. Setup
+also uses the declared plugin-onboarding skill; it is the same installer, not
+a separate settings workflow. It prefers the documented
+**`openai/elicitation/create`** method when `openai/elicitation.form` is negotiated,
+otherwise uses standard MCP `elicitation/create` when advertised. The deprecated
+`openai/form` method is used only if neither current nor standard forms are
+available. Without form support it defers without
 writing roles. A missing MCP connection during startup does not block the
 session; invoke `$manage-codex-agents` once the server connects. Decline/cancel
 never installs, and a declined choice is not prompted again by that server
@@ -53,7 +57,11 @@ in the same session. There are no command-line consent bypasses.
 
 The form previews the package version, models, target paths and writes. It
 offers shared user scope (recommended for personal reuse), the current
-repository, or later. It generates roles beneath:
+repository, or later with titled choices and unchecked approval. Decline/cancel
+does not trigger another form dialect or an installation. An unsupported-form
+card is a failed rendering check, not consent; diagnose it before requesting
+another attempt. Structured settings are reserved for future persistent plugin
+preferences and are not another role-installation path. It generates roles beneath:
 
 - `$CODEX_HOME/agents/product-development/`, normally `~/.codex/agents/…`;
 - `<repository>/.codex/agents/product-development/` for project scope.
@@ -103,6 +111,8 @@ alone does not establish that this interface can select them.
 References: [portable plugin packaging](https://developers.openai.com/plugins/build/plugins),
 [native hooks and their trust/connection semantics](https://learn.chatgpt.com/docs/hooks),
 [custom agents](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+the [plugin onboarding extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#plugin-onboarding),
+the [current form extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#openai-form-elicitation),
 and [Codex's rich form client implementation](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/rmcp-client/src/elicitation_client_service.rs).
 
 ## Initialize upstream skills in a consumer project

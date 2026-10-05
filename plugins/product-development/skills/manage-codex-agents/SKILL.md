@@ -18,6 +18,11 @@ and delegation boundaries. Do not spawn costly probes solely for onboarding.
 The bundled `SubagentStart` hook records actual native role selection; report
 which roles have been observed and which remain unverified.
 
+This skill is the plugin's declared onboarding entrypoint. Use the plugin's
+Setup action when available or invoke this skill in the current chat. Keep
+installation and upgrades in this one workflow; structured settings are for
+persistent plugin preferences, not a second installer.
+
 When installation is missing or outdated, call `codex_agents_onboard` with the
 current directory and session id. It previews owned files, scope and version,
 then requests consent using Codex's rich MCP form when available. A declined,
@@ -25,6 +30,9 @@ cancelled or unavailable form leaves role files unchanged. Never replace this
 consent with a tool argument, shell command or assumed default. If the startup
 MCP hook ran before the server connected, call this tool once the connection is
 ready. Do not repeatedly prompt after a decline in the same session.
+If Codex displays an unsupported-form card, report rendering as failed and
+verify that roles are unchanged. Diagnose request-format compatibility before
+another attempt; do not start a restart loop or assume another form was accepted.
 
 The installer generates roles in shared `$CODEX_HOME/agents/` (normally
 `~/.codex/agents/`) or the selected repository's `.codex/agents/`. The plugin

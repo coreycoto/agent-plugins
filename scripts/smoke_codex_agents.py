@@ -121,7 +121,9 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         assert installed["result"] == "installed" and installed["restartRequired"]
         assert len(list(target.glob("*.toml"))) == 3 and not other.exists()
         assert (home / ".codex/config.toml").read_bytes() == original_config
-        assert len(rpc.forms) == 2 and all(form["mode"] == "openai/form" for form in rpc.forms)
+        assert installed["formMethod"] in {"openai/elicitation/create", "elicitation/create"}, f"Negotiated native method: {installed['formMethod']}"
+        expected_mode = "openaiForm" if installed["formMethod"] == "openai/elicitation/create" else "form"
+        assert len(rpc.forms) == 2 and all(form["mode"] == expected_mode for form in rpc.forms)
         form_modes = [form["mode"] for form in rpc.forms]
     finally:
         rpc.close()
@@ -146,12 +148,13 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
             "action": "accept", "content": {"scope": scope, "confirm": True}})
         assert upgraded["result"] == "upgraded" and upgraded["version"] == data["version"]
         assert Path(upgraded["backup"]).is_dir() and not Path(upgraded["backup"]).is_relative_to(target.parent)
-        assert len(rpc.forms) == 1 and rpc.forms[0]["mode"] == "openai/form"
+        assert upgraded["formMethod"] == installed["formMethod"]
+        assert len(rpc.forms) == 1 and rpc.forms[0]["mode"] == expected_mode
         assert (home / ".codex/config.toml").read_bytes() == original_config
     finally:
         rpc.close()
     return {"scope": scope, "hookEvents": [hook["eventName"] for hook in detail["hooks"]],
-            "onboardingSkill": detail["onboardingSkill"]["name"], "formModes": form_modes,
+            "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": installed["formMethod"], "formModes": form_modes,
             "declinePreservedFiles": True, "install": installed["result"], "upgrade": upgraded["result"],
             "generatedRoles": sorted(path.name for path in target.glob("*.toml")),
             "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending"}
