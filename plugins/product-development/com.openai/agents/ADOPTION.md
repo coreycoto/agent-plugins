@@ -21,7 +21,7 @@ python scripts/render_codex_agents.py --project /path/to/agents.project.json --o
 python scripts/render_codex_agents.py --project /path/to/agents.project.json --output /path/to/consumer/.codex/agents --check
 ```
 
-Review and commit the generated roles and projection receipt in a companion
+Review and commit the generated roles and plugin-qualified projection receipt in a companion
 PR. The tool refuses a nonempty render target and rejects unsafe aliases,
 filenames and unsupported permission/model overrides. It preserves unrelated
 files during comparison. Keep already-qualified consumer skill references
@@ -30,3 +30,6 @@ until a separate runtime migration establishes their replacement.
 Byte parity proves the committed projection matches its pinned source. It does
 not prove cloud discovery, native role selection, hook trust, authentication or
 authority for operations. Verify each surface in its actual client.
+
+Each plugin has a distinct receipt filename, so multiple owning-plugin
+projections can be checked in the same consumer agents directory.

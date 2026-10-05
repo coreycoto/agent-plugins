@@ -27,7 +27,7 @@ def test_overlay_preserves_shared_model_and_local_task_contract(tmp_path: Path) 
     assert project["roles"]["bounded_implementation"]["appendInstructions"] in writer["developer_instructions"]
     assert "explicit file ownership" in writer["description"]
     assert reviewer["model"] == "gpt-6.1-sol" and reviewer["sandbox_mode"] == "read-only"
-    assert json.loads(files[RECEIPT])["sourceRevision"] == project["sourceRevision"]
+    assert json.loads(files[RECEIPT.format(plugin="product-development")])["sourceRevision"] == project["sourceRevision"]
     assert files == projection(project)
     write_new(tmp_path, files)
     assert matches(tmp_path, files)

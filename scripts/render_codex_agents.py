@@ -17,7 +17,7 @@ sys.path.insert(0, str(REPOSITORY / "adapters/codex_agents"))
 
 from manager import digest, encode, plugin_manifest, read, role_assets, safe_path  # noqa: E402
 
-RECEIPT = ".agent-plugin-projection.json"
+RECEIPT = ".agent-plugin-projection-{plugin}.json"
 
 
 def projection(project: dict) -> dict[str, bytes]:
@@ -58,7 +58,7 @@ def projection(project: dict) -> dict[str, bytes]:
         files[filename] = (header + "".join(
             f"{key} = {json.dumps(value, ensure_ascii=False)}\n" for key, value in role.items()
         )).encode()
-    files[RECEIPT] = encode({
+    files[RECEIPT.format(plugin=project["plugin"])] = encode({
         "schemaVersion": 1, "source": owner,
         "sourceRevision": project["sourceRevision"], "overlayDigest": digest(encode(project)),
         "files": {name: digest(data) for name, data in files.items()},

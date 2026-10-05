@@ -9,8 +9,9 @@ from pathlib import Path
 
 import pytest
 from build_codex_package import check
+from jsonschema import ValidationError
 from manager import MARKER, AgentError, Manager, role_assets
-from render_codex_agents import RECEIPT, projection
+from render_codex_agents import RECEIPT, matches, projection, write_new
 from server import Server, onboard
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -105,12 +106,12 @@ def test_projection_selects_owning_plugin_without_borrowing_roles() -> None:
                "roles": {"dependency_patcher": {"sourceRole": "pm_dependency_maintainer", "file": "dependency-patcher.toml"}}}
     files = projection(project)
     assert "dependency-patcher.toml" in files
-    assert json.loads(files[RECEIPT])["source"] == "coreycoto/agent-plugins:project-management"
+    assert json.loads(files[RECEIPT.format(plugin="project-management")])["source"] == "coreycoto/agent-plugins:project-management"
     project["roles"]["dependency_patcher"]["sourceRole"] = "pd_implementer"
     with pytest.raises(ValueError, match="absent"):
         projection(project)
     project["plugin"] = "../product-development"
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         projection(project)
 
 
@@ -122,3 +123,13 @@ def test_namespace_mismatch_is_rejected(tmp_path: Path) -> None:
     path.write_text(json.dumps(data))
     with pytest.raises(AgentError, match="namespaced"):
         Manager(pm.root, pm.home, pm.cwd)
+
+
+def test_multiple_plugin_projections_coexist_in_one_consumer_directory(tmp_path: Path) -> None:
+    pd = projection({"schemaVersion": 1, "plugin": "product-development", "sourceRevision": "a" * 40,
+                     "roles": {"code_reviewer": {"sourceRole": "pd_reviewer"}}})
+    pm = projection({"schemaVersion": 1, "plugin": "project-management", "sourceRevision": "a" * 40,
+                     "roles": {"merge_reviewer": {"sourceRole": "pm_merge_reviewer"}}})
+    assert pd.keys().isdisjoint(pm.keys())
+    write_new(tmp_path, {**pd, **pm})
+    assert matches(tmp_path, pd) and matches(tmp_path, pm)
