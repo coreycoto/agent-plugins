@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Callable
 
 from hook import context
-from manager import AgentError, Manager
+from manager import AgentError, Manager, plugin_manifest
 
 ARGUMENTS = {
     "type": "object",
@@ -54,14 +54,14 @@ def onboard(manager: Manager, session: str, capabilities: dict,
         label = "All repositories" if scope == "user" else "This repository"
         preview.append(f"{label}: {action}\n{destination}")
     roles = "\n".join(
-        f"{role['name'].removeprefix('pd_').replace('_', ' ').capitalize()}: {role['model']}"
+        f"{role['name'].removeprefix(manager.namespace + '_').replace('_', ' ').capitalize()}: {role['model']}"
         for role in manager.roles)
     destinations = "\n".join(preview)
     params = {
         "mode": "form",
         "message": (
-            f"Set up Product Development agents\n\n{roles}\n\n"
-            "Implementation and transformation can edit assigned files; diagnosis can write temporary output. "
+            f"Set up {manager.label} agents\n\n{roles}\n\n"
+            f"{manager.install_summary} "
             "All agents inherit the current chat's permissions.\n\n"
             f"{destinations}\n\nRestart Codex after setup."
         ),
@@ -91,7 +91,10 @@ def onboard(manager: Manager, session: str, capabilities: dict,
 
 
 class Server:
-    def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout):
+    def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout, root: Path | None = None):
+        self.root = root or Path(__file__).resolve().parents[2]
+        self.manifest = plugin_manifest(self.root)
+        self.namespace = json.loads((self.root / "com.openai/agents/catalog.json").read_bytes())["namespace"]
         self.input = input_stream
         self.output = output_stream
         self.capabilities = {}
@@ -106,7 +109,7 @@ class Server:
 
     def request_form(self, method: str, params: dict) -> dict:
         self.next_id += 1
-        request_id = f"pd-form-{self.next_id}"
+        request_id = f"{self.namespace}-form-{self.next_id}"
         self.send({"id": request_id, "method": method, "params": params})
         for line in self.input:
             message = json.loads(line)
@@ -131,13 +134,8 @@ class Server:
         if method == "initialize":
             self.capabilities = params.get("capabilities", {})
             self.client_name = params.get("clientInfo", {}).get("name", "")
-            root = Path(__file__).resolve().parents[2]
-            manifest = root / "plugin.json"
-            if not manifest.exists():
-                manifest = root / ".codex-plugin/plugin.json"
             return {"protocolVersion": "2025-06-18", "capabilities": {"tools": {}},
-                    "serverInfo": {"name": "product-development-agents", "version": json.loads(
-                        manifest.read_bytes())["version"]}}
+                    "serverInfo": {"name": self.manifest["name"] + "-agents", "version": self.manifest["version"]}}
         if method == "ping":
             return {}
         if method == "tools/list":

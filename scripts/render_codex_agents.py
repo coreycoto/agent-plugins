@@ -13,10 +13,9 @@ from pathlib import Path
 from jsonschema import ValidationError, validate
 
 REPOSITORY = Path(__file__).resolve().parents[1]
-PLUGIN = REPOSITORY / "plugins/product-development"
-sys.path.insert(0, str(PLUGIN / "com.openai/codex_agents"))
+sys.path.insert(0, str(REPOSITORY / "adapters/codex_agents"))
 
-from manager import digest, encode, read, role_assets, safe_path  # noqa: E402
+from manager import digest, encode, plugin_manifest, read, role_assets, safe_path  # noqa: E402
 
 RECEIPT = ".agent-plugin-projection.json"
 
@@ -24,7 +23,10 @@ RECEIPT = ".agent-plugin-projection.json"
 def projection(project: dict) -> dict[str, bytes]:
     schema = json.loads((REPOSITORY / "schemas/codex-agent-projection.schema.json").read_bytes())
     validate(project, schema)
-    _, assets, _ = role_assets(PLUGIN)
+    plugin = REPOSITORY / "plugins" / project["plugin"]
+    manifest = plugin_manifest(plugin)
+    owner = manifest["repository"].removeprefix("https://github.com/") + ":" + manifest["name"]
+    _, assets, _ = role_assets(plugin)
     files = {}
     for name, overlay in sorted(project["roles"].items()):
         source_name = overlay["sourceRole"]
@@ -45,7 +47,7 @@ def projection(project: dict) -> dict[str, bytes]:
         if "appendInstructions" in overlay:
             role["developer_instructions"] += "\nProject instructions:\n" + overlay["appendInstructions"]
         header = (
-            "# Generated from coreycoto/agent-plugins Product Development; do not edit.\n"
+            f"# Generated from {owner}; do not edit.\n"
             f"# Source revision: {project['sourceRevision']}; source role: {source_name}.\n"
         )
         # TOML basic strings support these JSON string escapes, including newlines.
@@ -57,7 +59,7 @@ def projection(project: dict) -> dict[str, bytes]:
             f"{key} = {json.dumps(value, ensure_ascii=False)}\n" for key, value in role.items()
         )).encode()
     files[RECEIPT] = encode({
-        "schemaVersion": 1, "source": "coreycoto/agent-plugins:product-development",
+        "schemaVersion": 1, "source": owner,
         "sourceRevision": project["sourceRevision"], "overlayDigest": digest(encode(project)),
         "files": {name: digest(data) for name, data in files.items()},
     })

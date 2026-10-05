@@ -1,0 +1,7 @@
+interface:
+  display_name: "Intake"
+  short_description: "Turn source material into a clear project decision brief"
+  default_prompt: "Use $project-management:intake to summarize the evidence and prepare a reviewable project proposal."
+
+policy:
+  allow_implicit_invocation: true

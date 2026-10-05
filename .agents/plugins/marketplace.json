@@ -41,7 +41,7 @@
       "name": "project-management",
       "source": {
         "source": "local",
-        "path": "./plugins/project-management"
+        "path": "./plugins/project-management/com.openai/codex-package"
       },
       "policy": {
         "installation": "AVAILABLE"

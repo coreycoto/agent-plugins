@@ -1,0 +1,7 @@
+interface:
+  display_name: "Backlog Planning"
+  short_description: "Assess and sequence work using the consumer's backlog rules"
+  default_prompt: "Use $project-management:backlog-planning to assess the current backlog and prepare a reviewable plan."
+
+policy:
+  allow_implicit_invocation: true

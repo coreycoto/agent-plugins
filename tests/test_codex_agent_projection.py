@@ -10,9 +10,9 @@ from render_codex_agents import RECEIPT, matches, projection, write_new
 
 
 def descriptor() -> dict:
-    return {"schemaVersion": 1, "sourceRevision": "a" * 40, "roles": {
-        "dependency_patcher": {"sourceRole": "pd_implementer", "appendInstructions":
-                               'Use $project-management:delivery-lifecycle. Preserve "quoted" policy.\nReturn evidence 🚀.'},
+    return {"schemaVersion": 1, "plugin": "product-development", "sourceRevision": "a" * 40, "roles": {
+        "bounded_implementation": {"sourceRole": "pd_implementer", "appendInstructions":
+                               'Use the assigned Product Development skill. Preserve "quoted" policy.\nReturn evidence 🚀.'},
         "pr-review-guard": {"sourceRole": "pd_reviewer"},
     }}
 
@@ -20,18 +20,18 @@ def descriptor() -> dict:
 def test_overlay_preserves_shared_model_and_local_task_contract(tmp_path: Path) -> None:
     project = descriptor()
     files = projection(project)
-    writer = tomllib.loads(files["dependency_patcher.toml"].decode())
+    writer = tomllib.loads(files["bounded_implementation.toml"].decode())
     reviewer = tomllib.loads(files["pr-review-guard.toml"].decode())
-    assert writer["name"] == "dependency_patcher"
+    assert writer["name"] == "bounded_implementation"
     assert writer["model"] == "gpt-6.1-sol" and writer["sandbox_mode"] == "workspace-write"
-    assert project["roles"]["dependency_patcher"]["appendInstructions"] in writer["developer_instructions"]
+    assert project["roles"]["bounded_implementation"]["appendInstructions"] in writer["developer_instructions"]
     assert "explicit file ownership" in writer["description"]
     assert reviewer["model"] == "gpt-6.1-sol" and reviewer["sandbox_mode"] == "read-only"
     assert json.loads(files[RECEIPT])["sourceRevision"] == project["sourceRevision"]
     assert files == projection(project)
     write_new(tmp_path, files)
     assert matches(tmp_path, files)
-    role = tmp_path / "dependency_patcher.toml"
+    role = tmp_path / "bounded_implementation.toml"
     role.write_text(role.read_text() + "# Local drift\n")
     assert not matches(tmp_path, files)
     with pytest.raises(ValueError, match="empty directory"):
@@ -41,13 +41,13 @@ def test_overlay_preserves_shared_model_and_local_task_contract(tmp_path: Path) 
 
 def test_project_can_tighten_writer_or_preserve_existing_permission_profile() -> None:
     project = descriptor()
-    project["roles"]["dependency_patcher"]["sandbox_mode"] = "read-only"
+    project["roles"]["bounded_implementation"]["sandbox_mode"] = "read-only"
     project["roles"]["pr-review-guard"]["default_permissions"] = "project-read"
     with pytest.raises(ValueError, match="read-only profile"):
         projection(project)
     project["readOnlyProfiles"] = ["project-read"]
     files = projection(project)
-    assert tomllib.loads(files["dependency_patcher.toml"].decode())["sandbox_mode"] == "read-only"
+    assert tomllib.loads(files["bounded_implementation.toml"].decode())["sandbox_mode"] == "read-only"
     reader = tomllib.loads(files["pr-review-guard.toml"].decode())
     assert reader["default_permissions"] == "project-read" and "sandbox_mode" not in reader
 
@@ -58,14 +58,14 @@ def test_project_can_tighten_writer_or_preserve_existing_permission_profile() ->
 ])
 def test_project_cannot_override_model_or_expand_sandbox(field: str, value: str) -> None:
     project = descriptor()
-    project["roles"]["dependency_patcher"][field] = value
+    project["roles"]["bounded_implementation"][field] = value
     with pytest.raises(ValidationError):
         projection(project)
 
 
 def test_unknown_source_and_escaping_alias_are_rejected() -> None:
     project = descriptor()
-    project["roles"]["dependency_patcher"]["sourceRole"] = "pd_missing"
+    project["roles"]["bounded_implementation"]["sourceRole"] = "pd_missing"
     with pytest.raises(ValueError, match="absent"):
         projection(project)
     project = descriptor()
@@ -76,9 +76,9 @@ def test_unknown_source_and_escaping_alias_are_rejected() -> None:
 
 def test_existing_filename_can_be_preserved_without_collision_or_escape() -> None:
     project = descriptor()
-    project["roles"]["dependency_patcher"]["file"] = "dependency-patcher.toml"
-    assert "dependency-patcher.toml" in projection(project)
-    project["roles"]["pr-review-guard"]["file"] = "dependency-patcher.toml"
+    project["roles"]["bounded_implementation"]["file"] = "bounded-implementation.toml"
+    assert "bounded-implementation.toml" in projection(project)
+    project["roles"]["pr-review-guard"]["file"] = "bounded-implementation.toml"
     with pytest.raises(ValueError, match="share an output file"):
         projection(project)
     project["roles"]["pr-review-guard"]["file"] = "../outside.toml"

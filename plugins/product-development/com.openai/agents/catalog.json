@@ -31,5 +31,8 @@
       "file": "pd_architecture_adviser.toml",
       "routing": "Explicit escalation for difficult architecture tradeoffs or unresolved competing explanations."
     }
-  ]
+  ],
+  "namespace": "pd",
+  "installSummary": "Implementation and transformation can edit assigned files; diagnosis can write temporary output.",
+  "guidance": "Assign file ownership before implementation or transformation; diagnosis does not edit product source. Select Astra only for difficult architecture questions. Product Development owns these engineering agents."
 }

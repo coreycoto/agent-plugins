@@ -12,7 +12,6 @@ import tomllib
 import uuid
 from pathlib import Path
 
-OWNER = "coreycoto/agent-plugins:product-development"
 MARKER = ".agent-plugins.json"
 RESTART = (
     "Restart Codex and resume this chat; in CLI, exit and relaunch in the repository. "
@@ -67,17 +66,36 @@ def version(value: str) -> tuple[int, int, int]:
     return tuple(int(part) for part in value.split("."))
 
 
+def plugin_manifest(root: Path) -> dict:
+    path = root / "plugin.json"
+    if not path.exists():
+        path = root / ".codex-plugin/plugin.json"
+    manifest = json.loads(read(path))
+    if not re.fullmatch(r"[a-z][a-z0-9-]{1,63}", manifest.get("name", "")):
+        raise AgentError("Invalid plugin identity.")
+    repository = manifest.get("repository", "")
+    if not re.fullmatch(r"https://github.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+        raise AgentError("An explicit GitHub source repository is required.")
+    return manifest
+
+
 def role_assets(root: Path) -> tuple[dict, dict[str, bytes], list[dict]]:
     """One catalog reader for consent-gated installation and author projections."""
     agents = root / "com.openai/agents"
     catalog = json.loads(read(agents / "catalog.json"))
     if catalog.get("schemaVersion") != 1 or not catalog.get("roles"):
         raise AgentError("Unsupported or empty role catalog.")
+    namespace = catalog.get("namespace", "")
+    if not re.fullmatch(r"[a-z][a-z0-9]{1,15}", namespace):
+        raise AgentError("A valid plugin-owned role namespace is required.")
+    for field in ("installSummary", "guidance"):
+        if not isinstance(catalog.get(field), str) or not 0 < len(catalog[field]) <= 4096:
+            raise AgentError("The catalog requires concise installation and routing guidance.")
     files: dict[str, bytes] = {".gitignore": b"*\n"}
     roles = []
     for entry in catalog["roles"]:
         name, filename = entry["name"], entry["file"]
-        if not re.fullmatch(r"pd_[a-z_]+", name) or filename != name + ".toml":
+        if not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) or filename != name + ".toml":
             raise AgentError("Invalid namespaced role identity.")
         asset = agents / filename
         asset.resolve(strict=True).relative_to(root)
@@ -106,15 +124,17 @@ class Manager:
         if not self.cwd.is_dir():
             raise AgentError("The working directory must be a directory.")
         safe_path(self.home)
-        manifest_path = self.root / "plugin.json"
-        if not manifest_path.exists():
-            manifest_path = self.root / ".codex-plugin/plugin.json"
-        manifest = json.loads(read(manifest_path))
-        if manifest.get("name") != "product-development":
-            raise AgentError("Unexpected plugin identity.")
+        manifest = plugin_manifest(self.root)
+        self.plugin = manifest["name"]
+        self.owner = manifest["repository"].removeprefix("https://github.com/") + ":" + self.plugin
+        self.label = manifest.get("extensions", {}).get("com.openai", {}).get("interface", {}).get(
+            "displayName", self.plugin.replace("-", " ").title())
         self.version = manifest["version"]
         version(self.version)
         catalog, self.files, self.roles = role_assets(self.root)
+        self.namespace = catalog["namespace"]
+        self.install_summary = catalog["installSummary"]
+        self.guidance = catalog["guidance"]
         self.asset_digest = digest(encode({
             "version": self.version, "catalog": catalog,
             "files": {name: digest(data) for name, data in self.files.items()},
@@ -129,9 +149,9 @@ class Manager:
 
     def target(self, scope: str) -> Path:
         if scope == "user":
-            return self.home / "agents/product-development"
+            return self.home / "agents" / self.plugin
         if scope == "project" and self.repo:
-            return self.repo / ".codex/agents/product-development"
+            return self.repo / ".codex/agents" / self.plugin
         raise AgentError("Project installation requires a repository working directory.")
 
     def project_trusted(self) -> bool:
@@ -155,7 +175,7 @@ class Manager:
             return {"state": "conflict", "reason": "Target has no ownership marker.", "hashes": hashes}
         try:
             marker = json.loads(read(target / MARKER))
-            if marker["owner"] != OWNER or marker["schemaVersion"] != 1:
+            if marker["owner"] != self.owner or marker["schemaVersion"] != 1:
                 raise ValueError("owner")
             if set(hashes) != set(marker["files"]) | {MARKER}:
                 raise ValueError("unexpected files")
@@ -224,7 +244,7 @@ class Manager:
         plans = self.plans()
         observed = self.observed(session_id) if session_id and any(plan["state"] == "ready" for plan in plans.values()) else []
         return {
-            "plugin": "product-development", "version": self.version,
+            "plugin": self.plugin, "label": self.label, "guidance": self.guidance, "version": self.version,
             "roles": self.roles, "installations": plans,
             "session": {"id": session_id, "nativeRoleSelections": observed,
                         "verification": "role_selection_observed" if observed else "pending"},
@@ -233,7 +253,7 @@ class Manager:
 
     def state_dir(self, scope: str = "user") -> Path:
         base = self.target(scope).parents[1]
-        return base / "agent-plugin-state/product-development"
+        return base / "agent-plugin-state" / self.plugin
 
     def apply(self, scope: str, fingerprint: str, session_id: str) -> dict:
         """Called only after an accepted native form; revalidate before any writes."""
@@ -263,7 +283,7 @@ class Manager:
             for name, data in self.files.items():
                 private_write(stage / name, data)
             private_write(stage / MARKER, encode({
-                "schemaVersion": 1, "owner": OWNER, "version": self.version,
+                "schemaVersion": 1, "owner": self.owner, "version": self.version,
                 "assetDigest": self.asset_digest, "installedDuringSession": session_id,
                 "files": {name: digest(data) for name, data in self.files.items()},
             }))

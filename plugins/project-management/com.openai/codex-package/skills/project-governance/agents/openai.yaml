@@ -1,0 +1,7 @@
+interface:
+  display_name: "Project Governance"
+  short_description: "Assess project records against consumer-owned rules"
+  default_prompt: "Use $project-management:project-governance to compare the relevant project state with the consumer's documented rules."
+
+policy:
+  allow_implicit_invocation: true

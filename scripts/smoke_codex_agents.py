@@ -15,7 +15,8 @@ from pathlib import Path
 
 
 class Rpc:
-    def __init__(self, codex: str, home: Path, repo: Path):
+    def __init__(self, codex: str, home: Path, repo: Path, plugin: str):
+        self.server = plugin + "-agents"
         env = dict(os.environ, HOME=str(home), CODEX_HOME=str(home / ".codex"),
                    PYTHONDONTWRITEBYTECODE="1")
         self.process = subprocess.Popen([codex, "app-server", "--stdio"], cwd=repo, env=env,
@@ -72,12 +73,13 @@ class Rpc:
 
 def tool(rpc: Rpc, thread_id: str, repo: Path, session: str, answer=None) -> dict:
     return rpc.call("mcpServer/tool/call", {
-        "threadId": thread_id, "server": "product-development-agents", "tool": "codex_agents_onboard",
+        "threadId": thread_id, "server": rpc.server, "tool": "codex_agents_onboard",
         "arguments": {"cwd": str(repo), "session_id": session},
     }, answer)["structuredContent"]
 
 
 def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
+    plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
     home, repo, catalog = work / "user", work / "repo", work / "marketplace"
     home.mkdir(parents=True)
     repo.mkdir()
@@ -85,48 +87,49 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
     (home / ".codex").mkdir()
     (home / ".codex/config.toml").write_text(
         f"model = \"gpt-6.1-sol\"\n[projects.{json.dumps(str(repo))}]\ntrust_level = \"trusted\"\n")
-    destination = catalog / "plugins/product-development"
+    destination = catalog / "plugins" / plugin
     shutil.copytree(package, destination, ignore=shutil.ignore_patterns("__pycache__"))
-    # Start with the previous three-role pilot, then qualify catalog growth.
+    # Qualify catalog growth from the original PD pilot or a smaller owned catalog.
     role_catalog = destination / "com.openai/agents/catalog.json"
     expanded_catalog = role_catalog.read_bytes()
     previous_catalog = json.loads(expanded_catalog)
     previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in {
-        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}]
+        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}] if plugin == "product-development" else previous_catalog["roles"][:2]
+    initial_count, final_count = len(previous_catalog["roles"]), len(json.loads(expanded_catalog)["roles"])
     role_catalog.write_text(json.dumps(previous_catalog))
     marketplace = catalog / ".agents/plugins/marketplace.json"
     marketplace.parent.mkdir(parents=True)
     marketplace.write_text(json.dumps({
-        "name": "codex-role-qualification", "plugins": [{"name": "product-development",
-            "source": {"source": "local", "path": "./plugins/product-development"},
+        "name": "codex-role-qualification", "plugins": [{"name": plugin,
+            "source": {"source": "local", "path": "./plugins/" + plugin},
             "policy": {"installation": "AVAILABLE"}, "category": "Developer Tools"}]}))
     env = dict(os.environ, HOME=str(home), CODEX_HOME=str(home / ".codex"), PYTHONDONTWRITEBYTECODE="1")
     subprocess.run([codex, "plugin", "marketplace", "add", str(catalog)], cwd=repo, env=env,
                    capture_output=True, check=True, timeout=30)
-    rpc = Rpc(codex, home, repo)
+    rpc = Rpc(codex, home, repo, plugin)
     try:
         rpc.initialize()
-        rpc.call("plugin/install", {"marketplacePath": str(marketplace), "pluginName": "product-development"})
-        detail = rpc.call("plugin/read", {"marketplacePath": str(marketplace), "pluginName": "product-development"})["plugin"]
+        rpc.call("plugin/install", {"marketplacePath": str(marketplace), "pluginName": plugin})
+        detail = rpc.call("plugin/read", {"marketplacePath": str(marketplace), "pluginName": plugin})["plugin"]
         assert len(detail["hooks"]) == 3
         assert detail["onboardingSkill"]["name"].endswith(":manage-codex-agents")
     finally:
         rpc.close()
-    rpc = Rpc(codex, home, repo)
-    target = (home / ".codex" if scope == "user" else repo / ".codex") / "agents/product-development"
-    other = (repo / ".codex" if scope == "user" else home / ".codex") / "agents/product-development"
+    rpc = Rpc(codex, home, repo, plugin)
+    target = (home / ".codex" if scope == "user" else repo / ".codex") / "agents" / plugin
+    other = (repo / ".codex" if scope == "user" else home / ".codex") / "agents" / plugin
     original_config = (home / ".codex/config.toml").read_bytes()
     try:
         rpc.initialize()
         thread_id = rpc.call("thread/start", {"cwd": str(repo), "ephemeral": True, "model": "gpt-6.1-sol"})["thread"]["id"]
         statuses = rpc.call("mcpServerStatus/list", {"threadId": thread_id})["data"]
-        assert any(server["name"] == "product-development-agents" and server["runtimeStatus"] == "connected" for server in statuses)
+        assert any(server["name"] == plugin + "-agents" and server["runtimeStatus"] == "connected" for server in statuses)
         declined = tool(rpc, thread_id, repo, thread_id)
         assert declined["result"] == "deferred" and not target.exists()
         installed = tool(rpc, thread_id, repo, "qualification-accepted", {
             "action": "accept", "content": {"scope": scope, "confirm": True}})
         assert installed["result"] == "installed" and installed["restartRequired"]
-        assert len(list(target.glob("*.toml"))) == 3 and not other.exists()
+        assert len(list(target.glob("*.toml"))) == initial_count and not other.exists()
         assert (home / ".codex/config.toml").read_bytes() == original_config
         assert installed["formMethod"] in {"openai/elicitation/create", "elicitation/create"}, f"Negotiated native method: {installed['formMethod']}"
         expected_mode = "openaiForm" if installed["formMethod"] == "openai/elicitation/create" else "form"
@@ -142,27 +145,27 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
     data["version"] = ".".join(parts)
     manifest.write_text(json.dumps(data))
     role_catalog.write_bytes(expanded_catalog)
-    rpc = Rpc(codex, home, repo)
+    rpc = Rpc(codex, home, repo, plugin)
     try:
         rpc.initialize()
-        rpc.call("plugin/install", {"marketplacePath": str(marketplace), "pluginName": "product-development"})
+        rpc.call("plugin/install", {"marketplacePath": str(marketplace), "pluginName": plugin})
     finally:
         rpc.close()
-    rpc = Rpc(codex, home, repo)
+    rpc = Rpc(codex, home, repo, plugin)
     try:
         rpc.initialize()
         thread_id = rpc.call("thread/start", {"cwd": str(repo), "ephemeral": True})["thread"]["id"]
         upgraded = tool(rpc, thread_id, repo, thread_id, {
             "action": "accept", "content": {"scope": scope, "confirm": True}})
         assert upgraded["result"] == "upgraded" and upgraded["version"] == data["version"]
-        assert len(list(target.glob("*.toml"))) == 6
+        assert len(list(target.glob("*.toml"))) == final_count
         assert Path(upgraded["backup"]).is_dir() and not Path(upgraded["backup"]).is_relative_to(target.parent)
         assert upgraded["formMethod"] == installed["formMethod"]
         assert len(rpc.forms) == 1 and rpc.forms[0]["mode"] == expected_mode
         assert (home / ".codex/config.toml").read_bytes() == original_config
     finally:
         rpc.close()
-    return {"scope": scope, "hookEvents": [hook["eventName"] for hook in detail["hooks"]],
+    return {"plugin": plugin, "scope": scope, "hookEvents": [hook["eventName"] for hook in detail["hooks"]],
             "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": installed["formMethod"], "formModes": form_modes,
             "declinePreservedFiles": True, "install": installed["result"], "upgrade": upgraded["result"],
             "generatedRoles": sorted(path.name for path in target.glob("*.toml")),
@@ -173,6 +176,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--codex", default=shutil.which("codex"))
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--package", type=Path, help="Qualify one generated package; default is all public owned catalogs.")
     args = parser.parse_args()
     receipt = {"verified": False, "inferenceRequests": 0, "desktopActivation": False,
                "cloudPilot": "pending", "cases": []}
@@ -180,11 +184,15 @@ def main() -> int:
         if not args.codex:
             raise RuntimeError("A local Codex executable is required.")
         receipt["codexVersion"] = subprocess.check_output([args.codex, "--version"], text=True, stderr=subprocess.DEVNULL).strip()
-        package = Path(__file__).resolve().parents[1] / "plugins/product-development/com.openai/codex-package"
+        root = Path(__file__).resolve().parents[1]
+        packages = [args.package] if args.package else [root / "plugins" / name / "com.openai/codex-package"
+                                                      for name in ("product-development", "project-management")]
         with tempfile.TemporaryDirectory(prefix="codex-role-qualification-") as temporary:
             work = Path(temporary).resolve()
-            for scope in ("user", "project"):
-                receipt["cases"].append(qualify(args.codex, work / scope, scope, package))
+            for package in packages:
+                plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
+                for scope in ("user", "project"):
+                    receipt["cases"].append(qualify(args.codex, work / plugin / scope, scope, package))
         receipt["verified"] = True
     except Exception as error:
         receipt["failure"] = {"type": type(error).__name__, "message": str(error) if isinstance(error, RuntimeError) else "Native qualification failed; inspect the failing case."}

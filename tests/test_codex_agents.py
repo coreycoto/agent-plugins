@@ -428,7 +428,7 @@ def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypa
         {"id": 3, **call},
     ]) + "\n")
     output = io.StringIO()
-    assert Server(input_stream, output).run() == 0
+    assert Server(input_stream, output, root=manager.root).run() == 0
     messages = [json.loads(line) for line in output.getvalue().splitlines()]
     forms = [message for message in messages if message.get("method") == method]
     assert len(forms) == 1 and forms[0]["params"]["mode"] == "form"
@@ -438,7 +438,7 @@ def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypa
 
 def test_non_codex_client_cannot_prompt_or_install(manager: Manager, monkeypatch) -> None:
     monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
-    server = Server(io.StringIO(), io.StringIO())
+    server = Server(io.StringIO(), io.StringIO(), root=manager.root)
     server.dispatch("initialize", {"clientInfo": {"name": "other-client"}, "capabilities": {"elicitation": {"form": {}}}})
     result = server.dispatch("tools/call", {"name": "codex_agents_onboard", "arguments": {
         "cwd": str(manager.cwd), "session_id": "session"}})
@@ -460,7 +460,7 @@ def test_mcp_form_cancellation_only_matches_its_active_requests(manager: Manager
         requests.append({"id": "pd-form-1", "result": choose("user")()})
     output = io.StringIO()
     input_stream = io.StringIO("\n".join(json.dumps(r) for r in requests) + "\n")
-    assert Server(input_stream, output).run() == 0
+    assert Server(input_stream, output, root=manager.root).run() == 0
     messages = [json.loads(line) for line in output.getvalue().splitlines()]
     result = next(m["result"]["structuredContent"] for m in messages if m.get("id") == 2)
     if request_id == "unrelated-request":

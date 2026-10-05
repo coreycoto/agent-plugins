@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "project-management",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
   "author": {
     "name": "Corey Coto",
@@ -22,7 +22,7 @@
       "interface": {
         "displayName": "Project Management",
         "shortDescription": "Portable planning and delivery workflows",
-        "longDescription": "Reusable project planning, backlog governance, queue and relationship guidance. GitHub composition uses gh-steward; ordinary lifecycle operations use the available client connector or native GitHub CLI under repository policy.",
+        "longDescription": "Reusable project planning, backlog governance, queue and relationship guidance. GitHub composition uses gh-steward; ordinary lifecycle operations use the available client connector or native GitHub CLI under repository policy. Plugin-owned dependency, documentation, governance, merge-review and release-preparation agents use native install and upgrade consent.",
         "developerName": "Corey Coto",
         "category": "Productivity",
         "capabilities": [
@@ -40,7 +40,9 @@
         "composerIcon": "./assets/project-management.svg",
         "logo": "./assets/project-management.svg",
         "screenshots": []
-      }
+      },
+      "hooks": "./com.openai/hooks/hooks.json",
+      "onboardingSkill": "./skills/manage-codex-agents/SKILL.md"
     }
   }
 }

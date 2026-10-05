@@ -27,7 +27,7 @@
     ],
     "SubagentStart": [
       {
-        "matcher": "pd_explorer|pd_reviewer|pd_architecture_adviser",
+        "matcher": "^pd_[a-z_]+$",
         "hooks": [
           {
             "type": "command",

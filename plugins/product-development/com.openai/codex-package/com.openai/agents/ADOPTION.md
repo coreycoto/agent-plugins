@@ -1,95 +1,32 @@
-# Adopt shared Codex agents
+# Pinned project adoption
 
-Use the plugin's Setup action for local shared-user or project installation.
-That path requires the supported native form and produces owned, ignored files;
-it does not replace a consumer's tracked role definitions.
+The plugin owns its agents. Project policy, skill contracts, permission profiles
+and hosted trust stay in the consumer. Native local installation uses the
+plugin's consent-gated Setup workflow; this offline author tool prepares a
+reviewed source change for CI/cloud and never installs shared configuration.
 
-For CI/cloud configuration, keep one authored role source in this plugin and
-commit generated projections alongside a small project overlay. Local global
-installation does not establish discovery in hosted runs. The author helper
-`scripts/render_codex_agents.py` is an offline renderer/checker, not a runtime
-installer or a substitute for native form consent.
+Create a project descriptor with `schemaVersion: 1`, `plugin`, an exact
+`sourceRevision`, and `roles`. Each consumer role names a `sourceRole` from
+that plugin's catalog. It can preserve its role ID and filename, append local
+instructions, supply a description, tighten writes to `read-only`, or use an
+existing named permission profile. Models and effort remain plugin-owned.
+Read-only source roles require an explicitly declared `readOnlyProfiles` entry
+when substituting a named profile. That declaration is intent; the consumer
+must verify actual runtime permissions.
 
-## Choose a role and preserve the task contract
-
-| Existing purpose | Shared source |
-| --- | --- |
-| Exploration/scouting | `pd_explorer` |
-| Correctness, behavior or contract review | `pd_reviewer` |
-| Accepted implementation | `pd_implementer` |
-| Root-cause investigation | `pd_diagnostician` |
-| Deterministic mechanical edits | `pd_transformer` |
-| Difficult architecture escalation | `pd_architecture_adviser` |
-
-Use the owning workflow's current skills. Project Management maintains the
-[maintenance routing](https://github.com/coreycoto/agent-plugins/tree/main/plugins/project-management#shared-execution-agents) in its own package; consumers
-must not retain obsolete skill names merely to preserve an old helper label.
-For consumers still pinned to a qualified legacy workflow runtime, preserve
-that working runtime and its valid skill references until its own migration
-is qualified. Adopting role projections does not replace an executable runtime
-or install the current Project Management plugin into a hosted job.
-Aliases can keep existing native role IDs stable while their authored source
-and models change. An optional `file` preserves an existing TOML basename when
-it differs from the role ID; paths and duplicate filenames are rejected.
-Product-specific instructions, required local skills,
-permission profiles, experiment constraints, and release/operational gates
-remain with the consumer. Organization-owned contracts keep their own adoption
-path; do not create a competing public policy catalog.
-
-## Pin, render, and review
-
-Put an overlay in the consumer's `.codex/agent-plugin-project.json`, with the
-actual reviewed publisher commit as `sourceRevision`. For example:
-
-```json
-{
-  "schemaVersion": 1,
-  "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-  "roles": {
-    "dependency_patcher": {
-      "sourceRole": "pd_implementer",
-      "appendInstructions": "Use $project-management:delivery-lifecycle for the accepted dependency change."
-    },
-    "pr-review-guard": {
-      "sourceRole": "pd_reviewer",
-      "appendInstructions": "Return findings to the parent; do not run project checks or edit files."
-    }
-  }
-}
-```
-
-Run from the clean publisher checkout at that exact commit:
+From the clean publisher checkout at that exact revision:
 
 ```sh
-uv run --locked python scripts/render_codex_agents.py \
-  --project /path/to/consumer/.codex/agent-plugin-project.json \
-  --output /path/to/empty-review-directory
+python scripts/render_codex_agents.py --project /path/to/agents.project.json --output /empty/review-directory
+python scripts/render_codex_agents.py --project /path/to/agents.project.json --output /path/to/consumer/.codex/agents --check
 ```
 
-Review the generated diff before replacing the corresponding tracked role
-files and committing the `.agent-plugin-projection.json` receipt. The renderer
-refuses to overwrite a nonempty destination. It never edits config registrations,
-trust, permission definitions, or user configuration. Change the overlay and
-regenerate instead of hand-editing generated model pins or instructions.
+Review and commit the generated roles and projection receipt in a companion
+PR. The tool refuses a nonempty render target and rejects unsafe aliases,
+filenames and unsupported permission/model overrides. It preserves unrelated
+files during comparison. Keep already-qualified consumer skill references
+until a separate runtime migration establishes their replacement.
 
-To preserve a named permission profile, set `default_permissions` on that role.
-For a read-only source role, declare the profile in `readOnlyProfiles` too.
-Alternatively, a write-capable source role can be tightened with
-`"sandbox_mode": "read-only"`. These declarations express project intent;
-they do not create profiles, grant authority, or prove an enforced child sandbox.
-Models and effort remain controlled by the pinned shared source.
-
-Verify committed projections in CI from the same publisher revision:
-
-```sh
-uv run --locked python scripts/render_codex_agents.py \
-  --project /path/to/consumer/.codex/agent-plugin-project.json \
-  --output /path/to/consumer/.codex/agents --check
-```
-
-Keep permission/config registrations, prompt role references and overlays
-consistent. Preserve trusted-base snapshots before checking out untrusted PR
-code. A source pin or generated receipt is provenance, not authorization.
-Native role selection, effective runtime permissions, and hosted discovery
-remain separate checks. Remove obsolete aliases only in a reviewed consumer
-change that updates all callers together.
+Byte parity proves the committed projection matches its pinned source. It does
+not prove cloud discovery, native role selection, hook trust, authentication or
+authority for operations. Verify each surface in its actual client.
