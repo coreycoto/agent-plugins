@@ -1,7 +1,0 @@
-interface:
-  display_name: "Review Closeout"
-  short_description: "Assess findings and prepare a reviewable closeout decision"
-  default_prompt: "Use $project-management:review-closeout to assess the evidence, blockers, and needed follow-up."
-
-policy:
-  allow_implicit_invocation: true

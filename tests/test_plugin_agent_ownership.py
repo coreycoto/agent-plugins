@@ -3,12 +3,12 @@ from __future__ import annotations
 import io
 import json
 import re
-import shutil
 import tomllib
 from pathlib import Path
 
 import pytest
-from build_codex_package import check
+from build_codex_package import check, write_generated
+from build_codex_package import projection as package_projection
 from jsonschema import ValidationError
 from manager import MARKER, AgentError, Manager, role_assets
 from render_codex_agents import RECEIPT, matches, projection, write_new
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def make_manager(tmp_path: Path, plugin: str) -> Manager:
     source = tmp_path / plugin
-    shutil.copytree(ROOT / "plugins" / plugin, source, ignore=shutil.ignore_patterns("__pycache__"))
+    write_generated(source, package_projection(ROOT / "plugins" / plugin, "portable"))
     repo = tmp_path / "repo"
     repo.mkdir(exist_ok=True)
     (repo / ".git").mkdir(exist_ok=True)
@@ -71,7 +71,7 @@ def test_pm_form_is_owned_and_decline_preserves_everything(tmp_path: Path) -> No
 
 
 @pytest.mark.parametrize("plugin,prefix", [("product-development", "pd"), ("project-management", "pm")])
-def test_every_owned_role_matches_native_receipt_hook_and_generated_package(plugin: str, prefix: str) -> None:
+def test_every_owned_role_matches_native_receipt_hook_and_generated_package(tmp_path: Path, plugin: str, prefix: str) -> None:
     source = ROOT / "plugins" / plugin
     catalog, _, roles = role_assets(source)
     assert catalog["namespace"] == prefix
@@ -81,7 +81,9 @@ def test_every_owned_role_matches_native_receipt_hook_and_generated_package(plug
         assert role["name"].startswith(prefix + "_")
         assert any(re.search(matcher, role["name"]) for matcher in matchers)
     assert not any(re.search(matcher, "unrelated_role") for matcher in matchers)
-    assert check(source, source / "com.openai/codex-package")
+    package = tmp_path / plugin
+    write_generated(package, package_projection(source))
+    assert check(source, package)
 
 
 def test_pm_owned_model_and_write_contracts() -> None:

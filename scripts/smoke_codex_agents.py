@@ -13,12 +13,15 @@ import tempfile
 import threading
 from pathlib import Path
 
+from build_codex_package import marketplace_projection, write_generated
+
 
 class Rpc:
-    def __init__(self, codex: str, home: Path, repo: Path, plugin: str):
+    def __init__(self, codex: str, home: Path, repo: Path, plugin: str, extra_env: dict | None = None):
         self.server = plugin + "-agents"
         env = dict(os.environ, HOME=str(home), CODEX_HOME=str(home / ".codex"),
                    PYTHONDONTWRITEBYTECODE="1")
+        env.update(extra_env or {})
         self.process = subprocess.Popen([codex, "app-server", "--stdio"], cwd=repo, env=env,
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                         stderr=subprocess.DEVNULL, text=True)
@@ -52,7 +55,7 @@ class Rpc:
                 self.send({"id": message["id"], "result": answer or {"action": "decline", "content": None}})
             elif message.get("id") == request_id:
                 if "error" in message:
-                    raise RuntimeError(f"Native request failed: {method}.")
+                    raise RuntimeError(f"Native request failed: {method}: {json.dumps(message['error'])}")
                 return message["result"]
 
     def initialize(self) -> None:
@@ -187,10 +190,14 @@ def main() -> int:
             raise RuntimeError("A local Codex executable is required.")
         receipt["codexVersion"] = subprocess.check_output([args.codex, "--version"], text=True, stderr=subprocess.DEVNULL).strip()
         root = Path(__file__).resolve().parents[1]
-        packages = [args.package] if args.package else [root / "plugins" / name / "com.openai/codex-package"
-                                                      for name in ("product-development", "project-management")]
         with tempfile.TemporaryDirectory(prefix="codex-role-qualification-") as temporary:
             work = Path(temporary).resolve()
+            if args.package:
+                packages = [args.package]
+            else:
+                distribution = work / "distribution"
+                write_generated(distribution, marketplace_projection(root))
+                packages = [distribution / "plugins" / name for name in ("product-development", "project-management")]
             for package in packages:
                 plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
                 for scope in ("user", "project"):

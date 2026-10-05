@@ -53,8 +53,11 @@ permissions; their sandbox defaults grant no authority. See the
 assignments and legacy helper migration, and the
 [pinned projection guide](com.openai/agents/ADOPTION.md) for CI/cloud consumers.
 
-Its portable extension lives in `com.openai/`. Codex 0.160 uses a contained,
-generated compatibility package because that version skips portable hooks.
+Its authored extension lives in `com.openai/`. Complete portable and Codex
+distributions are built into ignored `dist/plugin-packages/`; no runtime copies
+or distribution trees are committed. The catalog pins an exact npm package,
+with publication and acquisition qualified separately. Codex 0.160 uses the
+built compatibility package because that version skips portable hooks.
 The same authored installer in `adapters/codex_agents/` is generated into each
 bundle; its ownership marker, target directory and private upgrade state are
 specific to this plugin. Native forms recheck the exact plan, preserve local

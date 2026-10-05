@@ -3,14 +3,13 @@ from __future__ import annotations
 import io
 import json
 import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import manager as manager_module
 import pytest
-from build_codex_package import check
+from build_codex_package import check, projection, write_generated
 from jsonschema import ValidationError, validate
 from manager import MARKER, AgentError, Manager
 from server import Server, onboard
@@ -21,7 +20,7 @@ PLUGIN = Path(__file__).resolve().parents[1] / "plugins/product-development"
 @pytest.fixture
 def manager(tmp_path: Path) -> Manager:
     package = tmp_path / "plugin"
-    shutil.copytree(PLUGIN, package, ignore=shutil.ignore_patterns("__pycache__"))
+    write_generated(package, projection(PLUGIN, "portable"))
     repo = tmp_path / "repo"
     repo.mkdir()
     (repo / ".git").mkdir()
@@ -404,7 +403,7 @@ def test_hook_handles_missing_server_and_does_not_leak_config(manager: Manager) 
     manager.home.mkdir(parents=True)
     (manager.home / "config.toml").write_text('private_value = "fixture-private-value"\n')
     event = {"hook_event_name": "SessionStart", "cwd": str(manager.cwd), "session_id": "session"}
-    result = subprocess.run([sys.executable, str(PLUGIN / "com.openai/codex_agents/hook.py")],
+    result = subprocess.run([sys.executable, str(manager.root / "com.openai/codex_agents/hook.py")],
                             input=json.dumps(event), text=True, capture_output=True, check=True,
                             env={**os.environ, "CODEX_HOME": str(manager.home), "PYTHONDONTWRITEBYTECODE": "1"})
     output = json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"]
@@ -482,8 +481,9 @@ def test_catalog_and_hooks_are_bundled_and_onboarding_is_discoverable() -> None:
     assert MARKER not in {path.name for path in PLUGIN.rglob("*")}
 
 
-def test_codex_compatibility_package_matches_authored_source() -> None:
-    package = PLUGIN / "com.openai/codex-package"
+def test_codex_compatibility_package_matches_authored_source(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    write_generated(package, projection(PLUGIN))
     assert check(PLUGIN, package)
     assert not (package / "plugin.json").exists()  # 0.160 must select its legacy hook loader.
     manifest = json.loads((package / ".codex-plugin/plugin.json").read_bytes())

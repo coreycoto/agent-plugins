@@ -1,8 +1,0 @@
-interface:
-  display_name: "Phased Refactor"
-  short_description: "Refactor code and tests in evidence-backed phases"
-  default_prompt: "Use $product-development:phased-refactor to plan and validate a substantial code or test refactor in bounded, evidence-backed phases."
-  brand_color: "#334155"
-
-policy:
-  allow_implicit_invocation: true

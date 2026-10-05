@@ -1,7 +1,0 @@
-interface:
-  display_name: "Relationship Management"
-  short_description: "Review dependencies and hierarchy using consumer rules"
-  default_prompt: "Use $project-management:relationship-management to assess the relevant item relationships and prepare a reviewable delta."
-
-policy:
-  allow_implicit_invocation: true

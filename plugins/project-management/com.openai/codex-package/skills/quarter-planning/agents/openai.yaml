@@ -1,7 +1,0 @@
-interface:
-  display_name: "Quarter Planning"
-  short_description: "Prepare time-bound plans using consumer conventions"
-  default_prompt: "Use $project-management:quarter-planning to assess candidate work and prepare a time-bound plan for review."
-
-policy:
-  allow_implicit_invocation: true

@@ -17,8 +17,9 @@ jobs:
       - run: python -m pip install uv
       - run: uv sync --locked --group dev
       - run: uv run --locked python scripts/validate_agent_plugins.py
+      - run: uv run --locked python scripts/build_codex_package.py
       - run: uv run --locked python scripts/build_codex_package.py --check
-      - run: uv run --locked ruff check adapters scripts tests plugins/*/com.openai/codex_agents
+      - run: uv run --locked ruff check adapters scripts tests
 
       - name: Set up Node for native Skills CLI
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -31,3 +32,12 @@ jobs:
 
       - name: Restore and verify native skill dependencies in isolated projects
         run: uv run --locked python scripts/smoke_skill_dependencies.py
+
+      - name: Upload built plugin candidates
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: agent-plugins-${{ github.sha }}
+          path: dist/plugin-packages/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

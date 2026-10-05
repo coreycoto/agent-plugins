@@ -16,13 +16,13 @@ Version 0.8.0 includes a local Codex client extension. Role definitions live in
 onboarding skill. Root `mcp.json` declares the local onboarding adapter. Other
 clients can use the ordinary skills; this adapter manages only local Codex roles.
 
-Codex CLI 0.160.0 loads portable skills and MCP servers but intentionally skips
-portable-package hooks in its local loader. The Codex catalog therefore selects
-the generated, contained compatibility package in `com.openai/codex-package/`,
-with `.codex-plugin/plugin.json` and `.mcp.json`. Its definitions and skills are
-generated from this authored package, checked for byte equality in CI and never
-edited independently. This changes the install layout, not the plugin identity.
-The authored portable package remains available to other clients. A client
+Codex CLI 0.160.0 skips portable-package hooks in the observed local loader.
+The built Codex artifact therefore contains `.codex-plugin/plugin.json` and
+`.mcp.json`. The marketplace pins its npm package at version 0.8.0; publication
+and authenticated acquisition are separate from preparing this source PR.
+Complete Codex and portable packages are built into ignored
+`dist/plugin-packages/`, never committed or edited independently. For local
+testing, use the built Codex marketplace. A client
 version with qualified native portable-hook support can retire this projection.
 
 | Role | Model and effort | Use |
