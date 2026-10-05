@@ -67,6 +67,37 @@ def version(value: str) -> tuple[int, int, int]:
     return tuple(int(part) for part in value.split("."))
 
 
+def role_assets(root: Path) -> tuple[dict, dict[str, bytes], list[dict]]:
+    """One catalog reader for consent-gated installation and author projections."""
+    agents = root / "com.openai/agents"
+    catalog = json.loads(read(agents / "catalog.json"))
+    if catalog.get("schemaVersion") != 1 or not catalog.get("roles"):
+        raise AgentError("Unsupported or empty role catalog.")
+    files: dict[str, bytes] = {".gitignore": b"*\n"}
+    roles = []
+    for entry in catalog["roles"]:
+        name, filename = entry["name"], entry["file"]
+        if not re.fullmatch(r"pd_[a-z_]+", name) or filename != name + ".toml":
+            raise AgentError("Invalid namespaced role identity.")
+        asset = agents / filename
+        asset.resolve(strict=True).relative_to(root)
+        data = read(asset)
+        role = tomllib.loads(data.decode())
+        if role.get("name") != name or not role.get("description") or not role.get("developer_instructions"):
+            raise AgentError("The role is missing required native fields.")
+        sandbox = role.get("sandbox_mode")
+        if sandbox not in {"read-only", "workspace-write"}:
+            raise AgentError("Roles require a read-only or workspace-write sandbox default.")
+        if name in {item["name"] for item in roles}:
+            raise AgentError("Duplicate catalog role.")
+        files[filename] = data
+        roles.append({
+            "name": name, "model": role["model"], "effort": role["model_reasoning_effort"],
+            "routing": entry["routing"], "sandboxMode": sandbox,
+        })
+    return catalog, files, roles
+
+
 class Manager:
     def __init__(self, root: Path, codex_home: Path, cwd: Path):
         self.root = root.resolve(strict=True)
@@ -83,31 +114,7 @@ class Manager:
             raise AgentError("Unexpected plugin identity.")
         self.version = manifest["version"]
         version(self.version)
-        agents = self.root / "com.openai/agents"
-        catalog = json.loads(read(agents / "catalog.json"))
-        if catalog.get("schemaVersion") != 1 or not catalog.get("roles"):
-            raise AgentError("Unsupported or empty role catalog.")
-        self.files: dict[str, bytes] = {".gitignore": b"*\n"}
-        self.roles = []
-        for entry in catalog["roles"]:
-            name, filename = entry["name"], entry["file"]
-            if not re.fullmatch(r"pd_[a-z_]+", name) or filename != name + ".toml":
-                raise AgentError("Invalid namespaced role identity.")
-            asset = agents / filename
-            asset.resolve(strict=True).relative_to(self.root)
-            data = read(asset)
-            role = tomllib.loads(data.decode())
-            if role.get("name") != name or not role.get("description") or not role.get("developer_instructions"):
-                raise AgentError("The role is missing required native fields.")
-            if role.get("sandbox_mode") != "read-only":
-                raise AgentError("This pilot only supports read-only roles.")
-            if name in {item["name"] for item in self.roles}:
-                raise AgentError("Duplicate catalog role.")
-            self.files[filename] = data
-            self.roles.append({
-                "name": name, "model": role["model"], "effort": role["model_reasoning_effort"],
-                "routing": entry["routing"],
-            })
+        catalog, self.files, self.roles = role_assets(self.root)
         self.asset_digest = digest(encode({
             "version": self.version, "catalog": catalog,
             "files": {name: digest(data) for name, data in self.files.items()},

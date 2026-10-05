@@ -24,6 +24,13 @@ hook discovery and rich-form decline/accept/upgrade in both scopes, and makes
 zero inference requests. It does not qualify desktop rendering or live role
 selection; those remain separate checks after reviewed consumer activation.
 
+For committed CI/cloud role projections, use the offline
+`scripts/render_codex_agents.py` author helper from the exact clean source pin.
+It reads project overlays, preserves shared model routing, and supports legacy
+role aliases without duplicating authored role definitions. Render into an empty
+review directory; `--check` verifies already committed outputs. See
+[agent adoption](plugins/product-development/com.openai/agents/ADOPTION.md).
+
 These checks validate portable manifests, skill frontmatter, package containment
 and native Vercel dependency locks. Python helpers live in `scripts/author_checks`
 and are used only by authors; they are not an installable workflow SDK or CLI.

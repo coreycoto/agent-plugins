@@ -11,6 +11,11 @@ for choosing work, representing ownership, and defining delivery stages. Keep
 the work item's state aligned with verified progress; do not mark work complete
 because code was written or a pull request was opened.
 
+For authorized delegation, use the optional Product Development roles described
+in the [agent routing guide](../_shared/references/codex-agent-routing.md): an
+implementer for an accepted bounded change, a transformer for explicit mechanical
+edits, and a reviewer for an exact candidate. Keep merges with the parent.
+
 Follow the repository's implementation and verification guidance. Before
 changing a stage or linked record, identify the target and expected effect. For
 coordinated GitHub project or issue updates, use `gh-steward` to compose and

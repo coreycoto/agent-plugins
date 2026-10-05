@@ -2,12 +2,15 @@
 
 ## Product Development 0.8.0 — unreleased
 
-- Bundle purpose-specific Codex roles: Luna exploration, Sol 6.1 review and
-  explicit Astra architecture advice.
+- Bundle six purpose-specific Codex roles: Luna exploration and mechanical
+  transformation; Sol 6.1 bounded implementation, diagnosis and review; explicit
+  Astra architecture advice.
 - Include startup routing/installation hooks, native rich MCP install and
   upgrade forms, owned shared-user/project projections and drift protection.
 - Require restart/reload verification separately from generated files; record
   actual native role selection through `SubagentStart` hooks.
+- Add offline, revision-pinned project role projections and maintenance skill
+  routing; preserve consumer aliases and project-specific permission policy.
 - Keep other package versions and upstream dependency pins unchanged.
 
 ## 0.7.0 — unreleased

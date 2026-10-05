@@ -60,7 +60,9 @@ def onboard(manager: Manager, session: str, capabilities: dict,
     params = {
         "mode": "form",
         "message": (
-            f"Set up Product Development agents\n\n{roles}\nFor read-only work.\n\n"
+            f"Set up Product Development agents\n\n{roles}\n\n"
+            "Implementation and transformation can edit assigned files; diagnosis can write temporary output. "
+            "All agents inherit the current chat's permissions.\n\n"
             f"{destinations}\n\nRestart Codex after setup."
         ),
         "requestedSchema": {

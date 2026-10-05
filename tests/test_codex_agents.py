@@ -70,7 +70,7 @@ def test_shared_install_preserves_unrelated_config_and_roles(manager: Manager) -
     assert config.read_bytes() == original
     assert unrelated.read_text() == 'name = "other"\n'
     assert directory.stat().st_mode & 0o777 == 0o755
-    assert len(list(manager.target("user").glob("*.toml"))) == 3
+    assert len(list(manager.target("user").glob("*.toml"))) == 6
     assert not manager.target("project").exists()
     assert manager.status("install-session")["session"]["verification"] == "pending"
 
@@ -83,7 +83,7 @@ def test_project_scope_does_not_write_user_configuration(manager: Manager) -> No
     assert result["result"] == "installed"
     assert tree(manager.home) == original_user
     assert not (manager.cwd / ".codex/config.toml").exists()
-    assert len(list((manager.cwd / ".codex/agents").rglob("*.toml"))) == 3
+    assert len(list((manager.cwd / ".codex/agents").rglob("*.toml"))) == 6
     assert all(manager.cwd.joinpath(path).read_bytes() == data for path, data in original.items())
     assert manager.plans()["project"]["state"] == "ready"
 
@@ -215,7 +215,7 @@ def test_upgrade_backs_up_owned_files_outside_discovery_tree(manager: Manager) -
     assert result["result"] == "upgraded"
     assert tree(Path(result["backup"])) == before
     assert not Path(result["backup"]).is_relative_to(manager.home / "agents")
-    assert len(list((manager.home / "agents").rglob("*.toml"))) == 3
+    assert len(list((manager.home / "agents").rglob("*.toml"))) == 6
     assert newer.plans()["user"]["state"] == "ready"
     repeated = onboard(newer, "session", {}, lambda *_: pytest.fail("already registered"))
     assert repeated["result"] == "registered"
@@ -229,6 +229,69 @@ def test_locally_edited_owned_role_blocks_upgrade_without_overwrite(manager: Man
     newer = upgrade_source(manager)
     assert install(newer)["result"] == "conflict"
     assert tree(manager.home) == before
+
+
+def test_catalog_growth_upgrades_three_owned_roles_with_fresh_consent(manager: Manager) -> None:
+    catalog = manager.root / "com.openai/agents/catalog.json"
+    expanded = catalog.read_bytes()
+    original = json.loads(expanded)
+    original["roles"] = [entry for entry in original["roles"] if entry["name"] in {
+        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}]
+    catalog.write_text(json.dumps(original))
+    previous = Manager(manager.root, manager.home, manager.cwd)
+    previous.home.mkdir(parents=True)
+    config = previous.home / "config.toml"
+    config.write_text('# Preserve user settings.\n[agents]\nmax_threads = 4\n')
+    unrelated = previous.home / "agents/unrelated.toml"
+    unrelated.parent.mkdir()
+    unrelated.write_text('name = "unrelated"\n')
+    assert install(previous)["result"] == "installed"
+    assert previous.record_start({"session_id": "install-session", "agent_type": "pd_explorer", "agent_id": "old-child"})
+    before = tree(previous.home)
+    owned_before = tree(previous.target("user"))
+    catalog.write_bytes(expanded)
+
+    assert manager.version == previous.version
+    assert manager.plans()["user"]["state"] == "upgrade_available"
+    assert onboard(manager, "declined-upgrade", {"elicitation": {"form": {}}},
+                   lambda *_: {"action": "decline"})["result"] == "deferred"
+    assert tree(manager.home) == before
+
+    def approve(_method, params):
+        assert "can edit assigned files" in params["message"]
+        assert "diagnosis can write temporary output" in params["message"]
+        assert "inherit the current chat's permissions" in params["message"]
+        assert "For read-only work." not in params["message"]
+        return choose("user")()
+
+    result = onboard(manager, "install-session", {"elicitation": {"form": {}}}, approve)
+    assert result["result"] == "upgraded" and result["restartRequired"]
+    assert tree(Path(result["backup"])) == owned_before
+    assert len(list(manager.target("user").glob("*.toml"))) == 6
+    assert config.read_bytes() == before["config.toml"]
+    assert unrelated.read_bytes() == before["agents/unrelated.toml"]
+    assert manager.status("install-session")["session"]["verification"] == "pending"
+
+
+@pytest.mark.parametrize("sandbox", ["danger-full-access", "external-sandbox", "unknown"])
+def test_packaged_role_cannot_expand_to_an_unrestricted_sandbox(manager: Manager, sandbox: str) -> None:
+    role = manager.root / "com.openai/agents/pd_implementer.toml"
+    role.write_text(role.read_text().replace('sandbox_mode = "workspace-write"', f'sandbox_mode = "{sandbox}"'))
+    with pytest.raises(AgentError, match="sandbox default"):
+        Manager(manager.root, manager.home, manager.cwd)
+    assert not manager.home.exists()
+
+
+def test_purpose_specific_routing_has_expected_models_and_defaults(manager: Manager) -> None:
+    assert {role["name"]: (role["model"], role["effort"], role["sandboxMode"])
+            for role in manager.roles} == {
+        "pd_explorer": ("gpt-6-luna", "high", "read-only"),
+        "pd_reviewer": ("gpt-6.1-sol", "high", "read-only"),
+        "pd_implementer": ("gpt-6.1-sol", "high", "workspace-write"),
+        "pd_diagnostician": ("gpt-6.1-sol", "high", "workspace-write"),
+        "pd_transformer": ("gpt-6-luna", "high", "workspace-write"),
+        "pd_architecture_adviser": ("gpt-6-astra", "medium", "read-only"),
+    }
 
 
 @pytest.mark.parametrize("explicit", [True, False])

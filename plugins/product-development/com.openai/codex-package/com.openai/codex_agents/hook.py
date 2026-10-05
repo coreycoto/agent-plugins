@@ -11,7 +11,7 @@ from manager import Manager
 
 def context(status: dict) -> str:
     lines = [f"Product Development {status['version']} Codex roles:"]
-    lines.extend(f"- {role['name']} ({role['model']}, {role['effort']}): {role['routing']}"
+    lines.extend(f"- {role['name']} ({role['model']}, {role['effort']}, default {role['sandboxMode']}): {role['routing']}"
                  for role in status["roles"])
     lines.append("Installation: " + "; ".join(
         f"{scope}={plan['state']}" for scope, plan in status["installations"].items()))
@@ -25,6 +25,8 @@ def context(status: dict) -> str:
         "or outdated, use $manage-codex-agents and codex_agents_onboard after the MCP server connects. "
         "The installer requests native form consent before changes. If files are ready but roles "
         "are not selectable, follow the restart guidance; installation alone does not reload this chat. "
+        "Assign file ownership before implementation or transformation; diagnosis does not edit product source. "
+        "Role defaults do not grant authority or override the parent's live permissions. "
         "Native SubagentStart receipts confirm actual role selection, not a model-policy reload. "
         "Cloud discovery remains pending."
     )

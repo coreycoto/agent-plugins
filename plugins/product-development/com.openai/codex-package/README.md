@@ -29,16 +29,28 @@ version with qualified native portable-hook support can retire this projection.
 | --- | --- | --- |
 | `pd_explorer` | GPT-6 Luna, high | Focused exploration and evidence gathering |
 | `pd_reviewer` | GPT-6.1 Sol, high | Correctness, regressions and missing test coverage |
+| `pd_implementer` | GPT-6.1 Sol, high | Assigned implementation from an accepted plan |
+| `pd_diagnostician` | GPT-6.1 Sol, high | Root cause and the smallest decisive next experiment |
+| `pd_transformer` | GPT-6 Luna, high | Explicit mechanical edits with deterministic validation |
 | `pd_architecture_adviser` | GPT-6 Astra, medium | Explicit escalation for difficult architecture decisions |
 
-All three roles are for read-only work and declare `sandbox_mode = "read-only"`
-as a default. Codex reapplies the parent's live permission settings when it
+Explorer, reviewer and architecture adviser declare `sandbox_mode = "read-only"`.
+Implementer, diagnostician and transformer declare `sandbox_mode = "workspace-write"`.
+Implementation and transformation edit only assigned files. Diagnosis does not
+edit product source; its write default permits temporary diagnostic evidence.
+These are purpose-specific defaults. Codex reapplies the parent's live permission settings when it
 spawns a child, so those settings can override the role's sandbox default.
 Verify the effective runtime permissions before claiming a separate read-only
 sandbox. Repository guidance, permissions and delegation authority remain with
 the task. Model routing belongs to each purpose-specific
 agent, not a parent-session profile. Installing the plugin does not opt into
 automatic delegation, grant provider access, or change the parent model.
+
+For existing repository roles and committed CI/cloud configuration, use the
+[pinned adoption guide](com.openai/agents/ADOPTION.md). The offline author
+renderer keeps shared models and behavior in this source while preserving
+consumer aliases, task constraints and named permission profiles. It is
+separate from the consent-gated local installer.
 
 Requirements: local Codex custom-agent support (qualified against CLI 0.160.0),
 Python 3.11+ and an enabled bundled MCP server. Manual setup works before hook
@@ -133,6 +145,13 @@ Its native runtime inherited the parent's workspace-write permissions; it
 performed read-only work. Hook trust and hook-produced selection receipts remain
 separate checks. Reviewer selection does not qualify the other roles or prove
 an independently enforced read-only sandbox.
+
+The expanded six-role catalog additionally passed isolated native form decline,
+installation and three-to-six-role upgrades in both scopes, without inference
+requests. Live selection and effective permissions for the new implementer,
+diagnostician and transformer still require useful authorized work after the
+reviewed upgrade and reload. Earlier selection receipts do not verify a newer
+catalog digest.
 
 References: [portable plugin packaging](https://developers.openai.com/plugins/build/plugins),
 [native hooks and their trust/connection semantics](https://learn.chatgpt.com/docs/hooks),

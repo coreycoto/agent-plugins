@@ -12,6 +12,21 @@
       "routing": "Correctness review, regression analysis and missing test coverage."
     },
     {
+      "name": "pd_implementer",
+      "file": "pd_implementer.toml",
+      "routing": "Bounded implementation from an accepted plan, with assigned file ownership and focused validation."
+    },
+    {
+      "name": "pd_diagnostician",
+      "file": "pd_diagnostician.toml",
+      "routing": "Root-cause investigation, observations versus hypotheses, and the smallest decisive next experiment."
+    },
+    {
+      "name": "pd_transformer",
+      "file": "pd_transformer.toml",
+      "routing": "Explicit mechanical edits with a deterministic success condition; return ambiguity to the parent."
+    },
+    {
       "name": "pd_architecture_adviser",
       "file": "pd_architecture_adviser.toml",
       "routing": "Explicit escalation for difficult architecture tradeoffs or unresolved competing explanations."

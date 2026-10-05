@@ -27,6 +27,15 @@ updates to a single issue or pull request, use the consumer's existing GitHub
 connector or native `gh` CLI according to repository policy. This plugin does
 not bundle or configure a connector, app, MCP server, hook, or authentication.
 
+## Shared execution agents
+
+When Product Development is installed and delegation is authorized, use its
+purpose-specific agents with these skills. The [routing guide](skills/_shared/references/codex-agent-routing.md)
+maps dependency, documentation, governance, merge and release helpers to the
+current skill names. Reuse the role and provide a bounded task contract; keep
+project policy, permission profiles, hosted CI trust and publication authority
+with the consumer. This is optional integration, not automatic installation.
+
 ## Skill name migration
 
 The focused skills replace the earlier, narrower names. Update consumer

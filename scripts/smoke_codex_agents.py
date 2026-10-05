@@ -87,6 +87,13 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         f"model = \"gpt-6.1-sol\"\n[projects.{json.dumps(str(repo))}]\ntrust_level = \"trusted\"\n")
     destination = catalog / "plugins/product-development"
     shutil.copytree(package, destination, ignore=shutil.ignore_patterns("__pycache__"))
+    # Start with the previous three-role pilot, then qualify catalog growth.
+    role_catalog = destination / "com.openai/agents/catalog.json"
+    expanded_catalog = role_catalog.read_bytes()
+    previous_catalog = json.loads(expanded_catalog)
+    previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in {
+        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}]
+    role_catalog.write_text(json.dumps(previous_catalog))
     marketplace = catalog / ".agents/plugins/marketplace.json"
     marketplace.parent.mkdir(parents=True)
     marketplace.write_text(json.dumps({
@@ -134,6 +141,7 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
     parts[-1] = str(int(parts[-1]) + 1)
     data["version"] = ".".join(parts)
     manifest.write_text(json.dumps(data))
+    role_catalog.write_bytes(expanded_catalog)
     rpc = Rpc(codex, home, repo)
     try:
         rpc.initialize()
@@ -147,6 +155,7 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         upgraded = tool(rpc, thread_id, repo, thread_id, {
             "action": "accept", "content": {"scope": scope, "confirm": True}})
         assert upgraded["result"] == "upgraded" and upgraded["version"] == data["version"]
+        assert len(list(target.glob("*.toml"))) == 6
         assert Path(upgraded["backup"]).is_dir() and not Path(upgraded["backup"]).is_relative_to(target.parent)
         assert upgraded["formMethod"] == installed["formMethod"]
         assert len(rpc.forms) == 1 and rpc.forms[0]["mode"] == expected_mode

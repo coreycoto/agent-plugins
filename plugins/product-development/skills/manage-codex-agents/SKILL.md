@@ -12,7 +12,7 @@ Setup action when available or invoke this skill in the current chat. Keep
 hook review, role installation and upgrades in this one guided workflow;
 structured settings are for persistent preferences, not a second installer.
 
-Keep the explanation brief: "Product Development adds three agents and
+Keep the explanation brief: "Product Development adds six agents and
 automatic setup checks. Review its three hooks in Codex, then install the
 agents if needed." Installing the plugin registers its bundled hooks; do not
 copy them into user or project configuration.
@@ -45,7 +45,11 @@ when a task actually benefits from that role. Explicitly select Astra only for
 a difficult architecture question. The parent retains the task's permission
 and delegation boundaries. Do not spawn costly probes solely for onboarding.
 The role's `sandbox_mode` is a default: the parent's live permission settings
-can override it. Inspect native child runtime permissions before claiming a
+can override it. Implementation and transformation edit assigned files;
+diagnosis may write temporary evidence but does not edit product source.
+Give each write task a bounded objective, file ownership and a success condition;
+preserve concurrent work and return unresolved decisions to the parent.
+Inspect native child runtime permissions before claiming a
 separate read-only sandbox; distinguish read-only work from write enforcement.
 The bundled `SubagentStart` hook records actual native role selection; report
 which roles have been observed and which remain unverified.

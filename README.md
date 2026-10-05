@@ -33,12 +33,17 @@ task authorization remain separate checks. This catalog distributes skills,
 client metadata and author checks. Product Development additionally bundles a
 local Python Codex onboarding adapter; GitHub workflow execution stays in gh-steward.
 
-Product Development's bundled `SessionStart` hook announces purpose-specific
+Product Development's bundled `SessionStart` hook announces six purpose-specific
 Luna, Sol 6.1 and Astra roles and checks installation/upgrade state. Its native
 MCP form offers shared-user or project installation with ownership checks.
 Generated files and live session usability are reported separately. See the
 [Codex role extension](plugins/product-development/README.md#codex-role-extension)
 for requirements, consent, upgrade behavior and restart verification.
+
+Use those shared agents with the owning plugin's skills instead of defining a
+new agent for every workflow. Project Management's [agent routing guide](plugins/project-management/skills/_shared/references/codex-agent-routing.md)
+maps legacy maintenance helpers to current skills and bounded roles. Repositories
+retain product policy, permission profiles and operational/release gates.
 
 Local clients may track the latest stable release through a qualified update
 adapter. Resolve each release to an exact commit, preserve package selection and

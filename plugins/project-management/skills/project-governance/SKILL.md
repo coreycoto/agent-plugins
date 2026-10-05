@@ -10,6 +10,11 @@ agree with its own documented rules. Read the current policy and inspect only
 the records relevant to the requested review. Describe the rule, observed state,
 and evidence for each material gap.
 
+For authorized delegation, use the optional Product Development explorer or
+reviewer for evidence gathering and audit, then a bounded implementer for
+accepted local edits. See the [agent routing guide](../_shared/references/codex-agent-routing.md).
+Policy decisions and coordinated GitHub applies stay with the parent.
+
 The consumer owns project identity, field definitions and options, ranking,
 hierarchy, label vocabulary, actors, and delivery stages. Compare the live or
 checked-in state with those consumer-owned choices; do not introduce new

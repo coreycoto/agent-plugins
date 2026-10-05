@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project overlays for pinned Product Development Codex agents",
+  "type": "object",
+  "required": ["schemaVersion", "sourceRevision", "roles"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {"type": "string"},
+    "schemaVersion": {"const": 1},
+    "sourceRevision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "readOnlyProfiles": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "roles": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_-]{0,63}$"},
+      "additionalProperties": {
+        "type": "object",
+        "required": ["sourceRole"],
+        "additionalProperties": false,
+        "properties": {
+          "sourceRole": {"type": "string", "pattern": "^pd_[a-z_]+$"},
+          "file": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}\\.toml$"},
+          "description": {"type": "string", "minLength": 1},
+          "appendInstructions": {"type": "string", "minLength": 1},
+          "sandbox_mode": {"const": "read-only"},
+          "default_permissions": {"type": "string", "minLength": 1}
+        },
+        "not": {"required": ["sandbox_mode", "default_permissions"]}
+      }
+    }
+  }
+}
