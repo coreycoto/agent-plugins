@@ -31,8 +31,6 @@ def form_method(capabilities: dict) -> str | None:
     elicitation = capabilities.get("elicitation", {})
     if isinstance(elicitation, dict) and isinstance(elicitation.get("form"), dict):
         return "elicitation/create"
-    if isinstance(extensions, dict) and "openai/form" in extensions:
-        return "openai/form"
     return None
 
 
@@ -52,6 +50,7 @@ def onboard(manager: Manager, session: str, capabilities: dict,
         f"→ {manager.version}; {plans[scope]['target']}" for scope in eligible)
     roles = "\n".join(f"{role['name']}: {role['model']} ({role['effort']})" for role in manager.roles)
     params = {
+        "mode": "form",
         "message": (
             f"Install or upgrade Product Development's generated Codex roles?\n{roles}\n\n{preview}\n\n"
             "The plugin remains the authored source. This writes the listed role TOMLs, an ownership "
@@ -76,8 +75,6 @@ def onboard(manager: Manager, session: str, capabilities: dict,
             }, "required": ["scope", "confirm"],
         },
     }
-    if method != "openai/form":
-        params["mode"] = "form"
     response = request_form(method, params)
     answer = response.get("content")
     if response.get("action") != "accept" or not isinstance(answer, dict):

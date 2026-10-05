@@ -33,7 +33,7 @@ def choose(scope: str, confirm: object = True):
 
 
 def install(manager: Manager, scope="user", session="install-session") -> dict:
-    return onboard(manager, session, {"extensions": {"openai/form": {}}}, choose(scope))
+    return onboard(manager, session, {"elicitation": {"form": {}}}, choose(scope))
 
 
 def trust_project(manager: Manager) -> None:
@@ -98,15 +98,18 @@ def test_project_scope_does_not_write_user_configuration(manager: Manager) -> No
 ])
 def test_no_valid_form_consent_means_no_writes(manager: Manager, response: dict) -> None:
     before = tree(manager.root.parent)
-    result = onboard(manager, "session", {"extensions": {"openai/form": {}}}, lambda *_: response)
+    result = onboard(manager, "session", {"elicitation": {"form": {}}}, lambda *_: response)
     assert result["result"] == "deferred"
     assert tree(manager.root.parent) == before
     assert not manager.home.exists()
 
 
-def test_missing_form_capability_defers_without_side_effects(manager: Manager) -> None:
-    result = onboard(manager, "session", {}, lambda *_: pytest.fail("no form capability"))
+@pytest.mark.parametrize("capabilities", [{}, {"extensions": {"openai/form": {}}}])
+def test_missing_supported_form_capability_defers_without_side_effects(manager: Manager, capabilities) -> None:
+    before = tree(manager.root.parent)
+    result = onboard(manager, "session", capabilities, lambda *_: pytest.fail("no supported form capability"))
     assert result["result"] == "form_unavailable"
+    assert tree(manager.root.parent) == before
     assert not manager.home.exists()
 
 
@@ -114,7 +117,6 @@ def test_missing_form_capability_defers_without_side_effects(manager: Manager) -
     ({"extensions": {"openai/elicitation": {"form": {}}}}, "openai/elicitation/create"),
     ({"extensions": {"openai/form": {}, "openai/elicitation": {"form": {}}}}, "openai/elicitation/create"),
     ({"extensions": {"openai/form": {}}, "elicitation": {"form": {}}}, "elicitation/create"),
-    ({"extensions": {"openai/form": {}}}, "openai/form"),
     ({"elicitation": {"form": {}}}, "elicitation/create"),
 ])
 def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, capabilities, method) -> None:
@@ -126,9 +128,7 @@ def test_negotiated_form_method_and_reviewable_scope_preview(manager: Manager, c
         assert all(role["model"] in params["message"] for role in manager.roles)
         assert [option["const"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"]] == ["user", "project", "later"]
         assert all(option["title"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"])
-        assert ("mode" in params) == (method != "openai/form")
-        if "mode" in params:
-            assert params["mode"] == "form"
+        assert params["mode"] == "form"
         return {"action": "decline"}
     assert onboard(manager, "session", capabilities, check)["result"] == "deferred"
 
@@ -172,7 +172,7 @@ def test_project_requires_shared_trust_before_offer_or_install(manager: Manager,
     def reject_project_choice(_method, params):
         assert [option["const"] for option in params["requestedSchema"]["properties"]["scope"]["oneOf"]] == ["user", "later"]
         return choose("project")()
-    result = onboard(manager, "session", {"extensions": {"openai/form": {}}}, reject_project_choice)
+    result = onboard(manager, "session", {"elicitation": {"form": {}}}, reject_project_choice)
     assert result["result"] == "deferred"
     assert manager.plans()["project"]["state"] == "conflict"
     assert tree(manager.root.parent) == before
@@ -193,7 +193,7 @@ def test_project_trust_revoked_during_form_invalidates_plan(manager: Manager) ->
         config.write_text(config.read_text().replace('"trusted"', '"untrusted"'))
         return choose("project")()
     with pytest.raises(AgentError, match="plan changed"):
-        onboard(manager, "session", {"extensions": {"openai/form": {}}}, revoke)
+        onboard(manager, "session", {"elicitation": {"form": {}}}, revoke)
     assert not manager.target("project").exists()
     assert not manager.state_dir("project").exists()
 
@@ -262,7 +262,7 @@ def test_form_time_drift_invalidates_plan_before_any_role_write(manager: Manager
         (target / "keep.txt").write_text("Unowned file created during review.")
         return choose("user")()
     with pytest.raises(AgentError, match="plan changed"):
-        onboard(manager, "session", {"extensions": {"openai/form": {}}}, race)
+        onboard(manager, "session", {"elicitation": {"form": {}}}, race)
     assert tree(manager.target("user")) == {"keep.txt": b"Unowned file created during review."}
     assert not manager.state_dir().exists()
 
@@ -349,21 +349,25 @@ def test_hook_handles_missing_server_and_does_not_leak_config(manager: Manager) 
     assert not manager.target("user").exists()
 
 
-def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypatch) -> None:
+@pytest.mark.parametrize("capabilities,method", [
+    ({"extensions": {"openai/elicitation": {"form": {}}}}, "openai/elicitation/create"),
+    ({"elicitation": {"form": {}}}, "elicitation/create"),
+])
+def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypatch, capabilities, method) -> None:
     monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
     call = {"method": "tools/call", "params": {"name": "codex_agents_onboard", "arguments": {
         "cwd": str(manager.cwd), "session_id": "session"}}}
     input_stream = io.StringIO("\n".join(json.dumps(message) for message in [
         {"id": 1, "method": "initialize", "params": {
-            "clientInfo": {"name": "codex-test"}, "capabilities": {"extensions": {"openai/form": {}}}}},
+            "clientInfo": {"name": "codex-test"}, "capabilities": capabilities}},
         {"id": 2, **call}, {"id": "pd-form-1", "result": {"action": "decline"}},
         {"id": 3, **call},
     ]) + "\n")
     output = io.StringIO()
     assert Server(input_stream, output).run() == 0
     messages = [json.loads(line) for line in output.getvalue().splitlines()]
-    forms = [message for message in messages if message.get("method") == "openai/form"]
-    assert len(forms) == 1 and "mode" not in forms[0]["params"]
+    forms = [message for message in messages if message.get("method") == method]
+    assert len(forms) == 1 and forms[0]["params"]["mode"] == "form"
     assert messages[-1]["result"]["structuredContent"]["result"] == "deferred"
     assert not manager.home.exists()
 
@@ -371,7 +375,7 @@ def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypa
 def test_non_codex_client_cannot_prompt_or_install(manager: Manager, monkeypatch) -> None:
     monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
     server = Server(io.StringIO(), io.StringIO())
-    server.dispatch("initialize", {"clientInfo": {"name": "other-client"}, "capabilities": {"extensions": {"openai/form": {}}}})
+    server.dispatch("initialize", {"clientInfo": {"name": "other-client"}, "capabilities": {"elicitation": {"form": {}}}})
     result = server.dispatch("tools/call", {"name": "codex_agents_onboard", "arguments": {
         "cwd": str(manager.cwd), "session_id": "session"}})
     assert result["structuredContent"]["result"] == "client_unsupported"
@@ -383,7 +387,7 @@ def test_mcp_form_cancellation_only_matches_its_active_requests(manager: Manager
     monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
     requests = [
         {"id": 1, "method": "initialize", "params": {
-            "clientInfo": {"name": "codex-test"}, "capabilities": {"extensions": {"openai/form": {}}}}},
+            "clientInfo": {"name": "codex-test"}, "capabilities": {"elicitation": {"form": {}}}}},
         {"id": 2, "method": "tools/call", "params": {"name": "codex_agents_onboard", "arguments": {
             "cwd": str(manager.cwd), "session_id": "session"}}},
         {"method": "notifications/cancelled", "params": {"requestId": request_id}},

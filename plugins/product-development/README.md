@@ -48,9 +48,9 @@ also uses the declared plugin-onboarding skill; it is the same installer, not
 a separate settings workflow. It prefers the documented
 **`openai/elicitation/create`** method when `openai/elicitation.form` is negotiated,
 otherwise uses standard MCP `elicitation/create` when advertised. The deprecated
-`openai/form` method is used only if neither current nor standard forms are
-available. Without form support it defers without
-writing roles. A missing MCP connection during startup does not block the
+`openai/form` method is not supported. Without either supported form capability,
+setup reports `form_unavailable` and leaves role files unchanged.
+A missing MCP connection during startup does not block the
 session; invoke `$manage-codex-agents` once the server connects. Decline/cancel
 never installs, and a declined choice is not prompted again by that server
 in the same session. There are no command-line consent bypasses.
