@@ -60,7 +60,7 @@ def onboard(manager: Manager, session: str, capabilities: dict,
     params = {
         "mode": "form",
         "message": (
-            f"Set up Product Development agents\n\n{roles}\nAll agents are read-only.\n\n"
+            f"Set up Product Development agents\n\n{roles}\nFor read-only work.\n\n"
             f"{destinations}\n\nRestart Codex after setup."
         ),
         "requestedSchema": {

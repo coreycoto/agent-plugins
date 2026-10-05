@@ -31,8 +31,12 @@ version with qualified native portable-hook support can retire this projection.
 | `pd_reviewer` | GPT-6.1 Sol, high | Correctness, regressions and missing test coverage |
 | `pd_architecture_adviser` | GPT-6 Astra, medium | Explicit escalation for difficult architecture decisions |
 
-All three roles are read-only. Repository guidance, permissions and delegation
-authority remain with the task. Model routing belongs to each purpose-specific
+All three roles are for read-only work and declare `sandbox_mode = "read-only"`
+as a default. Codex reapplies the parent's live permission settings when it
+spawns a child, so those settings can override the role's sandbox default.
+Verify the effective runtime permissions before claiming a separate read-only
+sandbox. Repository guidance, permissions and delegation authority remain with
+the task. Model routing belongs to each purpose-specific
 agent, not a parent-session profile. Installing the plugin does not opt into
 automatic delegation, grant provider access, or change the parent model.
 
@@ -94,19 +98,24 @@ not proof. Inspect the active spawn tool for a role/type selector; if the client
 does not expose it, report that limitation instead of claiming readiness.
 The `SubagentStart` hook records actual native role selection per parent session
 in private shared Codex state, with role ids and digests, never transcripts.
-Status lists observed selections separately from unverified roles. It refuses
-to confirm selection in the same session that installed the files. These
-receipts confirm selection, not an independently measured model-policy reload.
+Status lists observed selections separately from unverified roles. A restarted
+Desktop chat retains its session id, so native selections can be recorded when
+resuming the installation chat. Installation alone leaves verification pending.
+These receipts confirm selection, not the model or permission policy loaded
+by the child.
 Avoid costly verification-only subagents: confirm selection when delegation is
 authorized and useful to the task.
 
 Live CLI delegation needs a persistent parent session in qualified Codex 0.160.0;
 an ephemeral parent has no rollout to fork. A useful read-only installer review
 verified `pd_explorer` selection with GPT-6 Luna, high reasoning and read-only
-permissions through native child-session metadata. Desktop rich-form rendering
-and role selection remain separate gates. The current Desktop chat's spawn
-interface does not expose a custom-role selector; installing files or restarting
-alone does not establish that this interface can select them.
+permissions through native child-session metadata. Desktop accepted the current
+rich-form extension and installed the shared roles. After restart, a useful
+installer review selected `pd_reviewer` with GPT-6.1 Sol and high reasoning.
+Its native runtime inherited the parent's workspace-write permissions; it
+performed read-only work. Hook trust and hook-produced selection receipts remain
+separate checks. Reviewer selection does not qualify the other roles or prove
+an independently enforced read-only sandbox.
 
 References: [portable plugin packaging](https://developers.openai.com/plugins/build/plugins),
 [native hooks and their trust/connection semantics](https://learn.chatgpt.com/docs/hooks),

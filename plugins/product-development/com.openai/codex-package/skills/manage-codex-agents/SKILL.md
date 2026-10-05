@@ -15,6 +15,9 @@ selectable. If it exposes a role/type selector, use the registered `pd_*` name
 when a task actually benefits from that role. Explicitly select Astra only for
 a difficult architecture question. The parent retains the task's permission
 and delegation boundaries. Do not spawn costly probes solely for onboarding.
+The role's `sandbox_mode` is a default: the parent's live permission settings
+can override it. Inspect native child runtime permissions before claiming a
+separate read-only sandbox; distinguish read-only work from write enforcement.
 The bundled `SubagentStart` hook records actual native role selection; report
 which roles have been observed and which remain unverified.
 

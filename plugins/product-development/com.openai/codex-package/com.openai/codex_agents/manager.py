@@ -301,9 +301,6 @@ class Manager:
         ready = [scope for scope, plan in self.plans().items() if plan["state"] == "ready"]
         if len(ready) != 1:
             return False
-        marker = self.snapshot(self.target(ready[0]))["marker"]
-        if marker["installedDuringSession"] == session:
-            return False  # Never claim that installation reloaded the active session.
         directory = self.state_dir() / "sessions" / digest(session.encode())
         private_dir(directory)
         path = directory / (digest(agent_id.encode()) + ".json")

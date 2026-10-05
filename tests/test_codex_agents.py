@@ -322,18 +322,19 @@ def test_symlink_target_and_escaping_source_are_rejected(manager: Manager, tmp_p
         Manager(manager.root, manager.home, manager.cwd)
 
 
-def test_native_selection_receipt_requires_different_session_and_current_assets(manager: Manager) -> None:
+@pytest.mark.parametrize("session", ["install-session", "fresh-session"])
+def test_native_selection_receipt_tracks_same_or_new_chat_and_current_assets(manager: Manager, session) -> None:
     install(manager)
-    event = {"session_id": "install-session", "agent_type": "pd_explorer", "agent_id": "child-1"}
-    assert not manager.record_start(event)
-    event["session_id"] = "fresh-session"
-    assert manager.record_start(event)
-    status = manager.status("fresh-session")
+    resumed = Manager(manager.root, manager.home, manager.cwd)
+    assert resumed.status(session)["session"]["verification"] == "pending"
+    event = {"session_id": session, "agent_type": "pd_explorer", "agent_id": "child-1"}
+    assert resumed.record_start(event)
+    status = resumed.status(session)
     assert status["session"]["nativeRoleSelections"] == ["pd_explorer"]
     assert status["session"]["verification"] == "role_selection_observed"
-    assert manager.status("other-session")["session"]["verification"] == "pending"
+    assert resumed.status("other-session")["session"]["verification"] == "pending"
     newer = upgrade_source(manager)
-    assert newer.status("fresh-session")["session"]["verification"] == "pending"
+    assert newer.status(session)["session"]["verification"] == "pending"
 
 
 def test_hook_handles_missing_server_and_does_not_leak_config(manager: Manager) -> None:
