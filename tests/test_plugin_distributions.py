@@ -41,7 +41,7 @@ def test_builds_are_reproducible_without_changing_authored_plugins(tmp_path: Pat
 def test_archive_contains_complete_native_package_and_independent_owned_roles() -> None:
     files = distribution_projection()
     for name in ("product-development", "project-management"):
-        payload = files[f"npm/coreycoto-agent-plugin-{name}-0.8.0.tgz"]
+        payload = files[f"npm/coreycoto-agent-plugin-{name}-0.8.1.tgz"]
         with tarfile.open(fileobj=io.BytesIO(payload), mode="r:gz") as archive:
             members = archive.getmembers()
             assert all(member.isfile() and member.name.startswith("package/") for member in members)

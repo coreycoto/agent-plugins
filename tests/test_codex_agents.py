@@ -15,6 +15,16 @@ from manager import MARKER, AgentError, Manager
 from server import Server, onboard
 
 PLUGIN = Path(__file__).resolve().parents[1] / "plugins/product-development"
+HOOK_SCHEMA = json.loads((Path(__file__).parent / "fixtures/codex-session-start-output.schema.json").read_text())
+
+
+def hook_context(response: dict) -> str:
+    payload = response["structuredContent"]
+    validate(payload, HOOK_SCHEMA)
+    text_payload = json.loads(response["content"][0]["text"])
+    validate(text_payload, HOOK_SCHEMA)
+    assert text_payload == payload
+    return payload["hookSpecificOutput"]["additionalContext"]
 
 
 @pytest.fixture
@@ -431,7 +441,7 @@ def test_mcp_wire_form_and_decline_are_not_reprompted(manager: Manager, monkeypa
     messages = [json.loads(line) for line in output.getvalue().splitlines()]
     forms = [message for message in messages if message.get("method") == method]
     assert len(forms) == 1 and forms[0]["params"]["mode"] == "form"
-    assert messages[-1]["result"]["structuredContent"]["result"] == "deferred"
+    assert "Onboarding result: deferred" in hook_context(messages[-1]["result"])
     assert not manager.home.exists()
 
 
@@ -441,7 +451,7 @@ def test_non_codex_client_cannot_prompt_or_install(manager: Manager, monkeypatch
     server.dispatch("initialize", {"clientInfo": {"name": "other-client"}, "capabilities": {"elicitation": {"form": {}}}})
     result = server.dispatch("tools/call", {"name": "codex_agents_onboard", "arguments": {
         "cwd": str(manager.cwd), "session_id": "session"}})
-    assert result["structuredContent"]["result"] == "client_unsupported"
+    assert "Onboarding result: client_unsupported" in hook_context(result)
     assert not manager.home.exists()
 
 
@@ -461,13 +471,37 @@ def test_mcp_form_cancellation_only_matches_its_active_requests(manager: Manager
     input_stream = io.StringIO("\n".join(json.dumps(r) for r in requests) + "\n")
     assert Server(input_stream, output, root=manager.root).run() == 0
     messages = [json.loads(line) for line in output.getvalue().splitlines()]
-    result = next(m["result"]["structuredContent"] for m in messages if m.get("id") == 2)
+    result = next(m["result"] for m in messages if m.get("id") == 2)
     if request_id == "unrelated-request":
-        assert result["result"] == "installed"
+        assert "Onboarding result: installed" in hook_context(result)
         assert manager.plans()["user"]["state"] == "ready"
     else:
-        assert result["result"] == "deferred"
+        assert "Onboarding result: deferred" in hook_context(result)
         assert not manager.home.exists()
+
+
+@pytest.mark.parametrize("outcome", ["installed", "registered", "upgraded", "deferred",
+                                     "form_unavailable", "conflict", "client_unsupported"])
+def test_onboarding_obeys_native_hook_schema_and_status_stays_detailed(manager: Manager, monkeypatch, outcome) -> None:
+    if outcome in {"registered", "upgraded"}:
+        install(manager)
+        if outcome == "upgraded":
+            manager = upgrade_source(manager)
+    elif outcome == "conflict":
+        manager.home.mkdir(parents=True)
+        (manager.home / "config.toml").write_text('[agents.pd_explorer]\nconfig_file = "existing.toml"\n')
+    monkeypatch.setattr(Manager, "from_environment", lambda _: manager)
+    server = Server(io.StringIO(), io.StringIO(), root=manager.root)
+    server.dispatch("initialize", {"clientInfo": {
+        "name": "other-client" if outcome == "client_unsupported" else "codex-test"},
+        "capabilities": {} if outcome == "form_unavailable" else {"elicitation": {"form": {}}}})
+    server.request_form = lambda *_: {"action": "decline"} if outcome == "deferred" else choose("user")()
+    args = {"cwd": str(manager.cwd), "session_id": "schema-session"}
+    response = server.dispatch("tools/call", {"name": "codex_agents_onboard", "arguments": args})
+    assert "Onboarding result: " + outcome in hook_context(response)
+    status = server.dispatch("tools/call", {"name": "codex_agents_status", "arguments": args})
+    assert status["structuredContent"]["roles"] == manager.roles
+    assert status["structuredContent"]["installations"] == manager.plans()
 
 
 def test_catalog_and_hooks_are_bundled_and_onboarding_is_discoverable() -> None:

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "project-management",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
   "author": {
     "name": "Corey Coto",

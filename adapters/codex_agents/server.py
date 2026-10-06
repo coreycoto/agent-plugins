@@ -165,12 +165,15 @@ class Server:
             result = onboard(manager, session, self.capabilities, self.request_form)
             if result.get("result") == "deferred":
                 self.deferred.add(key)
-        result["hookSpecificOutput"] = {
+        hook_output = {"hookSpecificOutput": {
             "hookEventName": "SessionStart",
             "additionalContext": context(manager.status(session)) + "\nOnboarding result: " +
                                  result.get("result", "status") + "\n" + result.get("restartGuidance", ""),
-        }
-        return {"content": [{"type": "text", "text": json.dumps(result)}], "structuredContent": result}
+        }}
+        # MCP hooks feed the tool's output directly to Codex's strict hook parser.
+        # Detailed status belongs to the status tool, outside that hook envelope.
+        output = hook_output if params["name"] == "codex_agents_onboard" else result
+        return {"content": [{"type": "text", "text": json.dumps(output)}], "structuredContent": output}
 
     def run(self) -> int:
         for line in self.input:
