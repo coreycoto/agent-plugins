@@ -14,6 +14,10 @@ import threading
 from pathlib import Path
 
 from build_codex_package import marketplace_projection, write_generated
+from jsonschema import validate
+
+HOOK_SCHEMA = json.loads((Path(__file__).resolve().parents[1] /
+                          "tests/fixtures/codex-session-start-output.schema.json").read_text())
 
 
 class Rpc:
@@ -75,10 +79,27 @@ class Rpc:
 
 
 def tool(rpc: Rpc, thread_id: str, repo: Path, session: str, answer=None) -> dict:
-    return rpc.call("mcpServer/tool/call", {
+    response = rpc.call("mcpServer/tool/call", {
         "threadId": thread_id, "server": rpc.server, "tool": "codex_agents_onboard",
         "arguments": {"cwd": str(repo), "session_id": session},
-    }, answer)["structuredContent"]
+    }, answer)
+    output = response["structuredContent"]
+    validate(output, HOOK_SCHEMA)
+    text_output = json.loads(response["content"][0]["text"])
+    validate(text_output, HOOK_SCHEMA)
+    assert text_output == output
+    return output
+
+
+def onboarding_context(output: dict) -> str:
+    return output["hookSpecificOutput"]["additionalContext"]
+
+
+def status(rpc: Rpc, thread_id: str, repo: Path) -> dict:
+    return rpc.call("mcpServer/tool/call", {
+        "threadId": thread_id, "server": rpc.server, "tool": "codex_agents_status",
+        "arguments": {"cwd": str(repo), "session_id": thread_id},
+    })["structuredContent"]
 
 
 def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
@@ -130,14 +151,17 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         statuses = rpc.call("mcpServerStatus/list", {"threadId": thread_id})["data"]
         assert any(server["name"] == plugin + "-agents" and server["runtimeStatus"] == "connected" for server in statuses)
         declined = tool(rpc, thread_id, repo, thread_id)
-        assert declined["result"] == "deferred" and not target.exists()
+        assert "Onboarding result: deferred" in onboarding_context(declined) and not target.exists()
         installed = tool(rpc, thread_id, repo, "qualification-accepted", {
             "action": "accept", "content": {"scope": scope, "confirm": True}})
-        assert installed["result"] == "installed" and installed["restartRequired"]
+        assert "Onboarding result: installed" in onboarding_context(installed)
+        assert "restart" in onboarding_context(installed).lower()
+        assert status(rpc, thread_id, repo)["installations"][scope]["state"] == "ready"
         assert len(list(target.glob("*.toml"))) == initial_count and not other.exists()
         assert (home / ".codex/config.toml").read_bytes() == original_config
-        assert installed["formMethod"] in {"openai/elicitation/create", "elicitation/create"}, f"Negotiated native method: {installed['formMethod']}"
-        expected_mode = "openaiForm" if installed["formMethod"] == "openai/elicitation/create" else "form"
+        expected_mode = rpc.forms[0]["mode"]
+        assert expected_mode in {"openaiForm", "form"}
+        form_method = "openai/elicitation/create" if expected_mode == "openaiForm" else "elicitation/create"
         assert len(rpc.forms) == 2 and all(form["mode"] == expected_mode for form in rpc.forms)
         form_modes = [form["mode"] for form in rpc.forms]
     finally:
@@ -162,17 +186,19 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         thread_id = rpc.call("thread/start", {"cwd": str(repo), "ephemeral": True})["thread"]["id"]
         upgraded = tool(rpc, thread_id, repo, thread_id, {
             "action": "accept", "content": {"scope": scope, "confirm": True}})
-        assert upgraded["result"] == "upgraded" and upgraded["version"] == data["version"]
+        assert "Onboarding result: upgraded" in onboarding_context(upgraded)
+        assert status(rpc, thread_id, repo)["version"] == data["version"]
         assert len(list(target.glob("*.toml"))) == final_count
-        assert Path(upgraded["backup"]).is_dir() and not Path(upgraded["backup"]).is_relative_to(target.parent)
-        assert upgraded["formMethod"] == installed["formMethod"]
+        backups = list((target.parents[1] / "agent-plugin-state" / plugin / "backups").iterdir())
+        assert len(backups) == 1 and backups[0].is_dir() and not backups[0].is_relative_to(target.parent)
+        assert len(list(backups[0].glob("*.toml"))) == initial_count
         assert len(rpc.forms) == 1 and rpc.forms[0]["mode"] == expected_mode
         assert (home / ".codex/config.toml").read_bytes() == original_config
     finally:
         rpc.close()
     return {"plugin": plugin, "scope": scope, "hookEvents": [hook["eventName"] for hook in detail["hooks"]],
-            "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": installed["formMethod"], "formModes": form_modes,
-            "declinePreservedFiles": True, "install": installed["result"], "upgrade": upgraded["result"],
+            "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": form_method, "formModes": form_modes,
+            "declinePreservedFiles": True, "install": "installed", "upgrade": "upgraded", "hookOutputSchemaVerified": True,
             "generatedRoles": sorted(path.name for path in target.glob("*.toml")),
             "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending"}
 

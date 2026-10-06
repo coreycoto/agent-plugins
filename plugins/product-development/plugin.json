@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "product-development",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
   "author": {
     "name": "Corey Coto",

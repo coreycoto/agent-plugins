@@ -32,7 +32,7 @@
       "source": {
         "source": "npm",
         "package": "@coreycoto/agent-plugin-product-development",
-        "version": "0.8.0",
+        "version": "0.8.1",
         "registry": "https://registry.npmjs.org"
       },
       "policy": {
@@ -40,7 +40,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Developer Tools",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
       "interface": {
         "displayName": "Product Development",
@@ -87,7 +87,7 @@
       "source": {
         "source": "npm",
         "package": "@coreycoto/agent-plugin-project-management",
-        "version": "0.8.0",
+        "version": "0.8.1",
         "registry": "https://registry.npmjs.org"
       },
       "policy": {
@@ -95,7 +95,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
       "interface": {
         "displayName": "Project Management",
