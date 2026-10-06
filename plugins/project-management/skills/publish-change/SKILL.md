@@ -10,6 +10,11 @@ explicit release process. First inspect the consumer's contribution and release
 policy, branch state, and current change. Summarize what is ready, what remains
 unverified, and which publication step the user requested.
 
+For authorized delegation, use `pm_release_preparer` for assigned local
+preparation and release evidence. See the
+[agent routing guide](../_shared/references/codex-agent-routing.md). Publication,
+merges and release tags remain with the parent under the user's authorization.
+
 Keep local version-control work separate from hosted GitHub operations. Follow
 the consumer's branch, commit, pull-request, and release conventions. For
 ordinary pull-request or issue operations, use the existing GitHub connector or

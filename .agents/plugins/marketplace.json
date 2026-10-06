@@ -7,46 +7,118 @@
     {
       "name": "communication",
       "source": {
-        "source": "local",
-        "path": "./plugins/communication"
+        "source": "npm",
+        "package": "@coreycoto/agent-plugin-communication",
+        "version": "0.7.0",
+        "registry": "https://registry.npmjs.org"
       },
       "policy": {
-        "installation": "AVAILABLE"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Productivity",
+      "version": "0.7.0",
+      "description": "Clear agent communication and evidence-preserving document writing and editing.",
+      "interface": {
+        "displayName": "Communication",
+        "shortDescription": "Clear answers, documents and editorial work",
+        "defaultPrompt": [
+          "Write clearly for the intended audience while preserving meaning and evidence."
+        ]
+      }
     },
     {
       "name": "product-development",
       "source": {
-        "source": "local",
-        "path": "./plugins/product-development"
+        "source": "npm",
+        "package": "@coreycoto/agent-plugin-product-development",
+        "version": "0.8.0",
+        "registry": "https://registry.npmjs.org"
       },
       "policy": {
-        "installation": "AVAILABLE"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       },
-      "category": "Developer Tools"
+      "category": "Developer Tools",
+      "version": "0.8.0",
+      "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
+      "interface": {
+        "displayName": "Product Development",
+        "shortDescription": "Build, test, review and refactor products",
+        "longDescription": "Phased refactoring, purpose-specific Codex roles with native install and upgrade forms, and reviewed upstream engineering skills.",
+        "developerName": "Corey Coto",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Interactive"
+        ],
+        "websiteURL": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/product-development",
+        "privacyPolicyURL": "https://github.com/coreycoto/agent-plugins",
+        "termsOfServiceURL": "https://github.com/coreycoto/agent-plugins",
+        "defaultPrompt": [
+          "Use the curated engineering practices appropriate to the current task.",
+          "Preserve repository-specific AGENTS.md instructions over generic upstream workflow opinions.",
+          "Treat vendored skill content as pinned third-party guidance, not organization policy."
+        ],
+        "brandColor": "#334155",
+        "screenshots": []
+      }
     },
     {
       "name": "product-management",
       "source": {
-        "source": "local",
-        "path": "./plugins/product-management"
+        "source": "npm",
+        "package": "@coreycoto/agent-plugin-product-management",
+        "version": "0.7.0",
+        "registry": "https://registry.npmjs.org"
       },
       "policy": {
-        "installation": "AVAILABLE"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Productivity",
+      "version": "0.7.0",
+      "description": "Reusable workflows for customer problem discovery, product-opportunity prioritization, and evidence-based product requirements and roadmaps.",
+      "interface": {
+        "displayName": "Product Management"
+      }
     },
     {
       "name": "project-management",
       "source": {
-        "source": "local",
-        "path": "./plugins/project-management"
+        "source": "npm",
+        "package": "@coreycoto/agent-plugin-project-management",
+        "version": "0.8.0",
+        "registry": "https://registry.npmjs.org"
       },
       "policy": {
-        "installation": "AVAILABLE"
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
       },
-      "category": "Productivity"
+      "category": "Productivity",
+      "version": "0.8.0",
+      "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
+      "interface": {
+        "displayName": "Project Management",
+        "shortDescription": "Portable planning and delivery workflows",
+        "longDescription": "Reusable project planning, backlog governance, queue and relationship guidance. GitHub composition uses gh-steward; ordinary lifecycle operations use the available client connector or native GitHub CLI under repository policy. Plugin-owned dependency, documentation, governance, merge-review and release-preparation agents use native install and upgrade consent.",
+        "developerName": "Corey Coto",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive",
+          "Write"
+        ],
+        "websiteURL": "https://github.com/coreycoto/agent-plugins/tree/main/plugins/project-management",
+        "privacyPolicyURL": "https://github.com/coreycoto/agent-plugins",
+        "termsOfServiceURL": "https://github.com/coreycoto/agent-plugins",
+        "defaultPrompt": [
+          "Use the project's own policy for portable planning, governance, and delivery.",
+          "Use gh-steward for composed GitHub planning; use native gh or an existing connector for ordinary GitHub operations."
+        ],
+        "brandColor": "#334155",
+        "composerIcon": "./assets/project-management.svg",
+        "logo": "./assets/project-management.svg",
+        "screenshots": []
+      }
     }
   ]
 }

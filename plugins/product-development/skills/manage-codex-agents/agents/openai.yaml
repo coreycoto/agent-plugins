@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Codex Agents"
+  short_description: "Set up agents and automatic checks"
+  default_prompt: "Use $manage-codex-agents to guide Product Development setup: review hooks in Codex, install or update agents if needed, and verify readiness."

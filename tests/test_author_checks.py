@@ -56,3 +56,24 @@ def test_skill_identity_and_metadata_are_checked(tmp_path: Path, header: str) ->
     skill.parent.mkdir(parents=True)
     skill.write_text(f"---\n{header}\n---\nInstructions.\n")
     assert validate_portable_plugin(tmp_path, SCHEMA)
+
+
+def test_portable_mcp_requires_transport_type(tmp_path: Path) -> None:
+    manifest(tmp_path)
+    path = tmp_path / "mcp.json"
+    path.write_text(json.dumps({"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+                               "mcpServers": {"example": {"command": "python3"}}}))
+    assert validate_portable_plugin(tmp_path, SCHEMA)
+    data = json.loads(path.read_text())
+    data["mcpServers"]["example"]["type"] = "stdio"
+    path.write_text(json.dumps(data))
+    assert not validate_portable_plugin(tmp_path, SCHEMA)
+
+
+def test_onboarding_requires_contained_packaged_skill(tmp_path: Path) -> None:
+    manifest(tmp_path, extensions={"com.openai": {"onboardingSkill": "./skills/onboard/SKILL.md"}})
+    assert validate_portable_plugin(tmp_path, SCHEMA)
+    path = tmp_path / "skills/onboard/SKILL.md"
+    path.parent.mkdir(parents=True)
+    path.write_text("---\nname: onboard\ndescription: Onboard this plugin\n---\nInstructions.\n")
+    assert not validate_portable_plugin(tmp_path, SCHEMA)

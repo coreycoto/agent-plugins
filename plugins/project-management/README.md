@@ -25,7 +25,44 @@ issues, project fields, relationships, labels, milestones, or governance rules.
 That plugin owns executable composition and validation. For ordinary reads or
 updates to a single issue or pull request, use the consumer's existing GitHub
 connector or native `gh` CLI according to repository policy. This plugin does
-not bundle or configure a connector, app, MCP server, hook, or authentication.
+not bundle or configure a GitHub connector, app, or authentication. Its local
+Codex MCP server manages only its own agent installation.
+
+## Codex agents
+
+Project Management owns five specialized agents; it does not depend on
+Product Development's agents. Use **Setup** or
+`$project-management:manage-codex-agents`, review its three native hook handlers,
+and install the agents in shared-user or trusted project scope through the
+native consent form. Restart Codex after changed role files, then inspect the
+current spawn selector and native selection receipts. Installation alone does
+not reload an active chat. Cloud discovery remains unverified.
+
+| Agent | Model / effort | Task |
+| --- | --- | --- |
+| `pm_dependency_maintainer` | GPT-6.1 Sol / high | Accepted manifest and lockfile changes with compatibility evidence |
+| `pm_documentation_steward` | GPT-6 Luna / high | Accepted taxonomy, documentation and link maintenance |
+| `pm_governance_auditor` | GPT-6.1 Sol / high | Read-only policy and record audit |
+| `pm_merge_reviewer` | GPT-6.1 Sol / high | Read-only exact-candidate merge readiness |
+| `pm_release_preparer` | GPT-6.1 Sol / high | Assigned local release preparation and artifact evidence |
+
+The parent owns policy decisions, GitHub writes, merges and publication.
+Write roles edit only assigned local files. All roles inherit live chat
+permissions; their sandbox defaults grant no authority. See the
+[routing guide](skills/_shared/references/codex-agent-routing.md) for skill
+assignments and legacy helper migration, and the
+[pinned projection guide](com.openai/agents/ADOPTION.md) for CI/cloud consumers.
+
+Its authored extension lives in `com.openai/`. Complete portable and Codex
+distributions are built into ignored `dist/plugin-packages/`; no runtime copies
+or distribution trees are committed. The catalog pins an exact npm package,
+with publication and acquisition qualified separately. Codex 0.160 uses the
+built compatibility package because that version skips portable hooks.
+The same authored installer in `adapters/codex_agents/` is generated into each
+bundle; its ownership marker, target directory and private upgrade state are
+specific to this plugin. Native forms recheck the exact plan, preserve local
+conflicts and unrelated configuration, reject downgrades and keep private
+backups. Decline, cancellation and unavailable forms leave roles unchanged.
 
 ## Skill name migration
 
