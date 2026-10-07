@@ -1,0 +1,221 @@
+name: Publish Agent Plugins
+run-name: Agent Plugins ${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_revision:
+        description: Exact reviewed main commit with successful CI
+        required: true
+        type: string
+      version:
+        description: Exact new coordinated public plugin version
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-plugins-publication
+  cancel-in-progress: false
+
+env:
+  RELEASE_REVISION: ${{ inputs.source_revision }}
+  RELEASE_VERSION: ${{ inputs.version }}
+
+jobs:
+  qualify:
+    if: github.repository == 'coreycoto/agent-plugins' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Require exact dispatch source and successful main CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p receipts
+          test "$GITHUB_SHA" = "$RELEASE_REVISION"
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq .visibility)" = public
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&status=success&event=push" > receipts/ci.json
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          runs = json.loads(Path('receipts/ci.json').read_text())['workflow_runs']
+          assert any(run['head_sha'] == os.environ['GITHUB_SHA'] and run['head_branch'] == 'main'
+                     and run['conclusion'] == 'success' and run['event'] == 'push' for run in runs), 'No successful exact-source main CI'
+          PY
+      - name: Hold any previous attempt for this version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/workflows/publish-plugins.yml/runs?event=workflow_dispatch&per_page=100" > receipts/publication-history.json
+          PYTHONPATH=scripts python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from qualify_plugin_release import require_first_publication
+          pages = json.loads(Path('receipts/publication-history.json').read_text())
+          runs = [run for page in pages for run in page['workflow_runs']]
+          require_first_publication(runs, int(os.environ['GITHUB_RUN_ID']),
+                                    int(os.environ['GITHUB_RUN_ATTEMPT']), os.environ['RELEASE_VERSION'])
+          PY
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Build and qualify all four exact package candidates
+        run: |
+          python scripts/build_codex_package.py
+          python scripts/build_codex_package.py --check
+          for plugin in communication product-development product-management project-management; do
+            python scripts/qualify_plugin_release.py --revision "$RELEASE_REVISION" --version "$RELEASE_VERSION" \
+              --plugin "$plugin" --archive "dist/plugin-packages/npm/coreycoto-agent-plugin-$plugin-$RELEASE_VERSION.tgz" > "receipts/qualification-$plugin.json"
+          done
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: public-plugin-candidate-${{ github.sha }}
+          path: dist/plugin-packages/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve qualification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: public-plugin-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: receipts/
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin: [communication, product-development, product-management, project-management]
+    permissions:
+      contents: read
+      actions: read
+      packages: write
+    env:
+      RELEASE_PLUGIN: ${{ matrix.plugin }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://npm.pkg.github.com
+          scope: '@coreycoto'
+      - name: Acquire this run's qualified artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p receipts
+          test "$GITHUB_RUN_ATTEMPT" = 1
+          test "$GITHUB_SHA" = "$RELEASE_REVISION"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" \
+            --name "public-plugin-candidate-$GITHUB_SHA" --dir dist/plugin-packages
+          python scripts/qualify_plugin_release.py --revision "$RELEASE_REVISION" --version "$RELEASE_VERSION" \
+            --plugin "$RELEASE_PLUGIN" --archive "dist/plugin-packages/npm/coreycoto-agent-plugin-$RELEASE_PLUGIN-$RELEASE_VERSION.tgz" > receipts/qualification.json
+      - name: Require absent version and publish once
+        id: publication
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          npm view "@coreycoto/agent-plugin-$RELEASE_PLUGIN@$RELEASE_VERSION" --json --registry=https://npm.pkg.github.com > receipts/before.json 2> receipts/before.stderr
+          status=$?
+          set -e
+          test "$status" -ne 0
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('receipts/before.json').read_text())['error']['code'] == 'E404', 'Registry lookup did not establish absent version'
+          PY
+          set +e
+          npm publish "dist/plugin-packages/npm/coreycoto-agent-plugin-$RELEASE_PLUGIN-$RELEASE_VERSION.tgz" \
+            --ignore-scripts --registry=https://npm.pkg.github.com --access=public --json > receipts/publish.json 2> receipts/publish.stderr
+          status=$?
+          set -e
+          PUBLISH_EXIT_CODE="$status" python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          code = int(os.environ['PUBLISH_EXIT_CODE'])
+          Path('receipts/outcome.json').write_text(json.dumps({'exit_code': code,
+              'outcome': 'published-awaiting-acquisition-and-visibility' if code == 0 else 'unknown-requires-review'}) + '\n')
+          PY
+          exit "$status"
+      - name: Inspect package identity and observed visibility
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if test -f receipts/outcome.json; then
+            for attempt in 1 2 3 4 5; do
+              gh api "users/$GITHUB_REPOSITORY_OWNER/packages/npm/agent-plugin-$RELEASE_PLUGIN" > "receipts/package-$attempt.json" 2> "receipts/package-$attempt.stderr" || true
+              if PACKAGE_METADATA="receipts/package-$attempt.json" PYTHONPATH=scripts python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from qualify_plugin_release import qualify_registry_metadata
+          receipt = qualify_registry_metadata(json.loads(Path(os.environ['PACKAGE_METADATA']).read_text()), os.environ['RELEASE_PLUGIN'])
+          Path('receipts/package-qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
+              then
+                cp "receipts/package-$attempt.json" receipts/package.json
+                # Initial private visibility is explicitly recorded; public delivery remains a separate gate.
+                exit 0
+              fi
+              # Only metadata reads repeat; npm publication is never replayed.
+              if test "$attempt" -lt 5; then sleep 5; fi
+            done
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          Path('receipts/package-qualification.json').write_text(json.dumps({
+              'package_identity_verified': False, 'public_visibility_verified': False,
+              'outcome': 'unverified-requires-read-only-review'}) + '\n')
+          PY
+            exit 1
+          fi
+      - name: Verify fresh authenticated acquisition
+        if: always() && steps.publication.outcome == 'success'
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        run: |
+          npm view "@coreycoto/agent-plugin-$RELEASE_PLUGIN@$RELEASE_VERSION" --json --registry=https://npm.pkg.github.com > receipts/published.json 2> receipts/published.stderr
+          mkdir acquired
+          npm pack "@coreycoto/agent-plugin-$RELEASE_PLUGIN@$RELEASE_VERSION" --ignore-scripts --registry=https://npm.pkg.github.com \
+            --cache "$RUNNER_TEMP/fresh-npm-cache" --pack-destination acquired --json > receipts/acquisition.json 2> receipts/acquisition.stderr
+          python scripts/qualify_plugin_release.py --revision "$RELEASE_REVISION" --version "$RELEASE_VERSION" \
+            --plugin "$RELEASE_PLUGIN" --archive "acquired/coreycoto-agent-plugin-$RELEASE_PLUGIN-$RELEASE_VERSION.tgz" > receipts/acquired-qualification.json
+          PYTHONPATH=scripts python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from qualify_plugin_release import qualify_registry_version
+          archive = Path(f"acquired/coreycoto-agent-plugin-{os.environ['RELEASE_PLUGIN']}-{os.environ['RELEASE_VERSION']}.tgz")
+          receipt = qualify_registry_version(json.loads(Path('receipts/published.json').read_text()),
+                                            os.environ['RELEASE_PLUGIN'], os.environ['RELEASE_VERSION'], archive)
+          Path('receipts/registry-checksum-qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
+      - name: Preserve publication and acquisition receipts
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: public-plugin-publication-${{ matrix.plugin }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            receipts/
+            acquired/
+          if-no-files-found: warn
+          retention-days: 30

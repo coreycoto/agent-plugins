@@ -14,12 +14,14 @@ live under `extensions.com.openai` and files under `com.openai/`.
 The owned workflow release contains 33 public skills across four independently
 selectable packages. See [workflow selection and migration](docs/owned-workflows.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
-The four public packages use version 0.9.0. See [release notes](CHANGELOG.md)
+The four public packages use version 0.9.1. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest
 specification 1.0.0. Verify registry availability and installed contents when upgrading.
 
 For Codex, add the `agent-plugins` marketplace from a reviewed revision and select a package.
-The catalog pins independently versioned npm packages. CI builds those packages;
+The catalog pins independently versioned packages hosted only in GitHub Packages
+(`https://npm.pkg.github.com`). No npmjs.org account or publication is used.
+CI builds those packages;
 generated distributions are never committed. Registry releases must exist before
 that catalog revision can install them. For local authoring, build once and add
 the generated `dist/plugin-packages/codex` marketplace instead. Other clients use
@@ -59,8 +61,10 @@ namespaces, hooks, consent summaries, install directories
 and upgrade state remain independent. A change to one plugin cannot replace
 another plugin's owned roles.
 
-Codex owns package acquisition through its native npm source; install scripts are
-disabled. Refresh the marketplace to discover new exact package versions, then
+Codex owns package acquisition through its native `npm` source, the package
+format used by GitHub Packages; install scripts are disabled. GitHub registry
+reads require GitHub authentication, including for public packages. See
+[release and authentication guidance](CONTRIBUTING.md#github-packages-release). Refresh the marketplace to discover new exact package versions, then
 use native install/update and Setup. CI and operational automation use immutable
 qualified pins. Updating files does not prove that an
 already running chat has reloaded them; changed hook definitions require native

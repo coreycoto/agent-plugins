@@ -20,8 +20,8 @@ plugin source. CI verifies the builds and retains candidate artifacts.
 Codex 0.160.0's compatibility manifest is confined to the built Codex artifact.
 For local testing, add `dist/plugin-packages/codex` with the native marketplace
 command; the Git catalog uses exact npm versions after an authorized release.
-Public registry publication is a separate promotion gate, including account/scope
-ownership and package-version availability. Build and test never publish packages.
+GitHub Packages publication is a separate promotion gate, including repository
+permissions, package-version availability and observed package visibility. Build and test never publish packages.
 
 Use the [installation diagnostic and local trial recipe](docs/owned-workflows.md#read-only-installation-diagnostic)
 to compare explicit candidate/cache and discovery roots without installing or
@@ -65,3 +65,37 @@ Keep packaged source lineage pins and notices intact. Preserve independent plugi
 portable client boundaries. Put GitHub execution contracts and their tests in
 gh-steward, and keep consumer policy out of this catalog. A release requires a
 clean reviewed revision, matching package versions and fresh acquisition proof.
+
+## GitHub Packages release
+
+GitHub Packages (`https://npm.pkg.github.com`) is the sole package registry.
+The `npm` source type and archive format do not imply an npmjs.org account or
+publication. The builder rejects every other publishing destination.
+
+After exact-source main CI succeeds, explicitly dispatch `Publish Agent Plugins` with
+the full reviewed main SHA and new coordinated version. The workflow qualifies
+committed inputs and reproducible archives before a separate job receives
+`packages: write`. It publishes each package once using `GITHUB_TOKEN`, then
+preserves publication, metadata and fresh acquisition receipts. Do not rerun a
+failed publication or dispatch the same version again: inspect each package's
+actual registry state and retained receipts before a separately reviewed recovery.
+
+GitHub initially creates packages as private. Inspect each package's repository
+association and visibility, and use its GitHub package settings to make the four
+public plugin packages public. This visibility change is irreversible. Keep
+Agent Development private in its separate publisher. A successful publish or
+acquisition alone does not qualify public visibility.
+
+GitHub requires authenticated registry reads even for public packages. Native
+Codex uses the npm client's registry configuration. For local acquisition, use
+an existing GitHub credential authorized for package reads through a private,
+registry-scoped temporary npm configuration or the user's existing credential
+setup. Never print tokens, put credentials in marketplace URLs or source files,
+or request an npmjs.org login. Actions consumers use `GITHUB_TOKEN` when their
+repository has package access. See GitHub's
+[registry authentication documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+
+Retain the exact source SHA, package version, archive digest, observed visibility,
+repository association and fresh download verification in the release receipt.
+Verify native materialization and fresh-session discovery separately from
+publication; a running desktop chat still requires a supported reload.

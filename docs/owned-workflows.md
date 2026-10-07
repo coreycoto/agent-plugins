@@ -220,7 +220,8 @@ assertions and explicit evaluation planning commands. Its offline tests qualify
 the graders; model usefulness and native
 discovery require separate observed trials.
 
-Version 0.9.0 identifies the four public owned-workflow packages. Upgrades must
+Version 0.9.1 delivers the four public owned-workflow packages through GitHub
+Packages only. Version 0.9.0 remains the original GitHub release artifact. Upgrades must
 qualify native acquisition/discovery and update downstream source pins from the
 exact reviewed release. Retain a rollback copy until the replacement is verified.
 Local builds and tests do not activate installed packages or qualify provider behavior.

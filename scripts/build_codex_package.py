@@ -14,7 +14,7 @@ import tarfile
 from pathlib import Path
 
 REPOSITORY = Path(__file__).resolve().parents[1]
-REGISTRY = "https://registry.npmjs.org"
+REGISTRY = "https://npm.pkg.github.com"
 
 
 def encoded(value: object) -> bytes:
@@ -56,10 +56,8 @@ def distribution_settings(repository: Path) -> dict:
     if (settings.get("schemaVersion") != 1
             or settings.get("visibility") not in {"public", "private"}
             or settings.get("access") != ("public" if settings["visibility"] == "public" else "restricted")
-            or settings.get("registry") not in {REGISTRY, "https://npm.pkg.github.com"}):
-        raise ValueError("Declare an explicit registry and matching public/private package access.")
-    if settings["visibility"] == "private" and settings["registry"] == REGISTRY:
-        raise ValueError("Private plugins must use the authenticated private registry.")
+            or settings.get("registry") != REGISTRY):
+        raise ValueError("Use GitHub Packages and matching public/private package access.")
     return settings
 
 
