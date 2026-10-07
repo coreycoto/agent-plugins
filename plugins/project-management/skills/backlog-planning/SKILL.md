@@ -1,26 +1,38 @@
 ---
 name: backlog-planning
-description: Use this skill to assess a backlog, compare candidate work, and prepare a prioritized plan or reviewable backlog delta.
+description: Compare, select, sequence, or reprioritize existing work using the consumer's backlog policy and current evidence.
 ---
 
 # Backlog Planning
 
-Use this skill when the work is to clarify, sequence, select, or reprioritize
-backlog items. First read the consumer's project contract and inspect the
-current records that the decision depends on. State which candidates were
-considered and distinguish observed constraints from judgment.
+Read the consumer's project contract and current candidate records. Establish
+the decision being made: next eligible work, sequencing, scope reduction or a
+broader reprioritization. State which candidates and period were considered.
 
-Apply the consumer's ranking fields, option values, hierarchy, and eligibility
-rules as written. Do not introduce a priority scale, queue convention,
-initiative type, or definition of “next” from another repository. If the
-consumer has no rule for a material choice, return that choice for review
-instead of presenting a guessed ranking as deterministic.
+Apply established ranking fields, hierarchy and eligibility rules. Do not import
+a priority scale, queue convention or definition of “next.” Where policy leaves
+a material choice open, describe the tradeoff for the decision owner. A
+qualitative recommendation can remain conditional when evidence is incomplete.
 
-For a coordinated plan across GitHub issues or project fields, use
-`gh-steward` to compose and validate the proposed delta. Present the expected
-effects and any tradeoffs before applying it. For ordinary reads or a simple
-single-issue update, use the existing connector or native `gh` under repository
-policy. Keep preview and apply distinct, and verify live changes afterward.
+Compare outcome, dependency readiness, effort evidence, risk and capacity only
+as relevant to that decision. Keep estimates and assumptions distinguishable
+from verified constraints. Identify cycles, blocked prerequisites and work that
+cannot meet its acceptance conditions. Small vertical slices can expose progress
+and learning sooner; preserve their technical owner's feasibility decisions.
+Do not create tracker records solely to fit a preferred decomposition.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+Return a reviewable plan showing selected and deferred work, rationale,
+dependency order, open decisions and expected effects on affected records.
+Selecting an item does not authorize implementation or a project update; when
+that work is already authorized, continue through `delivery-lifecycle`.
+
+Use `gh-steward` to compose and validate coordinated GitHub deltas. For ordinary
+reads or a single-record update, use the existing connector or native `gh`
+under repository policy. Recheck relevant live state before an authorized
+apply, then verify ranking and relationships afterward. Planning and applying
+have separate evidence; already granted authorization need not be requested
+again for an unchanged delta and scope.
+
+Follow the [decision rubric](../_shared/references/agent-decision-rubric.md).
+Complete with a supported ordering or an explicit unresolved decision, not a
+fabricated deterministic score.

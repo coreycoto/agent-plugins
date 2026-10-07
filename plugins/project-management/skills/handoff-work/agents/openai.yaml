@@ -1,0 +1,7 @@
+interface:
+  display_name: "Handoff Work"
+  short_description: "Pause or resume work with exact state and evidence"
+  default_prompt: "Use $project-management:handoff-work to preserve the checkout, decisions, evidence, next action and authorized delivery stage."
+
+policy:
+  allow_implicit_invocation: true

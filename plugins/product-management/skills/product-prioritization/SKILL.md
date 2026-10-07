@@ -1,24 +1,43 @@
 ---
 name: product-prioritization
-description: Use when a product decision requires comparing and prioritizing a defined set of opportunities or options against user-provided outcomes and constraints. Use product-discovery first if the customer problem is still unclear.
+description: Compare defined product opportunities against supplied outcomes and constraints, making uncertainty and decision-changing tradeoffs explicit.
 ---
 
 # Product Prioritization
 
-Help choose among product options by making the desired outcome, evidence, constraints, and tradeoffs explicit. The user owns strategy, targets, business facts, and decision authority.
+Clarify the choice, horizon and constraints that rule options in or out. The
+user owns strategy, targets, business facts and commitments. Inspect supplied
+evidence before asking; ask about unresolved product decisions that materially
+change the comparison. Use `product-discovery` when the underlying problem is
+still undefined.
 
-Clarify the decision, horizon, and constraints that rule options in or out. Put options at a comparable level and include maintaining the current experience when it is a meaningful alternative. If the options solve different problems, identify that before ranking them.
+Put options at a comparable level using the consumer's domain terms. Include
+maintaining the current experience when meaningful. If options address different
+problems or users, identify that before ranking them. A small learning slice can
+be a useful alternative to a full feature commitment.
 
-Choose only criteria that matter to the stated decision. These may include customer outcome, affected users, evidence confidence, effort, timing, risk, dependencies, or reversibility. Use weights only when the user supplies or agrees to them. Do not default to a named scoring framework or invent reach, impact, effort, revenue, or confidence values. If a requested numeric model has missing inputs, show the gaps; use ranges or qualitative comparison where useful and explain what the available evidence can support.
+Choose criteria relevant to this decision: customer outcome, affected users,
+evidence confidence, effort evidence, timing, dependencies, risk or reversibility.
+Use weights only when supplied or agreed. Do not impose a named scoring model
+or invent reach, impact, cost, revenue, effort or confidence values. Missing
+inputs in a requested numeric model remain gaps. A range must have an evidential
+basis; otherwise use a qualitative comparison.
 
-Compare options against the same criteria. Make constraints and tradeoffs visible, separate evidence from assumptions, and test whether a plausible change in uncertain inputs would change the order. A recommendation can be conditional or deferred when evidence cannot distinguish options. Identify the next fact or experiment most likely to resolve that uncertainty.
+Compare options consistently, keeping assumptions separate from facts. Retain
+negative and disconfirming evidence. Explain which constraint or tradeoff drives
+the recommendation and whether plausible changes in uncertain inputs would
+change it. A conditional choice or deferral is appropriate when the evidence
+cannot distinguish alternatives.
 
-Return a decision brief with:
+Identify the observation most likely to resolve a consequential uncertainty.
+Use `product-experiments` for a falsifiable test, or `product-requirements` when
+the direction is settled. Product selection does not establish technical
+feasibility, staffing or implementation dates; request those from the owner
+when a commitment depends on them.
 
-- **Decision and desired outcome:** scope, horizon, and user-supplied constraints.
-- **Comparison:** options, decision-relevant criteria, supporting evidence, confidence, and tradeoffs.
-- **Recommendation:** preferred option or why the choice remains open.
-- **Sensitivity:** assumptions that could change the choice and the evidence needed.
-- **Not decided:** excluded options, unresolved constraints, and decision owner if provided.
-
-Use this skill to compare product choices, not to discover an undefined customer problem, turn a chosen option into detailed requirements or a roadmap, manage delivery/backlog order, or create persuasive launch copy. It grants no authority to publish, message customers, change a product tracker, or mutate provider data.
+Return the decision and desired outcome, comparison with evidence and limits,
+recommendation, sensitivity and unresolved choices. Completion means the owner
+can assess why an option is preferred and what could reverse that judgment.
+Backlog execution belongs to Project Management. This brief supplies no
+authority for tracker changes, publication, customer outreach or provider
+mutations.

@@ -1,12 +1,35 @@
 ---
 name: edit-prose
-description: Edit supplied prose for clarity, structure and consistency while preserving its meaning, evidence and requested tone.
+description: Edit supplied prose for reader understanding, structure, and consistency while preserving meaning, evidence, and requested tone.
 ---
 
-Determine the requested depth: copyedit, structural edit or substantive rewrite. Preserve the author's intended position, audience, terminology and factual qualifiers. A request to improve clarity does not authorize changing claims or adding a new thesis.
+Determine the requested depth: copyedit, structural edit or substantive rewrite.
+Preserve intended position, audience, terminology, factual qualifiers and
+consumer style. Improving clarity does not authorize a new thesis or stronger
+claims. Inspect context for factual answers before questioning the author.
 
-Repair ambiguous references, weak ordering, unnecessary repetition and sentences that require rereading. Keep terminology consistent. Preserve citations, quoted wording, numbers and exceptions unless a demonstrated error or the requested rewrite justifies a change. Flag a questionable fact instead of silently replacing it with a guess.
+Identify how the text will be used: explanation, instruction, reference or a
+decision brief. Put the reader's need first. Repair order and transitions so an
+explanation develops its reasoning, an instruction follows dependencies and
+observable outcomes, and reference material is easy to scan. Do not convert the
+document to a different purpose without support from the request.
 
-Return the edited text in the requested format. For a substantial change, briefly explain decisions that affect meaning or organization; do not attach an inventory of trivial punctuation edits. If tradeoffs remain, identify the specific sentence or claim and offer a concrete alternative.
+Repair ambiguous references, inconsistent terminology, unnecessary repetition
+and sentences that demand rereading. Prefer concrete wording over abstractions
+when the supplied facts support it. Keep useful examples and technical evidence;
+concision should not remove a condition required for understanding or action.
 
-Read the result as a whole. Check that concision has not removed an operational boundary, uncertainty or necessary context. Publishing or sending edited text remains governed by the user's task authorization.
+Preserve citations, quotations, numbers, attribution and exceptions unless a
+demonstrated error or authorized rewrite justifies a change. Flag questionable
+facts instead of guessing replacements. Do not introduce a deadline, recipient,
+metric or promise. Preserve the original distinction between observations,
+inferences, proposals and commitments.
+
+Return edited text in the requested format. For substantial edits, briefly
+explain changes affecting meaning or organization. Avoid an inventory of trivial
+punctuation edits. If a material choice remains, identify the specific claim
+and a concrete alternative or targeted question.
+
+Read the result as a whole and check it against the supplied evidence. Completion
+means the reader can follow the text with its meaning and necessary limits
+intact. Sending or publishing the result still follows task authorization.

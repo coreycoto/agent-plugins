@@ -1,24 +1,42 @@
 ---
 name: product-requirements
-description: Use when a supported product decision needs to become outcome measures, user-centered requirements, and a product roadmap. Use product-discovery or product-prioritization first when the problem or choice is unsettled.
+description: Translate a supported product direction into observable outcomes, user-centered requirements, and dependency-aware learning or delivery slices.
 ---
 
 # Product Requirements
 
-Translate a selected, evidence-backed product direction into a clear statement of intended outcomes, requirements, and sequencing. Preserve the limits of the underlying evidence and the user's authority over strategy and commitments.
+Establish the chosen direction, users, rationale, constraints and unresolved
+product decisions. Use `product-discovery` or `product-prioritization` when the
+problem or choice is unsettled. A useful provisional draft can expose gaps
+without pretending the decision is accepted.
 
-Confirm the chosen direction, users, rationale, constraints, and unresolved decisions. Separate validated needs from assumptions and proposed solutions. If the decision or evidence is missing, label the draft provisional and identify what must be settled before treating it as a commitment.
+Use the domain's existing terminology consistently. Inspect factual inputs and
+current behavior before questioning the user. Ask only where a product choice
+changes intended behavior or scope; technical ownership and ordinary drafting
+choices do not become mandatory questionnaires.
 
-Define outcomes in terms of user or business change, separately from shipped features. For each proposed measure, state what is measured, for whom, the source, time window, and any guardrail that matters. Record the baseline and target only when supplied or supported; otherwise mark them unknown and propose how to establish them. Do not claim that an idea will improve a metric merely because it is intended to.
+Define outcomes as user or business change, separately from shipped features.
+For each measure, identify what is measured, for whom, its source, time window
+and relevant guardrails. Use a baseline or target only when supplied or
+supported. Otherwise label it unknown and describe how to establish it. Intent
+to improve a metric is not evidence that an idea will do so.
 
-Write requirements around user situations and observable behavior. Make scope, non-goals, constraints, dependencies, risks, and open questions explicit. Keep acceptance examples testable without prescribing technical implementation that the user has not chosen. Sequence roadmap work by rationale, dependencies, learning gates, and confidence. Use dates, staffing, and delivery commitments only when provided.
+Write requirements around concrete user situations and observable behavior,
+including meaningful failure or edge cases. Preserve needs separately from
+proposed solutions. State scope, non-goals, constraints, dependencies and open
+questions. Acceptance examples should distinguish satisfactory behavior without
+prescribing an unchosen technical implementation.
 
-Return a product brief with:
+Sequence small slices that each deliver an observable outcome or test a
+consequential assumption. State dependency and learning gates. A roadmap can
+express relative order and confidence; use dates, staffing and delivery promises
+only when supported. Technical owners assess feasibility and implementation;
+Project Management owns authorized execution and tracker representation.
+Use `product-experiments` when observation is needed before commitment.
 
-- **Decision and rationale:** selected direction and evidence limits.
-- **Users and outcomes:** intended change, measures, known baseline or target, and guardrails.
-- **Requirements:** user situations, observable behavior, and acceptance examples.
-- **Scope and open questions:** non-goals, constraints, dependencies, risks, and decisions still needed.
-- **Roadmap:** relative order, rationale, dependencies, and confidence; dates only when supported.
-
-Use this skill for product definition and roadmap reasoning, not software implementation or code review, project/backlog execution, or marketing and launch persuasion. It grants no authority to publish a roadmap, message customers, update an external tracker, or mutate provider data.
+Return a product brief containing the decision and evidence limits, users and
+measures, requirements and acceptance examples, scope and unresolved choices,
+and sequencing rationale. Completion means a technical owner can evaluate the
+behavior and dependencies while the decision owner can see what remains open.
+The draft does not authorize publishing a roadmap, changing a tracker,
+contacting customers or operating providers.

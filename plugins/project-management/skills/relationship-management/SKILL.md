@@ -1,26 +1,38 @@
 ---
 name: relationship-management
-description: Use this skill to inspect and propose changes to dependency, parent-child, or other relationships in a consumer's work system.
+description: Inspect and repair or propose work-item relationships when dependencies, hierarchy, or ownership affect delivery.
 ---
 
 # Relationship Management
 
-Use this skill when work depends on how items relate to one another. Read the
-consumer's relationship and hierarchy policy first, then inspect the relevant
-records and their surrounding context. Represent observed relationships
-separately from proposed ones, and explain how each proposed edge or hierarchy
-change affects sequencing, ownership, or completion.
+Read the consumer's relationship and hierarchy policy, then inspect current
+records and relevant neighboring items. Distinguish observed relationships
+from proposed edges. Explain how each change affects sequencing, ownership or
+completion conditions.
 
-Do not assume that every tracker uses epics, initiatives, parent issues, or a
-particular dependency direction. Use only relationship types and constraints
-that the consumer has established. Call out cycles, orphaned work, ambiguous
-parents, or conflicting records without resolving them by inventing a rule.
+Use established relationship types and direction. Do not assume every tracker
+has epics, parent issues or the same blocking semantics. Call out cycles,
+orphaned work, ambiguous parents, duplicated scope and contradictory records.
+Confirm a dependency represents a real prerequisite rather than merely similar
+topics. Distinguish hierarchy for scope from dependencies for execution order.
 
-When composing changes across multiple GitHub issues or project records, use
-`gh-steward` to prepare and validate the delta. Review the affected relationships
-before any apply. Use the existing connector or native `gh` for ordinary
-single-record CRUD under repository policy. Verify the resulting graph after an
-authorized update.
+For substantial work, propose a coherent graph of dependency-ready vertical
+slices with observable results and explicit prerequisites. Preserve technical
+ownership and the consumer's taxonomy; do not create new record types or
+reorganize unrelated work to suit a preferred workflow. Keep unsupported
+relationships and policy choices open for the decision owner.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+Return affected items, current and proposed relationships, rationale and any
+completion or ordering impact. Include removals as well as additions so a
+reviewer can assess the complete graph.
+
+Use `gh-steward` to compose and validate coordinated GitHub deltas. Ordinary
+single-record work may use the existing connector or native `gh` under
+repository policy. Recheck the affected graph before an authorized apply and
+verify the resulting relationships afterward. Keep failed or partial updates
+explicit; do not claim a graph is reconciled from a successful request alone.
+Preserve existing authorization through routine continuation within scope.
+
+Complete with a supported relationship proposal or verified authorized graph
+and remaining ambiguities. Follow the
+[decision rubric](../_shared/references/agent-decision-rubric.md).

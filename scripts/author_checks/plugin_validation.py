@@ -9,6 +9,8 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
+from author_checks.owned_workflows import validate_markdown_references, validate_source_lineage
+
 
 def _openai_settings(manifest: dict[str, object]) -> dict[str, object]:
     extensions = manifest.get("extensions", {})
@@ -96,12 +98,16 @@ def validate_portable_plugin(root: Path, schema: dict[str, object]) -> list[str]
     elif skills.is_dir():
         for child in skills.iterdir():
             path = child / "SKILL.md"
+            if child.is_dir() and child.name != "_shared" and not path.is_file():
+                errors.append(f"{child}: skill directory must contain SKILL.md")
             if child.is_dir() and path.is_file():
                 try:
                     path.resolve(strict=True).relative_to(root.resolve())
                 except (OSError, ValueError):
                     continue  # The package containment error above already rejects it.
                 errors.extend(_validate_skill(path))
+        errors.extend(validate_markdown_references(root))
+        errors.extend(validate_source_lineage(root))
     settings = _openai_settings(manifest)
     mcp = root / "mcp.json"
     if mcp.exists() or mcp.is_symlink():

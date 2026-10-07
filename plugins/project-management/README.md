@@ -1,9 +1,10 @@
 # Project Management
 
-Portable guidance for planning work, reviewing project state, and carrying
-changes through delivery. The skills use the consumer repository's own rules
-for project identity, fields and options, ranking, hierarchy, labels, actors, and
-delivery stages.
+Independently maintained procedures for planning work, reviewing project state,
+and carrying changes through the requested delivery endpoint. Workflows run
+from the packaged instructions without invoking upstream skills. Consumer
+repositories own project identity, fields and options, ranking, hierarchy,
+labels, actors and delivery stages.
 
 ## Skills
 
@@ -15,8 +16,26 @@ delivery stages.
 | `quarter-planning` | Prepare time-bound commitments using consumer conventions. |
 | `review-closeout` | Assess review findings, blockers, and follow-up. |
 | `publish-change` | Prepare a reviewed change for the repository's delivery or release process. |
-| `delivery-lifecycle` | Carry selected work through verified delivery stages. |
+| `delivery-lifecycle` | Carry selected work through dependency-ready slices and verified delivery stages. |
+| `handoff-work` | Pause, transfer or resume work with checkout, evidence and authorization preserved. |
 | `project-governance` | Compare project practices and records with documented consumer rules. |
+
+## Working through delivery
+
+Start with `intake` for unclear source material or `backlog-planning` for a
+selection decision. Carry accepted work through `delivery-lifecycle`, giving
+technical ownership to Product Development or the parent under repository
+guidance. Use `review-closeout` to assess the requested endpoint and
+`publish-change` for an authorized publication step. Routine checks and repairs
+preserve existing authorization; changing scope or promotion stage needs its
+own task authority.
+
+A local result, reviewable candidate, merged source, published artifact and
+verified live behavior have different evidence. `handoff-work` makes incomplete
+work resumable with exact state and a next action. Durable solution capture is
+selective: `review-closeout` can use available
+`product-development:capture-solution` when retention is requested. Neither
+closeout nor handoff requires a memory, skill or tracker write.
 
 ## GitHub work
 

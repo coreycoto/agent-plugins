@@ -44,18 +44,19 @@ review directory; `--check` verifies already committed outputs. See
 [agent adoption](plugins/product-development/com.openai/agents/ADOPTION.md).
 
 These checks validate portable manifests, skill frontmatter, package containment
-and native Vercel dependency locks. Python helpers live in `scripts/author_checks`
+local reference integrity, source lineage and optional legacy dependency locks. Python helpers live in `scripts/author_checks`
 and are used only by authors; they are not an installable workflow SDK or CLI.
 
-The network-dependent restore check uses isolated consumer projects and Skills
-CLI 1.7.0. It compares restored paths, source revisions and content hashes against
-the declared native lock:
+Current packages have no upstream runtime skill dependencies. The smoke command
+is offline by default. For an explicitly selected historical package that still
+declares a lock, `--restore` opts into Skills CLI 1.7.0 network restoration and
+compares source revisions, paths and content hashes:
 
 ```sh
-uv run --locked python scripts/smoke_skill_dependencies.py
+uv run --locked python scripts/smoke_skill_dependencies.py --restore
 ```
 
-Keep upstream pins and notices intact. Preserve independent plugin selection and
+Keep packaged source lineage pins and notices intact. Preserve independent plugin selection and
 portable client boundaries. Put GitHub execution contracts and their tests in
 gh-steward, and keep consumer policy out of this catalog. A release requires a
 clean reviewed revision, matching package versions and fresh acquisition proof.

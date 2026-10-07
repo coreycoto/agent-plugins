@@ -1,25 +1,61 @@
 # Product Development
 
-This independently selectable plugin provides the first-party `phased-refactor`
-skill for evidence-led refactoring. Eighteen curated engineering skills are
-optional native Vercel dependencies, declared in `skills-lock.json`. Their
-source files are not bundled in this plugin. Initialize the selected dependencies
-in the consumer project's `.agents/skills/`, where supported clients can discover
-them directly. Our own plugin skill remains in the portable `skills/` directory.
+Independently maintained engineering procedures, packaged for direct use without
+restoring upstream skills. Consumer repositories retain product policy,
+implementation contracts, verification commands and durable project knowledge.
+The procedures are informed by retained, revision-pinned upstream research;
+`THIRD_PARTY_NOTICES.md` records attribution and licenses. Packaged lineage is
+provenance, not an installation manifest.
 
-`THIRD_PARTY_NOTICES.md` identifies upstream authors and retained license copies.
+## Skills
+
+| Skill | Use it to |
+| --- | --- |
+| `engineering-workflow` | Select the smallest sufficient procedure and continue to the authorized endpoint. |
+| `understand-codebase` | Explain a bounded path and distinguish current mechanics from historical rationale. |
+| `diagnose-problem` | Reproduce a symptom and discriminate causes with decisive probes. |
+| `design-change` | Resolve technical alternatives, contracts, impact and validation. |
+| `implement-change` | Complete accepted intent in behaviorally useful slices. |
+| `review-code` | Assess an exact candidate for supported defects and missing evidence. |
+| `test-behavior` | Add independent regression evidence at an appropriate public seam. |
+| `verify-product` | Exercise the actual user path and retain observable results or prerequisite gaps. |
+| `maintain-verification` | Create, qualify or refresh runnable consumer verification instructions. |
+| `prototype-decision` | Answer one uncertainty through a bounded disposable experiment. |
+| `improve-performance` | Identify the limiter and measure equivalent work with correctness preserved. |
+| `model-domain` | Clarify vocabulary, identity, state, invariants and boundary contracts. |
+| `capture-solution` | Retain verified reasoning whose loss would cause recurrence or major rediscovery. |
+| `refresh-solutions` | Reconcile selected records while preserving policy, history and unknowns. |
+| `phased-refactor` | Change substantial structure in bounded phases with contract and parity evidence. |
+| `manage-codex-agents` | Preserve the existing consent-based native role setup workflow. |
+
+A small understood task can go directly to `implement-change`. The router is
+not a mandatory chain and no skill automatically ships a local result. Shared
+references are read only for relevant techniques; they add no discoverable skills
+or mandatory specialist agents. Procedures remain usable in the parent without
+delegation. Use actual available tools rather than client-specific commands.
+
+Verification distinguishes executed user behavior from liveness and synthetic
+checks. Knowledge uses existing consumer conventions, deduplicates first and
+captures selectively; it does not set up a database, mine transcripts or update
+global memory or root instructions automatically. Project Management owns
+delivery tracking, Product Management owns product decisions and Communication
+owns substantial prose when those packages are available.
+
+The repository's `docs/owned-workflows.md` documents legacy-name migration.
+Existing consumer-restored upstream copies are outside this package's ownership;
+removing them requires a separately scoped inventory and migration.
 
 ## Codex role extension
 
-Version 0.8.0 includes a local Codex client extension. Role definitions live in
+The local Codex client extension keeps role definitions in
 `com.openai/agents/`; `extensions.com.openai` references the bundled hooks and
 onboarding skill. Root `mcp.json` declares the local onboarding adapter. Other
 clients can use the ordinary skills; this adapter manages only local Codex roles.
 
 Codex CLI 0.160.0 skips portable-package hooks in the observed local loader.
 The built Codex artifact therefore contains `.codex-plugin/plugin.json` and
-`.mcp.json`. The marketplace pins its npm package at version 0.8.0; publication
-and authenticated acquisition are separate from preparing this source PR.
+`.mcp.json`. Marketplace acquisition and release publication are separate from local source
+preparation; a local catalog change is not a released package.
 Complete Codex and portable packages are built into ignored
 `dist/plugin-packages/`, never committed or edited independently. For local
 testing, use the built Codex marketplace. A client
@@ -57,7 +93,7 @@ Python 3.11+ and an enabled bundled MCP server. Manual setup works before hook
 approval; automatic checks require reviewed/trusted hooks. Cloud and ChatGPT
 Work discovery are not qualified by this local pilot.
 
-Start with the plugin's **Setup** action, or `$manage-codex-agents` in the current
+Start with the plugin's **Setup** action, or `$product-development:manage-codex-agents` in the current
 chat. The declared onboarding skill guides the user through one setup workflow:
 
 1. Review the three bundled hooks in Codex's **Review hooks** dialog (Desktop
@@ -84,7 +120,7 @@ otherwise uses standard MCP `elicitation/create` when advertised. The deprecated
 `openai/form` method is not supported. Without either supported form capability,
 setup reports `form_unavailable` and leaves role files unchanged.
 A missing MCP connection during startup does not block the
-session; invoke `$manage-codex-agents` once the server connects. Decline/cancel
+session; invoke `$product-development:manage-codex-agents` once the server connects. Decline/cancel
 never installs, and a declined choice is not prompted again by that server
 in the same session. There are no command-line consent bypasses.
 
@@ -159,65 +195,3 @@ References: [portable plugin packaging](https://developers.openai.com/plugins/bu
 the [plugin onboarding extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#plugin-onboarding),
 the [current form extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#openai-form-elicitation),
 and [Codex's rich form client implementation](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/rmcp-client/src/elicitation_client_service.rs).
-
-## Initialize upstream skills in a consumer project
-
-The native `skills-lock.json` declares optional upstream skills using Vercel
-Skills CLI 1.7.0's version-1 format: `source`, `sourceType`, immutable `ref`,
-`skillPath` and `computedHash`. It contains only upstream dependencies, not our
-first-party plugin skills. No custom ledger or client hook is required.
-
-An agent should read this lock when asked to adopt or initialize these skills:
-
-1. Use the **consumer project root** as the working directory. Installing the
-   plugin does not install these project dependencies. Read the task's local
-   guidance and review which locked skills are wanted.
-2. Inspect the consumer's existing `skills-lock.json`. Preserve unrelated
-   entries. If a selected name already has a different source/ref/hash, resolve
-   that choice before replacing it.
-3. Group the selected entries by `source` and `ref`. For each group, run the
-   official CLI with exactly those names and the locked commit:
-
-   ```sh
-   npx --yes skills@1.7.0 add "<source>#<ref>" \
-     --skill <selected-names-from-that-source> --agent codex --yes --copy
-   ```
-
-   Replace the placeholders from this package's lock; do not use a moving branch,
-   `--global` or `--all`. The CLI writes native entries into the consumer lock
-   while retaining unrelated entries and installs the selected skills into that
-   consumer's `.agents/skills/`. No copy back into plugin `skills/` is needed.
-4. Compare the resulting consumer entries and files with this package's original
-   lock. Check source/ref/path and content hash, not only the command exit code:
-   native restore can log a failure while exiting zero and recalculates hashes.
-   In a publisher checkout, the read-only checker is:
-
-   ```sh
-   uv run --frozen python scripts/verify_skill_dependencies.py \
-     --plugin-root <chosen-plugin-root> \
-     --installed-root <consumer-project>/.agents/skills \
-     --consumer-lock <consumer-project>/skills-lock.json
-   ```
-
-   This uses Node's native hash ordering and the original declared hash. It does
-   not install anything. Stop on missing skills, pin drift or changed content.
-5. Confirm discovery in the chosen client. For Codex, upstream skills have their
-   ordinary names (for example `$code-review`), not a plugin-qualified name.
-   Refresh the task's skill catalog when needed; installed files alone do not
-   prove that an existing chat has loaded them. Repository policy and the
-   current task's authority remain in force.
-
-For a **new consumer project** whose own `skills-lock.json` already contains the
-reviewed dependency entries, `npx --yes skills@1.7.0 experimental_install`
-restores them into that project's `.agents/skills/`. The command reads only its
-working directory's lock; running it in this plugin directory would restore to
-the wrong project. It does not accept an alternate lock or destination path.
-
-Maintainers update the declaration with the official CLI in an isolated project
-at reviewed immutable refs, inspect the generated native lock and changed
-skills, then commit only the reviewed `skills-lock.json` and notices here.
-Do not commit the restored `.agents/skills/` tree into a plugin.
-
-Format and behavior were checked against [Vercel Skills 1.7.0](https://github.com/vercel-labs/skills/tree/18f96ea131dab3b0fcc9b27cf7c6f6cbb6174680),
-including its [native lock](https://github.com/vercel-labs/skills/blob/18f96ea131dab3b0fcc9b27cf7c6f6cbb6174680/src/local-lock.ts)
-and [restore implementation](https://github.com/vercel-labs/skills/blob/18f96ea131dab3b0fcc9b27cf7c6f6cbb6174680/src/install.ts).

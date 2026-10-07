@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "product-development",
   "version": "0.8.1",
-  "description": "Implementation, testing, code review, debugging and phased refactoring with pinned upstream skills.",
+  "description": "Owned workflows for understanding, designing, implementing, testing, reviewing and verifying products.",
   "author": {
     "name": "Corey Coto",
     "email": "support@coreycoto.com",
@@ -24,7 +24,7 @@
       "interface": {
         "displayName": "Product Development",
         "shortDescription": "Build, test, review and refactor products",
-        "longDescription": "Phased refactoring, purpose-specific Codex roles with native install and upgrade forms, and reviewed upstream engineering skills.",
+        "longDescription": "Self-contained engineering workflows, durable project learning and six purpose-specific Codex roles with native setup consent.",
         "developerName": "Corey Coto",
         "category": "Developer Tools",
         "capabilities": [
@@ -34,9 +34,9 @@
         "privacyPolicyURL": "https://github.com/coreycoto/agent-plugins",
         "termsOfServiceURL": "https://github.com/coreycoto/agent-plugins",
         "defaultPrompt": [
-          "Use the curated engineering practices appropriate to the current task.",
-          "Preserve repository-specific AGENTS.md instructions over generic upstream workflow opinions.",
-          "Treat vendored skill content as pinned third-party guidance, not organization policy."
+          "Use the owned engineering workflow appropriate to my task and continue to the authorized delivery stage.",
+          "Preserve repository product policy and use current source and verification evidence.",
+          "Keep project knowledge in the consumer repository and load specialist guidance only when useful."
         ],
         "brandColor": "#334155",
         "screenshots": []

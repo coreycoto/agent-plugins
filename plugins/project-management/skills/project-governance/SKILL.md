@@ -1,32 +1,38 @@
 ---
 name: project-governance
-description: Use this skill to review a project's working rules and identify evidence-backed governance drift or decisions for the consumer to resolve.
+description: Audit project practices and records against the consumer's documented rules and prepare evidence-backed repairs or policy decisions.
 ---
 
 # Project Governance
 
-Use this skill to assess whether the consumer's project practices and records
-agree with its own documented rules. Read the current policy and inspect only
-the records relevant to the requested review. Describe the rule, observed state,
-and evidence for each material gap.
+Inspect the current consumer policy and records relevant to the requested
+review. For each material gap, identify the rule, observed state, evidence and
+practical effect. Distinguish undocumented practice, stale records and a policy
+contradiction; they need different remedies.
 
-For authorized delegation, use `pm_governance_auditor` for evidence-backed
-audit or `pm_documentation_steward` for accepted documentation edits. See the
-[agent routing guide](../_shared/references/codex-agent-routing.md).
-Policy decisions and coordinated GitHub applies stay with the parent.
+Project identity, field definitions, ranking, hierarchy, labels, actors and
+delivery stages remain consumer-owned. Report missing or inconsistent policy
+for a decision instead of normalizing it by assumption. Keep generic workflow
+mechanics separate from product-specific rules and provider capabilities.
 
-The consumer owns project identity, field definitions and options, ranking,
-hierarchy, label vocabulary, actors, and delivery stages. Compare the live or
-checked-in state with those consumer-owned choices; do not introduce new
-defaults or treat a convention from another repository as policy. When the
-policy is missing or inconsistent, report the decision needed rather than
-normalizing state by assumption.
+For authorized delegation, use `pm_governance_auditor` for a bounded read-only
+audit or `pm_documentation_steward` for accepted documentation edits. Assign
+record or file scope and validation; policy decisions remain with the parent.
+Read the [agent routing guide](../_shared/references/codex-agent-routing.md).
 
-Use `gh-steward` to compose and validate coordinated GitHub governance changes
-across project fields, labels, relationships, or multiple records. An ordinary
-read or single-record update may use the consumer's existing connector or
-native `gh`, following repository policy. Show a reviewable delta before an
-authorized apply and verify the resulting state afterward.
+Propose the smallest coherent repair with affected records, rationale and a
+success condition. Preserve historical evidence and unrelated configuration.
+A recurring correction may support a documentation improvement when its cause
+is established; one anecdote does not establish universal policy. Write such
+changes only within the authorized documentation scope.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+Use `gh-steward` for composed governance changes across records, fields, labels
+or relationships. Ordinary single-record work can use the existing connector
+or native `gh` under consumer policy. Show the reviewable delta, apply only the
+authorized scope, and inspect the resulting state. Preserve existing
+authorization across routine repairs; ask only when the policy choice or action
+is uncovered.
+
+Finish with verified gaps, proposed or applied repairs, unresolved consumer
+decisions and remaining evidence limits. Follow the
+[decision rubric](../_shared/references/agent-decision-rubric.md).

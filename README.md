@@ -11,10 +11,10 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The initial catalog release is prepared at **0.7.0**; Product Development and Project Management's
-Codex role extensions are prepared at **0.8.0**. Plugin release versions
-are separate from the Agent Plugins 1.0.0 manifest specification. Packages are
-independently selectable; adding the catalog does not install every plugin.
+The owned workflow candidate contains 33 public skills across four independently
+selectable packages. See [workflow selection and migration](docs/owned-workflows.md).
+This local candidate is unreleased; package version changes and activation belong
+to release preparation. Plugin versions are separate from manifest specification 1.0.0.
 
 For Codex, add the `agent-plugins` marketplace from a reviewed revision and select a package.
 The catalog pins independently versioned npm packages. CI builds those packages;
@@ -22,11 +22,9 @@ generated distributions are never committed. Registry releases must exist before
 that catalog revision can install them. For local authoring, build once and add
 the generated `dist/plugin-packages/codex` marketplace instead. Other clients use
 the complete portable bundles under `dist/plugin-packages/portable/plugins/<name>`.
-Vercel Skills CLI can install individual skills. Optional upstream skills use
-the CLI's native `skills-lock.json` format and are restored into the consumer's
-`.agents/skills/`. Each package README gives the initialization and verification
-commands. First-party skills stay in the plugin; upstream skill trees are not
-bundled or copied back into it.
+All workflow bodies and their supporting references ship in the selected package.
+Upstream repositories are attribution sources, not runtime skill dependencies.
+Existing consumer-restored skill copies remain untouched by this source migration.
 
 Project Management uses [gh-steward](https://github.com/coreycoto/gh-steward) for
 qualified GitHub composition and durable execution. Ordinary GitHub operations
@@ -68,6 +66,6 @@ client trust review.
 
 Product facts, provider access, project policy and permissions belong in the
 task or consumer repository. Installation grants no external mutation authority.
-First-party content is MIT licensed. Optional upstream dependencies retain their
-authors' attribution and license notices. See [CONTRIBUTING.md](CONTRIBUTING.md)
-for offline author checks and native dependency restoration.
+Owned content is MIT licensed. Adapted techniques retain immutable source lineage
+and authors' license notices. See [CONTRIBUTING.md](CONTRIBUTING.md) for offline
+package checks and explicit legacy compatibility checks.

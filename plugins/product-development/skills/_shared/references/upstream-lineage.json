@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "kind": "source-lineage",
+  "runtime_dependencies": [],
+  "sources": [
+    {
+      "id": "matt",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
+      "license": "MIT",
+      "license_file": "licenses/mattpocock-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/engineering/diagnosing-bugs/SKILL.md",
+            "skills/engineering/codebase-design/SKILL.md",
+            "skills/engineering/domain-modeling/SKILL.md",
+            "skills/engineering/code-review/SKILL.md",
+            "skills/engineering/tdd/SKILL.md",
+            "skills/engineering/research/SKILL.md",
+            "skills/engineering/wayfinder/SKILL.md",
+            "skills/engineering/implement/SKILL.md",
+            "skills/engineering/implement-spec/SKILL.md",
+            "skills/engineering/prototype/SKILL.md",
+            "skills/engineering/to-spec/SKILL.md"
+          ],
+          "destinations": [
+            "skills/diagnose-problem/SKILL.md",
+            "skills/design-change/SKILL.md",
+            "skills/model-domain/SKILL.md",
+            "skills/review-code/SKILL.md",
+            "skills/test-behavior/SKILL.md",
+            "skills/understand-codebase/SKILL.md",
+            "skills/implement-change/SKILL.md",
+            "skills/prototype-decision/SKILL.md"
+          ],
+          "mechanism": "Reproduction and falsifiable diagnosis; deep interfaces; domain vocabulary; independent behavior tests; technical decision artifacts.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "david",
+      "repository": "https://github.com/davidondrej/skills",
+      "revision": "ba8e24cd135f393e61dd2a27fac2572f20ef790d",
+      "license": "MIT",
+      "license_file": "licenses/davidondrej-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/thinking-and-docs/decisions/SKILL.md",
+            "skills/agent-orchestration/git-worktree/SKILL.md",
+            "skills/ops-and-setup/risky-changes/SKILL.md",
+            "skills/thinking-and-docs/before-building/SKILL.md"
+          ],
+          "destinations": [
+            "skills/design-change/SKILL.md",
+            "skills/implement-change/SKILL.md",
+            "skills/review-code/SKILL.md"
+          ],
+          "mechanism": "Consequential decision evidence, scoped isolation and explicit assumptions.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "pstack",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "d0ef80d86795816da932a153458c5dbe192d294e",
+      "license": "MIT",
+      "license_file": "licenses/pstack-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "pstack/skills/poteto-mode/SKILL.md",
+            "pstack/skills/architect/SKILL.md",
+            "pstack/skills/arena/SKILL.md",
+            "pstack/skills/blast-radius/SKILL.md",
+            "pstack/skills/benchmark-checklist/SKILL.md",
+            "pstack/skills/correct/SKILL.md",
+            "pstack/skills/create-verification-skill/SKILL.md",
+            "pstack/skills/maintain-verification-skill/SKILL.md",
+            "pstack/skills/how/SKILL.md",
+            "pstack/skills/why/SKILL.md",
+            "pstack/skills/tdd/SKILL.md"
+          ],
+          "destinations": [
+            "skills/engineering-workflow/SKILL.md",
+            "skills/design-change/SKILL.md",
+            "skills/improve-performance/SKILL.md",
+            "skills/maintain-verification/SKILL.md",
+            "skills/verify-product/SKILL.md",
+            "skills/understand-codebase/SKILL.md",
+            "skills/test-behavior/SKILL.md",
+            "skills/phased-refactor/SKILL.md"
+          ],
+          "mechanism": "Conditional routing, alternatives, impact tracing, equal-work measurement and executable verification qualification.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "compound",
+      "repository": "https://github.com/EveryInc/compound-engineering-plugin",
+      "revision": "cef001f7b1c2e4a21516e3abd60252798d4b67c5",
+      "license": "MIT",
+      "license_file": "licenses/compound-engineering-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/lfg/SKILL.md",
+            "skills/ce-plan/SKILL.md",
+            "skills/ce-work/SKILL.md",
+            "skills/ce-code-review/SKILL.md",
+            "skills/ce-debug/SKILL.md",
+            "skills/ce-compound/SKILL.md",
+            "skills/ce-compound-refresh/SKILL.md",
+            "skills/ce-optimize/SKILL.md",
+            "skills/ce-prototype/SKILL.md",
+            "skills/ce-dogfood/SKILL.md"
+          ],
+          "destinations": [
+            "skills/engineering-workflow/SKILL.md",
+            "skills/design-change/SKILL.md",
+            "skills/implement-change/SKILL.md",
+            "skills/review-code/SKILL.md",
+            "skills/diagnose-problem/SKILL.md",
+            "skills/capture-solution/SKILL.md",
+            "skills/refresh-solutions/SKILL.md",
+            "skills/improve-performance/SKILL.md",
+            "skills/prototype-decision/SKILL.md",
+            "skills/verify-product/SKILL.md"
+          ],
+          "mechanism": "Adaptive planning/review, bounded implementation, durable reasoning capture and evidence-based knowledge refresh.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    }
+  ]
+}
