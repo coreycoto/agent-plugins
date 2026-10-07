@@ -23,6 +23,11 @@ readiness and instance checks, acceptance observations, evidence location and
 owned cleanup. Map only relevant behaviors with a concrete entry point and
 success condition; do not fabricate coverage or a feature quota.
 
+When an assigned task needs a maintained feature-to-command map, use the optional
+[consumer map contract](references/feature-map.md) and its contained read-only
+validator. It checks schema, references and explicitly changed paths; commands
+are never executed and declared qualification stays separate from observed runs.
+
 Qualify by executing the actual instructions on the selected behavior and
 retaining evidence through cleanup. An unexecuted map is a draft. Record which
 paths were exercised and which need unavailable prerequisites; one successful

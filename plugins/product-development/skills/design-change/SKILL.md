@@ -30,6 +30,11 @@ small experiment can settle a key uncertainty, use
 [prototype-decision](../prototype-decision/SKILL.md). A prototype result does
 not establish rollout readiness.
 
+For demonstrated recurring corrections or fragile invariants, use the
+[prevention guide](../_shared/references/recurrence-prevention.md) to compare a
+structural, type, API, lint or behavioral guard with a local repair. Qualify the
+known mistake and legitimate near miss; do not invent a new architecture rule.
+
 Produce the smallest coherent design: chosen approach and rationale, rejected
 alternatives, contracts and affected consumers, compatibility or migration,
 dependency-ready slices and validation. Mark unresolved choices instead of

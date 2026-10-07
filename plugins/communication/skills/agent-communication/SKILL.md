@@ -8,6 +8,11 @@ desired detail and domain vocabulary. Explain a choice through its practical
 effect and supporting evidence. Include implementation detail when it helps
 review, troubleshooting or a consequential decision.
 
+When relationships, competing scenarios or a process are difficult to understand
+in a concise answer, read
+[understanding formats](../_shared/references/understanding-formats.md) and choose
+a representation that helps the reader inspect the decision.
+
 During work, communicate material findings, uncertainty and what the next check
 will resolve. Avoid narrating commands or repeating a plan as progress. Answer
 status questions briefly and continue the active task unless the user asks to

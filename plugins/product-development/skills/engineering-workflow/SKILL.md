@@ -13,7 +13,7 @@ and focused validation without a design document or new tests.
 
 Choose by the unresolved task:
 
-- Explain a code path: [understand-codebase](../understand-codebase/SKILL.md).
+- Explain a code path or assess requested maintainability: [understand-codebase](../understand-codebase/SKILL.md).
 - Investigate a failure: [diagnose-problem](../diagnose-problem/SKILL.md).
 - Settle technical contracts: [design-change](../design-change/SKILL.md).
 - Execute accepted intent: [implement-change](../implement-change/SKILL.md).

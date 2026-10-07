@@ -140,7 +140,7 @@ def test_corrected_artifacts_pass_all_independent_checks(tmp_path, skill):
         assert_check(skill, check["id"], target, response, events)
 
 
-@pytest.mark.parametrize("skill", SKILLS)
+@pytest.mark.parametrize("skill", [*SKILLS, "understand-codebase", "product-discovery"])
 def test_declared_frozen_evaluator_snapshot_runs_standalone(tmp_path, skill):
     target, response, events = workspace(tmp_path, skill)
     complete(skill, target, events)
@@ -156,6 +156,8 @@ def test_declared_frozen_evaluator_snapshot_runs_standalone(tmp_path, skill):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(suite / entry["source"], destination)
     for check in case["checks"]:
+        if check["type"] != "assertion":
+            continue
         destination = snapshot / check["script"]
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(suite / check["script"], destination)
@@ -241,3 +243,23 @@ def test_verification_accepts_native_shell_wrapper(tmp_path):
         event["item"]["command"] = shlex.join(["/bin/zsh", "-lc", event["item"]["command"]])
     events.write_text(json.dumps(data))
     assert_check("verify-product", "completed-command-evidence", target, response, events)
+
+
+@pytest.mark.parametrize("skill", ["understand-codebase", "product-discovery"])
+@pytest.mark.parametrize("mutation", [None, "edit", "delete", "add", "symlink"])
+def test_assessment_preserves_sources_and_rejects_scope_changes(tmp_path, skill, mutation):
+    target, response, events = workspace(tmp_path, skill)
+    write(target, ".agents/skills/example/SKILL.md", "Runtime-controlled procedure\n")
+    _, case = load_case(skill)
+    source = target / case["workspace_files"][0]["path"]
+    if mutation == "edit":
+        source.write_text("Invented consumer policy or evidence\n")
+    elif mutation == "delete":
+        source.unlink()
+    elif mutation == "add":
+        write(target, "implementation.py", "print('unexpected implementation')\n")
+    elif mutation == "symlink":
+        original = tmp_path / "original"
+        source.rename(original)
+        source.symlink_to(original)
+    assert_check(skill, "scope", target, response, events, passes=mutation is None)

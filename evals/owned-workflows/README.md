@@ -1,10 +1,24 @@
 # Owned workflow trial corpus
 
-This author-only corpus supplies one small artifact task for each of five Product
+The deterministic portion supplies one small artifact task for each of five Product
 Development procedures: diagnosis, direct implementation, review, product
 verification, and refreshing existing knowledge. Each task belongs to both
 `smoke` and `deep`; this initial corpus has no extra deep cases. These are local
 consumer fixtures, not plugin runtime files or operational repositories.
+
+Three additional suites cover decisions and understanding: `understand-codebase`
+has a bounded maintainability assessment, `product-discovery` has conflicting
+preference/usage evidence, and `agent-communication` has a release explanation
+and a routine status reply. These four cases use semantic rubrics (plus
+unchanged-files assertions for both assessments); they do not claim deterministic
+proof of product judgment or human comprehension. The original five suites retain
+their 20 trigger queries. New semantic suites have no selection coverage yet.
+
+An independent forward exercise produced an evidence-grounded product decision
+and a concise status reply. It also exposed an extra approval checkpoint in a
+release diagram, prompting clearer decision-authority guidance. This is limited
+qualitative feedback, not a paired effectiveness measurement. Formal rubric runs
+require the private runner's isolated, fixed-model grader and remain optional.
 
 `evals.json` uses external-suite schema 3. Its ordinary task prompt and declared
 `workspace_files` form the measured workspace. `expected_output` and assertion
@@ -21,8 +35,9 @@ python -I oracles/CHECK.py WORKSPACE RESPONSE_PATH EVENTS_PATH
 
 Exit 0 means pass, exit 1 with the assertion's `FAIL:` report means a demonstrated
 failure, and an unexpected traceback, another exit or timeout is a grader error.
-Each suite declares top-level `grader_support: ["_oracle_support.py"]`, an
-immediate-parent filename. The runtime freezes and hashes the declared helper,
+The five original suites declare top-level `grader_support: ["_oracle_support.py"]`;
+the assessment suites use `_readonly_oracle.py`. Both are immediate-parent filenames.
+The runtime freezes and hashes the declared helper,
 assertion scripts and source fixtures outside the measured workspace, preserving
 their original relative layout. Entry points resolve the shared standard-library
 helper from that frozen location, two directory levels above each script.
@@ -89,6 +104,6 @@ The public repository does not depend on or ship that private runtime.
 Assess package/session provenance, exact skill-body exposure, procedure
 adherence, independently checked artifacts, and baseline comparison separately.
 An absent or unsupported skill-body observation is unknown, not proof of a
-negative trigger. One case per procedure is a smoke qualification rather than a
+negative trigger. This small corpus is a smoke qualification rather than a
 representative usefulness benchmark; add cases only for observed gaps or a
 specific adoption decision.

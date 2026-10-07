@@ -15,6 +15,10 @@ what change is expected, compared with what alternative, and what observation
 would contradict it. Separate assumptions about demand, usability, adoption and
 business outcomes; one test may not establish them all.
 
+When several assumptions compete for attention or a test must inform a build,
+defer or stop decision, read
+[decision pressure-testing](../_shared/references/decision-pressure-testing.md).
+
 Design the smallest observation that can affect the decision. Options include
 existing-data analysis, a prototype task, a bounded pilot or a controlled
 comparison. Match the method to the claim. State exposure or assignment,

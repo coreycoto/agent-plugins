@@ -35,6 +35,11 @@ Rerun the original scenario as well as any minimized regression. Remove owned
 temporary instrumentation after retaining useful evidence. No ambiguous provider
 operation is retried merely to obtain a reproducer.
 
+When evidence shows a recurring mistake, use the
+[prevention guide](../_shared/references/recurrence-prevention.md) for a bounded
+guard at the owning boundary. A diagnosis does not independently authorize a
+broader structural repair; return that scope when it is not already accepted.
+
 `pd_diagnostician` may investigate and write temporary evidence when delegated;
 product edits belong to the parent or assigned implementer. Complete with the
 supported cause or unresolved alternatives, probe evidence, repair result and

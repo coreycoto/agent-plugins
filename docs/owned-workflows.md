@@ -9,6 +9,7 @@ requires the corresponding delivery authority.
 | Need | Owned entry point |
 | --- | --- |
 | Explain current code or its history | `product-development:understand-codebase` |
+| Assess structural maintenance friction in a selected subsystem | `product-development:understand-codebase` with its assessment mode |
 | Reproduce and fix a failure | `product-development:diagnose-problem` |
 | Resolve a technical choice | `product-development:design-change` |
 | Implement accepted intent | `product-development:implement-change` |
@@ -27,6 +28,30 @@ requires the corresponding delivery authority.
 | Discover, compare or specify product opportunities | Product Management's discovery, prioritization and requirements skills |
 | Run a product learning experiment | `product-management:product-experiments` |
 | Explain, draft or edit | Communication's agent-communication, write-prose and edit-prose skills |
+
+## Improving the environment and human decisions
+
+The existing entry points support six additional mechanisms through conditional
+references, without increasing the 33-skill catalog:
+
+| Need | Concrete result and owning workflow |
+| --- | --- |
+| Prevent a recurring mistake | Diagnosis/design choose a proportionate structural, type, API or executable guard; verify the known bad case and legitimate behavior. Closeout links retained reasoning and the guard. |
+| Select worthwhile structural work | `understand-codebase` assesses a bounded subsystem using callers, ownership and maintenance evidence, including a justified no-change outcome. Accepted implementation continues through design/refactor. |
+| Navigate and verify product behavior | `maintain-verification` links accepted behavior, source, commands and retained evidence in an optional consumer feature map. Its packaged read-only validator checks references and affected mappings without executing commands or qualifying behavior. |
+| Simplify agent instructions | Private Agent Development compares prior/revised instructions on routine, conditional and boundary cases, with supporting-resource observations and fresh balanced repetitions. Public skills do not depend on the private runtime. |
+| Pressure-test a product commitment | Product Discovery/Experiments expose consequential assumptions, credible alternatives and disconfirming evidence; preserve unknown costs and decision criteria. |
+| Make an explanation inspectable | Communication chooses prose, tables, diagrams or richer artifacts for the reader's task, preserving uncertainty and actual decision authority. Technical-writing guidance borrows clarity principles without claiming STE compliance. |
+
+Product facts, feature maps, verification commands and correction records remain
+consumer-owned. Private maintenance can connect supplied interventions to repairs
+and later recurrence evidence. These mechanisms do not create automatic monitors,
+a universal registry or additional approval checkpoints.
+
+The [author-only corpus](../evals/owned-workflows/README.md) includes deterministic
+artifact tasks and separate semantic cases. A synthetic feature-map pilot drives
+the existing notes fixture CLI and retains command/source evidence. That is not
+a deployed-product qualification or proof of reduced human supervision.
 
 In Codex, invoke a qualified name with `$`, for example
 `$product-development:diagnose-problem`. Other hosts may expose different syntax.
@@ -190,8 +215,9 @@ requests, near misses, outcomes and authority boundaries with independent
 expected evidence. Proxy keyword scores and larger catalogs do not prove value.
 
 The [author-only workflow trial corpus](../evals/owned-workflows/README.md) provides
-five bounded fixtures, independent assertions and explicit evaluation planning
-commands. Its offline tests qualify the graders; model usefulness and native
+five deterministic suites and four additional semantic cases, independent
+assertions and explicit evaluation planning commands. Its offline tests qualify
+the graders; model usefulness and native
 discovery require separate observed trials.
 
 The local candidate retains existing package versions and is unreleased. Assign

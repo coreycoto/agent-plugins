@@ -10,6 +10,10 @@ product decisions. Use `product-discovery` or `product-prioritization` when the
 problem or choice is unsettled. A useful provisional draft can expose gaps
 without pretending the decision is accepted.
 
+Before requirements turn a contested idea into a delivery commitment, read
+[decision pressure-testing](../_shared/references/decision-pressure-testing.md).
+Keep requirements provisional where a consequential assumption remains open.
+
 Use the domain's existing terminology consistently. Inspect factual inputs and
 current behavior before questioning the user. Ask only where a product choice
 changes intended behavior or scope; technical ownership and ordinary drafting

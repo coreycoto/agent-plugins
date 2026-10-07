@@ -24,6 +24,11 @@ friction before proposing features. Follow a concrete episode through the
 steps where the problem appears; distinguish stated preferences from actual
 behavior and observed consequences.
 
+When validating an idea before commitment, read
+[decision pressure-testing](../_shared/references/decision-pressure-testing.md)
+to identify the consequential assumption, credible alternatives and evidence
+that could overturn the direction.
+
 When drafting research questions, ask about past events, choices and outcomes
 without suggesting the desired answer. Seek disconfirming cases and alternate
 explanations. A question about willingness to use an imagined feature does not

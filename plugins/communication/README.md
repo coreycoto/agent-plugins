@@ -11,6 +11,12 @@ domain terms and facts stay in the task or its repository.
 | `edit-prose` | Improve supplied text while retaining its meaning, evidence and necessary limits. |
 
 Choose a document shape for its use: understanding, action, lookup or a decision.
+Conditional [format guidance](skills/_shared/references/understanding-formats.md)
+helps choose prose, tables, diagrams, interactive artifacts or video according
+to the reader's task, available tools and inspectable evidence. Routine answers
+stay compact. An optional
+[technical writing profile](skills/_shared/references/technical-writing.md)
+supports precise procedures without claiming formal standard compliance.
 Ask targeted questions only when answers change the result, without inventing
 recipients or deadlines. A substantial handoff may use available
 `project-management:handoff-work` to preserve exact checkout, evidence,

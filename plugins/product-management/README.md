@@ -17,6 +17,12 @@ when the context is sufficient. Use the consumer's domain language and retain
 negative evidence, confounds and unknowns. Estimates, baselines and targets need
 support rather than invented precision.
 
+For ideas approaching commitment, conditional
+[decision pressure-testing](skills/_shared/references/decision-pressure-testing.md)
+guidance connects consequential assumptions, credible alternatives, independent
+disconfirming evidence and tests that can justify building, changing, deferring
+or stopping. It introduces no mandatory interview or numeric scoring model.
+
 The result is a product decision or learning artifact, with open questions
 visible. Technical owners assess implementation feasibility. Project Management
 covers authorized execution and tracking; Product Development covers

@@ -21,6 +21,13 @@ improvement, a durable project solution, or no action supported by the evidence.
 Use consumer destinations and taxonomy. Do not auto-close blockers or convert
 an isolated observation into a universal policy.
 
+For a demonstrated recurring correction, check whether a bounded executable guard
+addresses its cause: structural ownership, types, API constraints, lint or an
+independent regression. When available, use `product-development:design-change`
+for unresolved remedy choices within accepted scope. Compare the known mistake
+with a legitimate near miss and the guard's maintenance cost; broader changes
+remain separate work rather than automatic closeout requirements.
+
 When a solved problem has reusable evidence and the user wants it retained,
 use `product-development:capture-solution` if available. Preserve problem,
 cause, verified remedy and limits in the consumer's chosen location. This is

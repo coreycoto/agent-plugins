@@ -12,14 +12,14 @@ provenance, not an installation manifest.
 | Skill | Use it to |
 | --- | --- |
 | `engineering-workflow` | Select the smallest sufficient procedure and continue to the authorized endpoint. |
-| `understand-codebase` | Explain a bounded path and distinguish current mechanics from historical rationale. |
+| `understand-codebase` | Explain a bounded path or assess requested maintainability with evidence and alternatives. |
 | `diagnose-problem` | Reproduce a symptom and discriminate causes with decisive probes. |
 | `design-change` | Resolve technical alternatives, contracts, impact and validation. |
 | `implement-change` | Complete accepted intent in behaviorally useful slices. |
 | `review-code` | Assess an exact candidate for supported defects and missing evidence. |
 | `test-behavior` | Add independent regression evidence at an appropriate public seam. |
 | `verify-product` | Exercise the actual user path and retain observable results or prerequisite gaps. |
-| `maintain-verification` | Create, qualify or refresh runnable consumer verification instructions. |
+| `maintain-verification` | Maintain runnable consumer verification and optional feature maps with a read-only validator. |
 | `prototype-decision` | Answer one uncertainty through a bounded disposable experiment. |
 | `improve-performance` | Identify the limiter and measure equivalent work with correctness preserved. |
 | `model-domain` | Clarify vocabulary, identity, state, invariants and boundary contracts. |
@@ -40,6 +40,13 @@ captures selectively; it does not set up a database, mine transcripts or update
 global memory or root instructions automatically. Project Management owns
 delivery tracking, Product Management owns product decisions and Communication
 owns substantial prose when those packages are available.
+
+Requested maintainability assessments map rule ownership and concrete structural
+friction before proposing accepted changes. Recurrence prevention favors a
+qualified executable guard where useful, preserving uncodable reasoning
+selectively. Optional feature maps remain consumer-owned; their validator checks
+contained references and change selection, never executes product commands or
+claims complete coverage or current behavioral qualification.
 
 The repository's `docs/owned-workflows.md` documents legacy-name migration.
 Existing consumer-restored upstream copies are outside this package's ownership;

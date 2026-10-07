@@ -23,6 +23,12 @@ Use only the shapes the task needs. Avoid mixing background discussion into a
 step where it obscures the action. Scale headings, lists and tables to the
 length and use; a short answer need not resemble a report.
 
+For complex relationships, scenarios or processes, read
+[understanding formats](../_shared/references/understanding-formats.md). Preserve
+the requested medium; propose an additional representation only when it improves
+the reader's task. For precise technical procedures or reference prose, read
+[technical writing](../_shared/references/technical-writing.md) when useful.
+
 Build around a clear main point. Let each paragraph develop one idea and each
 sentence advance it. Prefer concrete nouns and active verbs. Explain jargon
 when the reader needs it and retain technical detail when it substantiates a

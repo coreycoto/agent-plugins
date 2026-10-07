@@ -12,6 +12,11 @@ record disappeared, would a future maintainer plausibly repeat the mistake or
 redo substantial investigation? Effort, diff size and completion alone do not
 justify a record.
 
+For recurring corrections, distinguish an executable guard from reasoning that
+needs a record; use the [prevention guide](../_shared/references/recurrence-prevention.md)
+when choosing an authorized remedy. Link the verified guard and its remaining
+limits instead of duplicating rules already expressed by code or checks.
+
 Read the [project knowledge guide](../_shared/references/project-knowledge.md).
 Search the consumer's existing store by symptom, component and domain terms.
 Open plausible matches and check their applicability. Update overlapping

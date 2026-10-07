@@ -14,6 +14,10 @@ explanation develops its reasoning, an instruction follows dependencies and
 observable outcomes, and reference material is easy to scan. Do not convert the
 document to a different purpose without support from the request.
 
+For technical procedures that are difficult to follow, read
+[technical writing](../_shared/references/technical-writing.md). Apply it within
+the requested editing depth and preserve domain terms and necessary conditions.
+
 Repair ambiguous references, inconsistent terminology, unnecessary repetition
 and sentences that demand rereading. Prefer concrete wording over abstractions
 when the supplied facts support it. Keep useful examples and technical evidence;

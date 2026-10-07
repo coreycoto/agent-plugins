@@ -1,6 +1,6 @@
 ---
 name: understand-codebase
-description: Explain a bounded code path, component, or architectural decision from current source and relevant history without changing product behavior.
+description: Explain a bounded code path or architectural decision, or assess requested maintainability questions from current source without changing product behavior.
 ---
 
 # Understand Codebase
@@ -10,6 +10,12 @@ guidance, relevant domain terms and supplied artifacts. Inspect entry points,
 public contracts and callers before expanding into implementation details.
 Search relevant existing solution records when a prior decision could explain
 the shape; use the [retrieval guide](../_shared/references/project-knowledge.md).
+
+For a requested strategic architecture or maintainability assessment, use the
+[assessment guide](../_shared/references/maintainability-assessment.md). Map
+responsibilities, callers, rule ownership and evidenced structural friction;
+compare alternatives including no change. Keep the assessment within the
+selected subsystem and return a supported recommendation, not automatic repairs.
 
 Trace a representative input through control flow, state or data changes,
 external boundaries and observable result. Include the conditions that alter
@@ -32,7 +38,7 @@ of substituting liveness for product behavior.
 For authorized exploration delegation, use `pd_explorer` with a focused question
 and read-only scope. The explanation remains useful without delegation.
 
-Complete with how the path works, the evidence for any design rationale,
-important failure or boundary conditions, and unanswered questions. Exploration
+Complete with the path explanation or assessment recommendation, evidence for
+design rationale, important boundary conditions, and unanswered questions. Exploration
 does not imply a refactor, configuration change or provider access. Route to
 [design-change](../design-change/SKILL.md) only when a technical change is requested.

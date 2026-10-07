@@ -8,7 +8,7 @@ uv run --locked python scripts/validate_agent_plugins.py
 uv run --locked python scripts/build_codex_package.py
 uv run --locked python scripts/build_codex_package.py --check
 uv run --locked python scripts/verify_skill_dependencies.py
-uv run --locked ruff check adapters scripts tests evals/owned-workflows
+uv run --locked ruff check adapters scripts tests evals/owned-workflows plugins/product-development/skills/maintain-verification/scripts
 uv run --locked pytest
 ```
 
