@@ -11,11 +11,12 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The owned workflow candidate contains 33 public skills across four independently
+The owned workflow release contains 33 public skills across four independently
 selectable packages. See [workflow selection and migration](docs/owned-workflows.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
-This local candidate is unreleased; package version changes and activation belong
-to release preparation. Plugin versions are separate from manifest specification 1.0.0.
+The four public packages use version 0.9.0. See [release notes](CHANGELOG.md)
+for the owned-workflow migration. Plugin versions are separate from manifest
+specification 1.0.0. Verify registry availability and installed contents when upgrading.
 
 For Codex, add the `agent-plugins` marketplace from a reviewed revision and select a package.
 The catalog pins independently versioned npm packages. CI builds those packages;

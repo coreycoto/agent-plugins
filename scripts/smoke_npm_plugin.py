@@ -14,7 +14,7 @@ import tarfile
 import tempfile
 from pathlib import Path
 
-from smoke_codex_agents import Rpc, tool
+from smoke_codex_agents import Rpc, onboarding_context, status, tool
 
 
 def qualify(codex: str, archive: Path, work: Path, scope: str) -> dict:
@@ -85,11 +85,12 @@ Path({str(arguments)!r}).write_text(json.dumps(args))
         statuses = rpc.call("mcpServerStatus/list", {"threadId": thread_id})["data"]
         assert any(server["name"] == plugin + "-agents" for server in statuses)
         declined = tool(rpc, thread_id, repo, "npm-declined")
-        assert declined["result"] == "deferred", f"Declined setup returned {declined}."
+        assert "Onboarding result: deferred" in onboarding_context(declined), f"Declined setup returned {declined}."
         assert not target.exists()
         answer = {"action": "accept", "content": {"scope": scope, "confirm": True}}
         accepted = tool(rpc, thread_id, repo, "npm-installed", answer)
-        assert accepted["result"] == "installed", f"Accepted setup returned {accepted}."
+        assert "Onboarding result: installed" in onboarding_context(accepted), f"Accepted setup returned {accepted}."
+        assert status(rpc, thread_id, repo)["installations"][scope]["state"] == "ready"
         assert {path.name for path in target.glob("*.toml")} == set(role_bytes), "Installed role inventory differs."
         assert all((target / name).read_bytes() == data for name, data in role_bytes.items()), "Installed role bytes differ."
         assert (home / ".codex/config.toml").read_bytes() == config, "Role setup changed native plugin configuration."

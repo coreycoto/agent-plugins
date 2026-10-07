@@ -220,7 +220,7 @@ assertions and explicit evaluation planning commands. Its offline tests qualify
 the graders; model usefulness and native
 discovery require separate observed trials.
 
-The local candidate retains existing package versions and is unreleased. Assign
-release versions, qualify native acquisition/discovery and update downstream
-source pins during authorized release preparation. Local builds and tests do not
-activate installed packages or qualify real provider behavior.
+Version 0.9.0 identifies the four public owned-workflow packages. Upgrades must
+qualify native acquisition/discovery and update downstream source pins from the
+exact reviewed release. Retain a rollback copy until the replacement is verified.
+Local builds and tests do not activate installed packages or qualify provider behavior.

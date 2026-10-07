@@ -67,7 +67,7 @@ def test_pm_form_is_owned_and_decline_preserves_everything(tmp_path: Path) -> No
     assert not pm.home.exists()
     server = Server(io.StringIO(), io.StringIO(), root=pm.root)
     result = server.dispatch("initialize", {"capabilities": {}})
-    assert result["serverInfo"] == {"name": "project-management-agents", "version": "0.8.1"}
+    assert result["serverInfo"] == {"name": "project-management-agents", "version": "0.9.0"}
 
 
 @pytest.mark.parametrize("plugin,prefix", [("product-development", "pd"), ("project-management", "pm")])
