@@ -51,7 +51,10 @@ def trust_project(manager: Manager) -> None:
         f"[projects.{json.dumps(str(manager.repo))}]\ntrust_level = \"trusted\"\n")
 
 
-def upgrade_source(manager: Manager, number="0.8.1") -> Manager:
+def upgrade_source(manager: Manager, number=None) -> Manager:
+    if number is None:
+        major, minor, patch = (int(part) for part in manager.version.split("."))
+        number = f"{major}.{minor}.{patch + 1}"
     path = manager.root / "plugin.json"
     data = json.loads(path.read_bytes())
     data["version"] = number

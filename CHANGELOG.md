@@ -1,10 +1,28 @@
 # Changelog
 
-## Unreleased
+## 0.9.0 — 2026-10-07
 
-- Replace upstream skill restoration with owned, attributed workflows and local migration guidance.
-- Validate complete packaged workflows and preserve explicit legacy dependency compatibility.
-- Add engineering verification, technical design, project learning, handoffs and product experiments.
+All four public packages use 0.9.0 for this coordinated owned-workflow release.
+Tracking: #8; source changes: #7.
+
+- Ship 33 self-contained owned skills with immutable upstream lineage and license
+  attribution. Runtime restoration of upstream skills is no longer required.
+- Add engineering diagnosis, design, implementation, review, behavioral testing,
+  product verification, performance, domain modeling and durable project learning.
+- Add bounded maintainability assessment and recurring-error prevention through
+  repairs at the owning boundary and qualified executable guards.
+- Add optional consumer-owned feature maps and a read-only validator; declared
+  qualification remains distinct from observed behavior and complete coverage.
+- Strengthen product decisions, experiments, handoffs, communication formats and
+  precise technical writing while retaining consumer facts and decision authority.
+- Add content-based installation diagnostics and author-only deterministic and
+  semantic trial suites. Skills work independently of optional Codex role setup.
+
+Migration: install the new package identities, verify exact contents and fresh
+session discovery, then retire only superseded upstream copies and matching lock
+entries. Preserve local adaptations and unrelated skills. Package installation does
+not grant provider permissions. Automatic selection and sustained usefulness
+remain subjects for observed qualification; the smoke trials do not prove a gain.
 
 ## Product Development 0.8.0 — unreleased
 
