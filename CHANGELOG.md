@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.1 — 2026-10-07
+
+- Publish all four packages exclusively to GitHub Packages through an explicitly
+  dispatched workflow using the repository token. No npmjs.org publication.
+- Pin GitHub Packages in the catalog and reject other publishing destinations.
+- Qualify exact source, archive bytes, prior attempts and fresh acquisition while
+  preserving publication receipts. Public visibility is verified separately.
+- Preserve the immutable 0.9.0 GitHub release archives.
+
+Tracking: #8.
+
 ## 0.9.0 — 2026-10-07
 
 All four public packages use 0.9.0 for this coordinated owned-workflow release.

@@ -12,6 +12,7 @@ from build_codex_package import (
     REPOSITORY,
     distribution_projection,
     distribution_settings,
+    package_metadata,
     projection,
     source_files,
     tree_matches,
@@ -94,7 +95,8 @@ def test_builds_are_reproducible_without_changing_authored_plugins(tmp_path: Pat
 def test_archive_contains_complete_native_package_and_independent_owned_roles() -> None:
     files = distribution_projection()
     for name in ("product-development", "project-management"):
-        payload = files[f"npm/coreycoto-agent-plugin-{name}-0.9.0.tgz"]
+        version = package_metadata(REPOSITORY / "plugins" / name)["version"]
+        payload = files[f"npm/coreycoto-agent-plugin-{name}-{version}.tgz"]
         with tarfile.open(fileobj=io.BytesIO(payload), mode="r:gz") as archive:
             members = archive.getmembers()
             assert all(member.isfile() and member.name.startswith("package/") for member in members)
@@ -167,12 +169,13 @@ def test_source_symlinks_and_returned_generated_files_are_rejected(tmp_path: Pat
         source_files(source)
 
 
-def test_private_distribution_cannot_target_public_registry(tmp_path: Path) -> None:
+@pytest.mark.parametrize("visibility,access", [("private", "restricted"), ("public", "public")])
+def test_distribution_cannot_target_npmjs(tmp_path: Path, visibility: str, access: str) -> None:
     config = tmp_path / ".agents/plugins/distribution.json"
     config.parent.mkdir(parents=True)
-    config.write_text(json.dumps({"schemaVersion": 1, "visibility": "private",
-                                  "access": "restricted", "registry": "https://registry.npmjs.org"}))
-    with pytest.raises(ValueError, match="Private plugins"):
+    config.write_text(json.dumps({"schemaVersion": 1, "visibility": visibility,
+                                  "access": access, "registry": "https://registry.npmjs.org"}))
+    with pytest.raises(ValueError, match="Use GitHub Packages"):
         distribution_settings(tmp_path)
 
 
