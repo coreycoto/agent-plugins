@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "project-management",
   "version": "0.8.1",
-  "description": "Plan projects, maintain backlogs, and review delivery using reusable guidance and gh-steward for GitHub composition.",
+  "description": "Plan, sequence, deliver and hand off work using consumer policy and gh-steward for GitHub composition.",
   "author": {
     "name": "Corey Coto",
     "email": "support@coreycoto.com",

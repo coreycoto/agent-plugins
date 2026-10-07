@@ -1,6 +1,7 @@
 # Project Management Skills
 
-The eight skills provide portable project-planning and delivery guidance.
+The nine workflow skills provide self-contained project-planning, delivery and
+handoff procedures. `manage-codex-agents` separately owns native agent setup.
 Consumer repositories own project identity, fields and options, ranking,
 hierarchy, labels, actors, and delivery stages; the skills read and follow those
 rules rather than imposing a shared project configuration.
@@ -15,6 +16,7 @@ require a GitHub connector.
 | --- | --- |
 | `backlog-planning` | `github_optional` |
 | `delivery-lifecycle` | `github_optional` |
+| `handoff-work` | `local_first` |
 | `intake` | `local_first` |
 | `project-governance` | `github_optional` |
 | `publish-change` | `github_optional` |

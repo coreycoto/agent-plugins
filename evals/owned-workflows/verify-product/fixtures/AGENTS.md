@@ -1,0 +1,1 @@
+Verify only. Preserve source, README.md and data/user-notes.json. Use .artifacts/trial-notes.json for scratch. Evidence and verification.md may be written. Preserve evidence before deleting owned scratch. No provider, install or publication actions.

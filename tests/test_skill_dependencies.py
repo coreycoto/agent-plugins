@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 import runpy
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -25,6 +27,7 @@ def installation(tmp_path: Path) -> tuple[Path, Path, Path]:
     }
     publisher = tmp_path / "plugin" / "skills-lock.json"
     publisher.parent.mkdir()
+    (publisher.parent / "plugin.json").write_text('{"name":"example"}')
     publisher.write_text(json.dumps({"version": 1, "skills": {"example-skill": entry}}))
     consumer = tmp_path / "consumer" / "skills-lock.json"
     consumer.parent.mkdir()
@@ -140,3 +143,54 @@ def test_dependencies_are_declared_without_bundled_copies(installation) -> None:
     bundled.mkdir(parents=True)
     (bundled / "SKILL.md").write_bytes(SKILL)
     assert any("must not be bundled" in error for error in validate(publisher.parent))
+
+
+def test_owned_package_has_no_dependency_restore_requirement(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    plugin = tmp_path / "plugins/example"
+    plugin.mkdir(parents=True)
+    (plugin / "plugin.json").write_text('{"name":"example"}')
+    result = subprocess.run([sys.executable, str(root / "scripts/verify_skill_dependencies.py"),
+                             "--repo-root", str(tmp_path)], capture_output=True, text=True)
+    assert result.returncode == 0
+    assert "no runtime skill dependencies declared" in result.stdout
+    result = subprocess.run([sys.executable, str(root / "scripts/smoke_skill_dependencies.py"),
+                             "--repo-root", str(tmp_path), "--skills-cli", str(tmp_path / "must-not-run")],
+                            capture_output=True, text=True)
+    assert result.returncode == 0
+    assert json.loads(result.stdout) == {
+        "packages": 1, "legacy_dependency_locks": 0,
+        "runtime_dependencies_declared": False, "restore_attempted": False,
+        "consumer_installation_verified": False,
+    }
+
+
+def test_explicit_missing_plugin_is_not_an_owned_package(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run([sys.executable, str(root / "scripts/verify_skill_dependencies.py"),
+                             "--plugin-root", str(tmp_path / "missing")], capture_output=True, text=True)
+    assert result.returncode == 1
+    assert "plugin.json is required" in result.stdout
+
+
+def test_legacy_smoke_validates_declarations_without_running_restore(installation, tmp_path: Path) -> None:
+    publisher, _, _ = installation
+    root = Path(__file__).resolve().parents[1]
+    plugins = tmp_path / "plugins"
+    plugins.mkdir()
+    publisher.parent.rename(plugins / "example")
+    notice = plugins / "example/licenses/example-skills-MIT.txt"
+    notice.parent.mkdir()
+    notice.write_text("MIT license")
+    result = subprocess.run([sys.executable, str(root / "scripts/smoke_skill_dependencies.py"),
+                             "--repo-root", str(tmp_path), "--skills-cli", str(tmp_path / "must-not-run")],
+                            capture_output=True, text=True)
+    assert result.returncode == 0
+    receipt = json.loads(result.stdout)
+    assert receipt["legacy_dependency_locks"] == 1
+    assert receipt["runtime_dependencies_declared"] is True
+    assert receipt["restore_attempted"] is False
+    (plugins / "example/skills-lock.json").write_text("invalid")
+    result = subprocess.run([sys.executable, str(root / "scripts/smoke_skill_dependencies.py"),
+                             "--repo-root", str(tmp_path)], capture_output=True, text=True)
+    assert result.returncode == 1

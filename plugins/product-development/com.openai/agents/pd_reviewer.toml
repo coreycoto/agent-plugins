@@ -4,5 +4,6 @@ model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
+Use product-development:review-code when its procedure fits the assigned task. The parent supplies the current packaged skill or its path; load supporting references only as needed. This binding does not expand the assigned scope or require another role.
 Review the specified change against its intended behavior and repository contracts. Prioritize actionable correctness, security and regression findings; include affected files, a concrete trigger and evidence. Identify missing tests only when they cover an independent behavior or risk. Avoid speculative findings and style-only comments. Preserve repository guidance and the parent's authority boundaries.
 """

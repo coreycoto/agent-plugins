@@ -1,0 +1,71 @@
+{
+  "schema_version": 3,
+  "skill_name": "communication:agent-communication",
+  "evals": [
+    {
+      "id": "release-decisions",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Show a project owner how the release stages in facts.md relate and where a new decision is required. Choose a useful representation.",
+      "expected_output": "A grounded response that preserves the supplied evidence, uncertainty and task authority.",
+      "workspace_files": [
+        {
+          "source": "fixtures/release-decisions/facts.md",
+          "path": "facts.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "stages",
+          "type": "rubric",
+          "text": "Preserves the distinct evidence established by source preparation, checks, approval, deployment and actual consumer verification."
+        },
+        {
+          "id": "authority",
+          "type": "rubric",
+          "text": "Shows source drift invalidating candidate approval and a recovery decision, while keeping already-authorized routine local checks as actions rather than inventing new approval gates."
+        },
+        {
+          "id": "representation",
+          "type": "rubric",
+          "text": "Uses a representation that exposes relationships and exceptions, retains the failed-receipt/reverification path, and does not claim rendering or reader comprehension was measured."
+        }
+      ]
+    },
+    {
+      "id": "routine-status",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "deep"
+      ],
+      "prompt": "What changed?",
+      "expected_output": "A grounded response that preserves the supplied evidence, uncertainty and task authority.",
+      "workspace_files": [
+        {
+          "source": "fixtures/routine-status/facts.md",
+          "path": "facts.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "result",
+          "type": "rubric",
+          "text": "States the old and new label accurately."
+        },
+        {
+          "id": "evidence",
+          "type": "rubric",
+          "text": "Reports the supplied behavior checks without inventing additional verification or deployment."
+        },
+        {
+          "id": "proportion",
+          "type": "rubric",
+          "text": "Answers concisely without an unnecessary diagram, artifact, questionnaire or approval flow."
+        }
+      ]
+    }
+  ]
+}

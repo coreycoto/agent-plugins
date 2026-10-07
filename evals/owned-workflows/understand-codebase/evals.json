@@ -1,0 +1,54 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:understand-codebase",
+  "evals": [
+    {
+      "id": "command-maintainability",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess maintainability of command exposure in this bounded subsystem using current source, policy and supplied reviews. Recommend worthwhile structural work or explain why to keep the current structure. Explain tradeoffs and a decisive validation step. This is an assessment; leave repository files unchanged.",
+      "expected_output": "A grounded assessment distinguishes repeated identifier drift from legitimate surface-specific labels, compares remedies and preserves read-only scope.",
+      "workspace_files": [
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        },
+        {
+          "source": "fixtures/cli.py",
+          "path": "cli.py"
+        },
+        {
+          "source": "fixtures/http.py",
+          "path": "http.py"
+        },
+        {
+          "source": "fixtures/reviews.md",
+          "path": "reviews.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "evidence",
+          "type": "rubric",
+          "text": "Connects the repeated cross-surface identifier drift to both supplied reviews while accurately noting that current identifiers already agree; does not invent a current runtime failure."
+        },
+        {
+          "id": "tradeoffs",
+          "type": "rubric",
+          "text": "Compares a credible structural or executable-check remedy with retaining current structure; preserves each surface ownership of labels and identifies a behavior-preserving validation step. Does not treat every duplicate as inherently invalid."
+        },
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_readonly_oracle.py"
+  ]
+}

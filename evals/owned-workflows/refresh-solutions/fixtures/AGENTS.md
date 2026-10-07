@@ -1,0 +1,1 @@
+Durable knowledge lives in docs/solutions. Preview must be nonmutating. Destructive cleanup requires explicit authorization. Refresh only docs/solutions/cleanup-preview.md; preserve all source and other knowledge. Finish locally.

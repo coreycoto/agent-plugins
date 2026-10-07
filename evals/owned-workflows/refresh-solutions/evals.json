@@ -1,0 +1,54 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:refresh-solutions",
+  "evals": [
+    {
+      "id": "cleanup-command",
+      "execution_mode": "artifact-safe",
+      "prompt": "Refresh only docs/solutions/cleanup-preview.md against the current source and accepted project instructions. Correct factual command drift while retaining the supported decision, historical reasoning and limitations. Preserve all source, product policy and other knowledge. Finish locally.",
+      "expected_output": "Selected note references src/cleanup.py --dry-run; accepted nonmutating-preview/destructive-authorization policy and rejected alternative retained; no product or unrelated edits.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/src/cleanup.py",
+          "path": "src/cleanup.py"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/cleanup-preview.md",
+          "path": "docs/solutions/cleanup-preview.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/unrelated.md",
+          "path": "docs/solutions/unrelated.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "current-command",
+          "type": "assertion",
+          "script": "oracles/current-command.py"
+        },
+        {
+          "id": "reasoning-retained",
+          "type": "assertion",
+          "script": "oracles/reasoning-retained.py"
+        },
+        {
+          "id": "scope-preserved",
+          "type": "assertion",
+          "script": "oracles/scope-preserved.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_oracle_support.py"
+  ]
+}

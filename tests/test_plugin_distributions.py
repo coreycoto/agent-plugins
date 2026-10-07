@@ -18,6 +18,59 @@ from build_codex_package import (
     write_generated,
 )
 
+# Accepted owned catalog, independent of the package manifests and builder discovery.
+OWNED_SKILLS = {
+    "product-development": {
+        "manage-codex-agents", "phased-refactor", "engineering-workflow", "understand-codebase",
+        "diagnose-problem", "design-change", "implement-change", "review-code", "test-behavior",
+        "verify-product", "maintain-verification", "prototype-decision", "improve-performance",
+        "model-domain", "capture-solution", "refresh-solutions",
+    },
+    "project-management": {
+        "manage-codex-agents", "backlog-planning", "delivery-lifecycle", "intake",
+        "project-governance", "publish-change", "quarter-planning", "relationship-management",
+        "review-closeout", "handoff-work",
+    },
+    "product-management": {
+        "product-discovery", "product-prioritization", "product-requirements", "product-experiments",
+    },
+    "communication": {"agent-communication", "edit-prose", "write-prose"},
+}
+
+
+def test_owned_catalog_and_attribution_survive_every_distribution() -> None:
+    assert sum(len(names) for names in OWNED_SKILLS.values()) == 33
+    distributions = distribution_projection()
+    for plugin, expected in OWNED_SKILLS.items():
+        source = REPOSITORY / "plugins" / plugin
+        authored = {path.parent.name for path in (source / "skills").glob("*/SKILL.md")}
+        assert authored == expected
+        assert not (source / "skills-lock.json").exists()
+        for format in ("portable", "codex"):
+            prefix = f"{format}/plugins/{plugin}/"
+            packaged = {name.removeprefix(prefix): content for name, content in distributions.items()
+                        if name.startswith(prefix)}
+            actual = {Path(name).parent.name for name in packaged
+                      if name.startswith("skills/") and name.endswith("/SKILL.md")}
+            assert actual == expected
+            assert "skills/_shared/references/upstream-lineage.json" in packaged
+            assert "THIRD_PARTY_NOTICES.md" in packaged
+            for path in (source / "skills").rglob("*"):
+                if path.is_file():
+                    assert packaged[path.relative_to(source).as_posix()] == path.read_bytes()
+        archive_name = next(name for name in distributions
+                            if name.startswith(f"npm/coreycoto-agent-plugin-{plugin}-"))
+        with tarfile.open(fileobj=io.BytesIO(distributions[archive_name]), mode="r:gz") as archive:
+            actual = {Path(name).parent.name for name in archive.getnames()
+                      if name.startswith("package/skills/") and name.endswith("/SKILL.md")}
+            assert actual == expected
+            for path in (source / "skills").rglob("*"):
+                if path.is_file():
+                    assert archive.extractfile("package/" + path.relative_to(source).as_posix()).read() == path.read_bytes()
+            for path in (source / "licenses").glob("*"):
+                if path.is_file():
+                    assert archive.extractfile("package/" + path.relative_to(source).as_posix()).read() == path.read_bytes()
+
 
 def test_builds_are_reproducible_without_changing_authored_plugins(tmp_path: Path) -> None:
     before = {root.name: source_files(root) for root in (REPOSITORY / "plugins").iterdir()}

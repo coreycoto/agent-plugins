@@ -1,26 +1,37 @@
 ---
 name: quarter-planning
-description: Use this skill to prepare and review time-bound planning commitments using the consumer's own planning conventions.
+description: Prepare or assess time-bound work commitments using the consumer's planning horizon, capacity evidence, and milestone conventions.
 ---
 
 # Quarter Planning
 
-Use this skill when the consumer plans work for a quarter or another defined
-time window. Confirm the intended period, outcomes, capacity assumptions, and
-current candidate work. Keep explicit commitments separate from tentative
-ideas, and show the basis for including or deferring each candidate.
+Establish the intended period, outcomes, stated capacity and candidate work
+from current consumer records. Use supplied dates and commitments; do not infer
+staffing, deadlines or a planning calendar. Missing capacity is an uncertainty
+to expose, not a license to invent estimates.
 
-Follow the consumer's policy for milestones, dates, project fields, and
-ownership. Treat time windows and work hierarchy as different concepts; do not
-use a milestone as a substitute for a parent-child relationship unless the
-consumer's own rules say so. Identify missing dates, unresolved dependencies,
-and scope that exceeds stated capacity.
+Separate explicit commitments from tentative options. Show each candidate's
+outcome, prerequisites, evidence of feasibility and reason for inclusion or
+deferral. Sequence dependency-ready slices and learning gates before costly
+commitments where appropriate. Technical owners decide implementation
+feasibility; product and consumer owners decide priorities and commitments.
 
-For a plan that coordinates GitHub issues, milestones, or project fields, use
-`gh-steward` to compose and validate a proposed delta. Present that delta for
-review before any live apply. The available connector or native `gh` may handle
-ordinary single-record operations under repository policy. Verify authorized
-changes against the resulting state.
+Follow consumer conventions for milestones, dates, fields, hierarchy and
+ownership. Time windows and work hierarchy describe different relationships;
+do not substitute a milestone for a parent unless the consumer's policy does
+so. Identify unresolved dependencies, date contradictions and scope exceeding
+stated capacity. Discuss alternatives without silently rewriting commitments.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+Return the proposed period plan with committed and tentative work, dependency
+order, capacity assumptions, unresolved choices and expected record changes.
+A plan can be useful locally even when live tracker state is unavailable.
+
+Use `gh-steward` to compose and validate coordinated GitHub changes across
+milestones, issues or project fields. The existing connector or native `gh`
+may handle ordinary single-record work under repository policy. Keep proposals
+reviewable, apply within existing authorization, and verify the resulting dates,
+relationships and fields. Do not request repeated approval for an unchanged
+authorized scope.
+
+Complete with a supported commitment plan or a clear decision gap. Follow the
+[decision rubric](../_shared/references/agent-decision-rubric.md).

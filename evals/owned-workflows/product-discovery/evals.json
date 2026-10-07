@@ -1,0 +1,47 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-management:product-discovery",
+  "evals": [
+    {
+      "id": "recurring-email-demand",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Help decide whether to commit to automatic weekly emailed exports using facts.md. Use existing evidence first, identify the consequential uncertainty and a bounded next step. No outreach or implementation. Leave repository files unchanged; return the assessment in your response.",
+      "expected_output": "A grounded response that preserves the supplied evidence, uncertainty and task authority.",
+      "workspace_files": [
+        {
+          "source": "fixtures/recurring-email-demand/facts.md",
+          "path": "facts.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "evidence",
+          "type": "rubric",
+          "text": "Distinguishes interview preference from behavior, retains the selection limitation and correct 42/7/2 denominators, and does not present uncollected reasons for nonuse or population demand as established facts; labels possible explanations as hypotheses."
+        },
+        {
+          "id": "decision",
+          "type": "rubric",
+          "text": "Identifies an assumption that could reverse the investment decision, considers credible alternatives including a narrow solution or deferral, and explains its recommendation from supplied evidence."
+        },
+        {
+          "id": "learning",
+          "type": "rubric",
+          "text": "Proposes a bounded observation capable of disconfirming the preferred hypothesis, retains unknown costs and thresholds, and does not claim outreach or implementation occurred."
+        },
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_readonly_oracle.py"
+  ]
+}

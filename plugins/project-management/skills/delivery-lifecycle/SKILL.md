@@ -1,31 +1,47 @@
 ---
 name: delivery-lifecycle
-description: Use this skill to carry selected work from planning through implementation, verification, review, and delivery-state handoff.
+description: Carry selected work from its task source through implementation, verification, review, and the user's requested delivery endpoint.
 ---
 
 # Delivery Lifecycle
 
-Use this skill when a task spans work selection, implementation, review, and
-completion tracking. Confirm the requested scope and use the consumer's rules
-for choosing work, representing ownership, and defining delivery stages. Keep
-the work item's state aligned with verified progress; do not mark work complete
-because code was written or a pull request was opened.
+Use this skill for a selected work item whose completion spans implementation
+and delivery. Start from the current issue, accepted local plan, or other work
+source allowed by the consumer. Read its acceptance conditions, repository
+contracts, exact checkout and existing edits. Establish the requested endpoint:
+local result, reviewable candidate, merged source, release, or verified live
+behavior. Keep these states distinguishable in evidence and tracking.
 
-For authorized delegation, use `pm_dependency_maintainer` for an accepted
-dependency change or `pm_merge_reviewer` for exact-candidate merge readiness.
-See the [agent routing guide](../_shared/references/codex-agent-routing.md).
-The parent owns broader implementation decisions and authorized merges.
+Make the work dependency-ready before execution. Identify prerequisites and
+split substantial work into small vertical slices that demonstrate an observable
+result through the relevant layers. Give each slice an acceptance example,
+validation, dependencies and technical owner. Preserve consumer taxonomy;
+a slice is not automatically a new issue or project commitment.
 
-Follow the repository's implementation and verification guidance. Before
-changing a stage or linked record, identify the target and expected effect. For
-coordinated GitHub project or issue updates, use `gh-steward` to compose and
-validate the change. Use the available connector or native `gh` for ordinary
-pull-request and issue operations under consumer policy.
+Technical implementation belongs to the available Product Development workflow
+or the parent following repository guidance. For authorized delegation, assign
+bounded scope, owned files and a success condition. Use
+`pm_dependency_maintainer` for accepted dependency maintenance and
+`pm_merge_reviewer` for review of an exact candidate; consult the
+[agent routing guide](../_shared/references/codex-agent-routing.md).
 
-Keep code delivery, hosted review, and project-state handoff as distinct gates.
-After each authorized action, verify the resulting state and report blockers
-with the smallest next step. Do not merge or apply project changes unless the
-user has requested that step and current policy permits it.
+Use native Git worktree isolation when required by the consumer or concurrent
+work. Inspect the starting ref and existing edits; reuse a suitable checkout
+when possible. Preserve unrelated work. Creating isolation does not authorize
+later cleanup or deleting branches.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+Continue ordinary repairs, relevant checks and review responses within the
+existing scope and authorized stage. A CI failure or comment is evidence to
+assess, not permission for unrelated changes. Reproduce material failures and
+fix causes attributable to this work; report unrelated failures or decisions.
+Read the [delivery evidence guide](references/delivery-evidence.md) when hosted
+checks, merge, release or live verification are part of the requested endpoint.
+
+Use `gh-steward` for composed project updates and the existing GitHub connector
+or native `gh` for ordinary operations under consumer policy. Verify each
+result before updating completion state. Retain authorization across routine
+continuation; request a decision only for an uncovered action or changed scope.
+
+Finish with the achieved endpoint, exact candidate, evidence, remaining gates
+and next action. Use `handoff-work` if execution pauses or transfers. Follow the
+[decision rubric](../_shared/references/agent-decision-rubric.md).

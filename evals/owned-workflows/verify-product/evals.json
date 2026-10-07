@@ -1,0 +1,54 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:verify-product",
+  "evals": [
+    {
+      "id": "notes-cli",
+      "execution_mode": "artifact-safe",
+      "prompt": "Verify notes.py through separate add and list CLI invocations, using only .artifacts/trial-notes.json as a disposable store and the text Trial note. Preserve data/user-notes.json and all source. Retain observed add and list JSON results in evidence/notes.json (keys add and list) and a concise verification.md. Remove the disposable store after preserving evidence. Do not claim success from narrated commands or unexecuted instructions. Finish locally.",
+      "expected_output": "Real successful add/list commands recorded, matching observed output retained after owned scratch cleanup, original user data/source unchanged.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/notes.py",
+          "path": "notes.py"
+        },
+        {
+          "source": "fixtures/data/user-notes.json",
+          "path": "data/user-notes.json"
+        },
+        {
+          "source": "fixtures/README.md",
+          "path": "README.md"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "completed-command-evidence",
+          "type": "assertion",
+          "script": "oracles/completed-command-evidence.py"
+        },
+        {
+          "id": "durable-evidence-and-cleanup",
+          "type": "assertion",
+          "script": "oracles/durable-evidence-and-cleanup.py"
+        },
+        {
+          "id": "userdata-and-source-preserved",
+          "type": "assertion",
+          "script": "oracles/userdata-and-source-preserved.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_oracle_support.py"
+  ]
+}

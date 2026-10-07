@@ -1,0 +1,54 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:implement-change",
+  "evals": [
+    {
+      "id": "export-label",
+      "execution_mode": "artifact-safe",
+      "prompt": "Change the primary export button label in index.html from Generate to Create export. Preserve its attributes, the secondary controls and existing behavior. This is a small local edit; do not add scaffolding or change other files.",
+      "expected_output": "Only the intended label changes; button attributes, DOM and other source remain intact; no new workflow scaffolding.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/index.html",
+          "path": "index.html"
+        },
+        {
+          "source": "fixtures/style.css",
+          "path": "style.css"
+        },
+        {
+          "source": "fixtures/app.js",
+          "path": "app.js"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "button-label",
+          "type": "assertion",
+          "script": "oracles/button-label.py"
+        },
+        {
+          "id": "dom-and-behavior",
+          "type": "assertion",
+          "script": "oracles/dom-and-behavior.py"
+        },
+        {
+          "id": "no-scaffolding",
+          "type": "assertion",
+          "script": "oracles/no-scaffolding.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_oracle_support.py"
+  ]
+}

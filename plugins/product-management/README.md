@@ -1,12 +1,31 @@
 # Product Management
 
-Independently selectable, portable skills for evidence-led customer problem
-discovery, product option prioritization, and supported requirements and roadmap
-sequencing. Facts, targets, constraints and style stay consumer-owned.
+Independently maintained, portable procedures for customer problem discovery,
+product decisions, requirements and experiments. The packaged workflows are
+self-contained; facts, targets, constraints and commitments stay consumer-owned.
 
-Use `product-discovery` to interpret supplied customer evidence,
-`product-prioritization` to compare defined bets, and `product-requirements` to
-turn a chosen direction into testable outcomes and open questions. Missing
-inputs remain explicit; no estimates, business guarantees or publication
-authority are supplied by installation. Project Management covers execution,
-Product Development covers implementation, and Communication covers prose.
+| Skill | Use it to |
+| --- | --- |
+| `product-discovery` | Frame an unmet need from customer evidence and competing explanations. |
+| `product-prioritization` | Compare defined options using supplied outcomes and constraints. |
+| `product-requirements` | Describe observable behavior, outcome measures and small useful slices. |
+| `product-experiments` | Design or assess a falsifiable test with an observation plan and decision criteria. |
+
+Inspect factual evidence before asking questions. Questions should resolve
+product choices or material gaps; none of these workflows requires an interview
+when the context is sufficient. Use the consumer's domain language and retain
+negative evidence, confounds and unknowns. Estimates, baselines and targets need
+support rather than invented precision.
+
+For ideas approaching commitment, conditional
+[decision pressure-testing](skills/_shared/references/decision-pressure-testing.md)
+guidance connects consequential assumptions, credible alternatives, independent
+disconfirming evidence and tests that can justify building, changing, deferring
+or stopping. It introduces no mandatory interview or numeric scoring model.
+
+The result is a product decision or learning artifact, with open questions
+visible. Technical owners assess implementation feasibility. Project Management
+covers authorized execution and tracking; Product Development covers
+implementation; Communication covers prose. Drafting a brief or experiment
+does not authorize outreach, live instrumentation, tracker updates, rollout or
+provider mutations.

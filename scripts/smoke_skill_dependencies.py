@@ -1,4 +1,4 @@
-"""Replay plugin dependency locks with the native Vercel CLI in isolated consumer projects."""
+"""Validate owned packages offline; optionally restore legacy locks in isolated projects."""
 from __future__ import annotations
 
 import argparse
@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+from verify_skill_dependencies import plugin_roots, validate_package_dependencies
 
 from author_checks.skills_lock import (
     SKILLS_LOCK_FILENAME,
@@ -19,13 +21,26 @@ from author_checks.skills_lock import (
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--restore", action="store_true", help="Restore legacy dependencies using Skills CLI (network access)")
     parser.add_argument("--skills-cli", type=Path, help="Optional installed skills 1.7.0 executable")
     parser.add_argument("--json-out", type=Path)
     args = parser.parse_args()
     root = args.repo_root.resolve()
-    locks = sorted((root / "plugins").glob(f"*/{SKILLS_LOCK_FILENAME}"))
-    if not locks:
-        parser.error("no native plugin dependency locks found")
+    plugins = plugin_roots(root)
+    if not plugins:
+        parser.error("no authored plugins found")
+    errors = [error for plugin in plugins for error in validate_package_dependencies(plugin)]
+    if errors:
+        parser.exit(1, "\n".join(f"error: {error}" for error in errors) + "\n")
+    locks = [plugin / SKILLS_LOCK_FILENAME for plugin in plugins if (plugin / SKILLS_LOCK_FILENAME).is_file()]
+    if not locks or not args.restore:
+        result = {"packages": len(plugins), "legacy_dependency_locks": len(locks),
+                  "runtime_dependencies_declared": bool(locks), "restore_attempted": False,
+                  "consumer_installation_verified": False}
+        if args.json_out:
+            args.json_out.write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result, indent=2))
+        return 0
     scratch = Path(tempfile.mkdtemp(prefix="native-skill-dependency-smoke-"))
     environment = os.environ.copy()
     environment.update({

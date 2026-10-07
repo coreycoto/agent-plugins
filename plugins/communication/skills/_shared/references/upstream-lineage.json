@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "kind": "source-lineage",
+  "runtime_dependencies": [],
+  "sources": [
+    {
+      "id": "matt",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
+      "license": "MIT",
+      "license_file": "licenses/mattpocock-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/in-progress/writing-shape/SKILL.md",
+            "skills/in-progress/writing-fragments/SKILL.md",
+            "skills/productivity/to-questionnaire/SKILL.md",
+            "skills/productivity/teach/SKILL.md"
+          ],
+          "destinations": [
+            "skills/write-prose/SKILL.md",
+            "skills/edit-prose/SKILL.md",
+            "skills/agent-communication/SKILL.md"
+          ],
+          "mechanism": "Reader purpose, document shape, purposeful questions and clear explanations.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "pstack",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "d0ef80d86795816da932a153458c5dbe192d294e",
+      "license": "MIT",
+      "license_file": "licenses/pstack-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "pstack/skills/technical-writing/SKILL.md",
+            "pstack/skills/unslop/SKILL.md",
+            "pstack/skills/principle-minimize-reader-load/SKILL.md"
+          ],
+          "destinations": [
+            "skills/write-prose/SKILL.md",
+            "skills/edit-prose/SKILL.md",
+            "skills/agent-communication/SKILL.md"
+          ],
+          "mechanism": "Concrete concise language and reducing reader effort while preserving substance.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "compound",
+      "repository": "https://github.com/EveryInc/compound-engineering-plugin",
+      "revision": "cef001f7b1c2e4a21516e3abd60252798d4b67c5",
+      "license": "MIT",
+      "license_file": "licenses/compound-engineering-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/ce-doc-review/SKILL.md",
+            "skills/ce-noslop/SKILL.md",
+            "skills/ce-handoff/SKILL.md"
+          ],
+          "destinations": [
+            "skills/write-prose/SKILL.md",
+            "skills/edit-prose/SKILL.md",
+            "skills/agent-communication/SKILL.md"
+          ],
+          "mechanism": "Evidence-preserving document review and concise decision handoffs.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Replace upstream skill restoration with owned, attributed workflows and local migration guidance.
+- Validate complete packaged workflows and preserve explicit legacy dependency compatibility.
+- Add engineering verification, technical design, project learning, handoffs and product experiments.
+
 ## Product Development 0.8.0 — unreleased
 
 - Bundle six purpose-specific Codex roles: Luna exploration and mechanical

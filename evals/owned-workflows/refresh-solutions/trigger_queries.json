@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "skill_name": "product-development:refresh-solutions",
+  "queries": [
+    {
+      "id": "train-positive",
+      "query": "Refresh the selected solution note after a command path changed.",
+      "split": "train",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/src/cleanup.py",
+          "path": "src/cleanup.py"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/cleanup-preview.md",
+          "path": "docs/solutions/cleanup-preview.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/unrelated.md",
+          "path": "docs/solutions/unrelated.md"
+        }
+      ]
+    },
+    {
+      "id": "train-near-miss",
+      "query": "Capture a newly verified incident solution for the first time.",
+      "split": "train",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/src/cleanup.py",
+          "path": "src/cleanup.py"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/cleanup-preview.md",
+          "path": "docs/solutions/cleanup-preview.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/unrelated.md",
+          "path": "docs/solutions/unrelated.md"
+        }
+      ]
+    },
+    {
+      "id": "validation-positive",
+      "query": "Reconcile this existing cleanup note with current source, preserving approved policy.",
+      "split": "validation",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/src/cleanup.py",
+          "path": "src/cleanup.py"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/cleanup-preview.md",
+          "path": "docs/solutions/cleanup-preview.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/unrelated.md",
+          "path": "docs/solutions/unrelated.md"
+        }
+      ]
+    },
+    {
+      "id": "validation-near-miss",
+      "query": "Update the product implementation to match cleanup policy.",
+      "split": "validation",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/src/cleanup.py",
+          "path": "src/cleanup.py"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/cleanup-preview.md",
+          "path": "docs/solutions/cleanup-preview.md"
+        },
+        {
+          "source": "fixtures/docs/solutions/unrelated.md",
+          "path": "docs/solutions/unrelated.md"
+        }
+      ]
+    }
+  ]
+}

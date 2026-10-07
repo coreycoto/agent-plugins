@@ -1,14 +1,43 @@
 ---
 name: agent-communication
-description: Communicate progress, findings, decisions and completed work clearly during an agent task, adapting to the user and the requested delivery stage.
+description: Communicate meaningful task progress, decisions, evidence, and handoffs clearly for the user and requested delivery stage.
 ---
 
-Lead with the answer or useful change in state. Match the user's technical knowledge and desired detail. Explain a decision through its practical effect; reserve implementation details for evidence, troubleshooting or review.
+Lead with the answer or useful change in state. Match the reader's knowledge,
+desired detail and domain vocabulary. Explain a choice through its practical
+effect and supporting evidence. Include implementation detail when it helps
+review, troubleshooting or a consequential decision.
 
-During work, report meaningful findings, uncertainty and the next check. Avoid narrating every command or implying that a plan is a completed action. For ongoing work, answer a status question and then continue unless the user asks to stop. Ask only for information that changes the work or a decision outside its authorization; make the question self-contained.
+When relationships, competing scenarios or a process are difficult to understand
+in a concise answer, read
+[understanding formats](../_shared/references/understanding-formats.md) and choose
+a representation that helps the reader inspect the decision.
 
-In the final response, distinguish what changed, what was validated and what remains. Scope a test claim to its actual revision and environment. Give the user relevant artifact links and the next concrete decision when one remains. A partial result must not read as a completed delivery.
+During work, communicate material findings, uncertainty and what the next check
+will resolve. Avoid narrating commands or repeating a plan as progress. Answer
+status questions briefly and continue the active task unless the user asks to
+stop. Do not imply execution from preparation or verified behavior from a
+successful tool call alone.
 
-Use plain words and connected sentences. Remove flattery, stock transitions, needless contrasts and repeated summaries. Use lists for parallel facts or steps; use a table when comparison is easier that way. Respect the user's requested format and vocabulary. Preserve uncertainty and disagreements without becoming evasive.
+Inspect available context for factual answers before asking. For unresolved
+choices, use a targeted questionnaire: state the decision, explain its effect,
+and offer comparable options when useful. Ask only questions whose answers
+change the work; preserve supplied answers and authorization across routine
+continuation. Do not invent a deadline, decision owner or recipient.
 
-This skill shapes communication. It does not grant permission to message another person, publish, merge or operate a provider. Follow the current task's tools and authorization.
+In the final response, make the result understandable without earlier updates.
+Explain what changed, why, what evidence establishes it and what remains.
+Scope validation to its actual candidate, environment and exercised behavior.
+Link relevant artifacts and give the next concrete action when needed. An
+unfinished delivery must read as unfinished.
+
+For a transfer, preserve work source, exact checkout and edits, decisions,
+validation limits, next action and authorized stage. If available, use
+`project-management:handoff-work` for a substantial task handoff. Communicating
+a handoff does not authorize sending messages to another person or task.
+
+Use plain words and connected sentences. Remove flattery, stock transitions,
+needless contrasts and repeated summaries. Lists suit parallel facts or steps;
+tables suit comparisons. Preserve uncertainty and supported disagreement.
+Respect requested formatting and consumer style. Communication supplies no
+permission to publish, merge, message others or operate providers.

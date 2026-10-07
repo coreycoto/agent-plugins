@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "kind": "source-lineage",
+  "runtime_dependencies": [],
+  "sources": [
+    {
+      "id": "matt",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
+      "license": "MIT",
+      "license_file": "licenses/mattpocock-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/engineering/to-tickets/SKILL.md",
+            "skills/engineering/triage/SKILL.md",
+            "skills/productivity/handoff/SKILL.md"
+          ],
+          "destinations": [
+            "skills/backlog-planning/SKILL.md",
+            "skills/intake/SKILL.md",
+            "skills/handoff-work/SKILL.md"
+          ],
+          "mechanism": "Dependency-ready vertical slices, evidence triage and resumable exact-state handoffs.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "david",
+      "repository": "https://github.com/davidondrej/skills",
+      "revision": "ba8e24cd135f393e61dd2a27fac2572f20ef790d",
+      "license": "MIT",
+      "license_file": "licenses/davidondrej-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/agent-orchestration/handoff/SKILL.md",
+            "skills/thinking-and-docs/keep-track/SKILL.md"
+          ],
+          "destinations": [
+            "skills/handoff-work/SKILL.md",
+            "skills/delivery-lifecycle/SKILL.md"
+          ],
+          "mechanism": "Continuation records and preserving decisions across context changes.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "pstack",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "d0ef80d86795816da932a153458c5dbe192d294e",
+      "license": "MIT",
+      "license_file": "licenses/pstack-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "pstack/skills/principle-sequence-verifiable-units/SKILL.md",
+            "pstack/skills/principle-outcome-oriented-execution/SKILL.md"
+          ],
+          "destinations": [
+            "skills/delivery-lifecycle/SKILL.md",
+            "skills/backlog-planning/SKILL.md"
+          ],
+          "mechanism": "Sequence independently verifiable useful units around the requested outcome.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    },
+    {
+      "id": "compound",
+      "repository": "https://github.com/EveryInc/compound-engineering-plugin",
+      "revision": "cef001f7b1c2e4a21516e3abd60252798d4b67c5",
+      "license": "MIT",
+      "license_file": "licenses/compound-engineering-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "skills/ce-plan/SKILL.md",
+            "skills/ce-work/SKILL.md",
+            "skills/ce-handoff/SKILL.md",
+            "skills/ce-resolve-pr-feedback/SKILL.md",
+            "skills/ce-compound/SKILL.md"
+          ],
+          "destinations": [
+            "skills/delivery-lifecycle/SKILL.md",
+            "skills/handoff-work/SKILL.md",
+            "skills/review-closeout/SKILL.md"
+          ],
+          "mechanism": "Requirement-to-evidence traceability, bounded worker handoffs and disposition of review results.",
+          "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
+        }
+      ]
+    }
+  ]
+}

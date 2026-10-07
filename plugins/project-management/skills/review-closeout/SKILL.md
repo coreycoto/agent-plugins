@@ -1,26 +1,45 @@
 ---
 name: review-closeout
-description: Use this skill to assess review findings or completed work and prepare a clear closeout decision with any needed follow-up.
+description: Assess review findings or completed work against its acceptance conditions and prepare verified closeout with necessary follow-up.
 ---
 
 # Review Closeout
 
-Use this skill to evaluate review findings, a completed project, or a body of
-work for closeout. Start from the evidence and the consumer's completion policy.
-Separate verified results, unresolved risks, assumptions, and lessons that
-could improve future work.
+Start from the requested endpoint, exact candidate and consumer completion
+policy. Inspect the relevant review and validation evidence. Separate verified
+results, assumptions, remaining gates and unresolved risks; code written or a
+pull request opened is insufficient when the endpoint requires more.
 
-Decide whether each material finding needs a fix, a tracked follow-up, a durable
-policy change, or no further action. Follow the consumer's own destinations for
-guidance, backlog items, and ownership. Do not auto-close work, dismiss open
-blockers, or promote tentative observations into policy. State what evidence
-would resolve any remaining question.
+Assess each material finding against the actual change. Distinguish a supported
+regression, stale assertion, unrelated failure and an open product or policy
+decision. Identify the smallest resolving check or repair. Carry routine fixes
+within the existing scope and authorization rather than reopening approval for
+each review comment. New requirements remain decisions for the owner.
 
-If the follow-up composes several GitHub records or project fields, use
-`gh-steward` to prepare and validate that delta. For ordinary single-issue or
-pull-request reads and updates, use the consumer's existing connector or native
-`gh` under its policy. Keep the assessment and proposed changes reviewable;
-apply only when explicitly requested and verify afterward.
+Classify follow-up by consequence: needed for this endpoint, a separately tracked
+improvement, a durable project solution, or no action supported by the evidence.
+Use consumer destinations and taxonomy. Do not auto-close blockers or convert
+an isolated observation into a universal policy.
 
-See the [decision rubric](../_shared/references/agent-decision-rubric.md) for
-consumer policy and authorization boundaries.
+For a demonstrated recurring correction, check whether a bounded executable guard
+addresses its cause: structural ownership, types, API constraints, lint or an
+independent regression. When available, use `product-development:design-change`
+for unresolved remedy choices within accepted scope. Compare the known mistake
+with a legitimate near miss and the guard's maintenance cost; broader changes
+remain separate work rather than automatic closeout requirements.
+
+When a solved problem has reusable evidence and the user wants it retained,
+use `product-development:capture-solution` if available. Preserve problem,
+cause, verified remedy and limits in the consumer's chosen location. This is
+selective routing; closeout does not require a documentation, skill or memory
+write, and memory updates still need the user's explicit request.
+
+Use `gh-steward` for composed follow-up across GitHub records. Ordinary issue or
+pull-request work may use the existing connector or native `gh` under consumer
+policy. Apply only authorized changes and verify resulting state. A local
+assessment does not authorize posting review responses or closing records.
+
+Finish with the closeout decision, candidate and evidence, remaining blockers,
+follow-up owner when known and next action. Use `handoff-work` if another context
+must continue the task. Follow the
+[decision rubric](../_shared/references/agent-decision-rubric.md).
