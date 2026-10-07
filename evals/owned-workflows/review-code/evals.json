@@ -1,0 +1,50 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:review-code",
+  "evals": [
+    {
+      "id": "tenant-cache",
+      "execution_mode": "artifact-safe",
+      "prompt": "Review the candidate catalog.py change against README.md. Write review.json with a findings array; each actionable finding should identify path, trigger and consequence. Add executable review_repro.py that demonstrates a material defect through Catalog.get, exits 1 when the defect occurs and exits 0 when behavior satisfies the contract. Keep product source and existing files unchanged. Finish locally.",
+      "expected_output": "Review identifies cache isolation defect with concrete tenant trigger; runnable reproduction fails candidate and passes tenant-keyed corrected variant; source unchanged.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/catalog.py",
+          "path": "catalog.py"
+        },
+        {
+          "source": "fixtures/README.md",
+          "path": "README.md"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "actionable-finding",
+          "type": "assertion",
+          "script": "oracles/actionable-finding.py"
+        },
+        {
+          "id": "reproducer-sensitivity",
+          "type": "assertion",
+          "script": "oracles/reproducer-sensitivity.py"
+        },
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_oracle_support.py"
+  ]
+}

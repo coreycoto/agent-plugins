@@ -12,7 +12,8 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Communication | Agent collaboration, explanatory prose and editing |
 
 The owned workflow candidate contains 33 public skills across four independently
-selectable packages. See [workflow selection and migration](docs/owned-workflows.md).
+selectable packages. See [workflow selection and migration](docs/owned-workflows.md)
+and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
 This local candidate is unreleased; package version changes and activation belong
 to release preparation. Plugin versions are separate from manifest specification 1.0.0.
 

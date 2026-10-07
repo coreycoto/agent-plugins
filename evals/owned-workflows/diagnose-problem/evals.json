@@ -1,0 +1,50 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:diagnose-problem",
+  "evals": [
+    {
+      "id": "half-open-conflicts",
+      "execution_mode": "artifact-safe",
+      "prompt": "Fix the booking conflict bug in scheduler.py using the existing README contract. Add standard-library unittest regression coverage in test_scheduler.py and a concise diagnosis.md describing the supported cause and checks. Preserve unrelated files and finish locally.",
+      "expected_output": "Original half-open boundary failure reproduced; correct interval behavior and independent regression tests; factual diagnosis and local scope preserved.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/scheduler.py",
+          "path": "scheduler.py"
+        },
+        {
+          "source": "fixtures/README.md",
+          "path": "README.md"
+        },
+        {
+          "source": "fixtures/AGENTS.md",
+          "path": "AGENTS.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "interval-contract",
+          "type": "assertion",
+          "script": "oracles/interval-contract.py"
+        },
+        {
+          "id": "regression-sensitivity",
+          "type": "assertion",
+          "script": "oracles/regression-sensitivity.py"
+        },
+        {
+          "id": "diagnosis-and-scope",
+          "type": "assertion",
+          "script": "oracles/diagnosis-and-scope.py"
+        }
+      ]
+    }
+  ],
+  "grader_support": [
+    "_oracle_support.py"
+  ]
+}

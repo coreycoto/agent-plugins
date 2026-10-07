@@ -34,6 +34,102 @@ Installed files do not prove that an existing session has reloaded discovery.
 Native agent setup remains an explicit `manage-codex-agents` operation in the
 owning package. Roles are optional; skills work without delegation.
 
+## Skills-only local candidate trial
+
+Use this path for one direct procedure trial; native roles are optional. In the
+publisher checkout with author dependencies available, build and inspect a
+candidate before changing the chosen client's installation:
+
+```sh
+uv run --locked python scripts/build_codex_package.py
+uv run --locked python -B scripts/inspect_skill_installation.py \
+  --candidate dist/plugin-packages/codex/plugins/product-development
+```
+
+For an authorized local client trial, Codex CLI 0.160.0's help confirms these
+commands. Check the chosen client's marketplace first; if `agent-plugins` already
+points to another source, use a separate trial client/home rather than replacing
+that registration. The local build uses marketplace name `agent-plugins`:
+
+```sh
+codex plugin marketplace add "$PWD/dist/plugin-packages/codex"
+codex plugin add product-development@agent-plugins
+codex plugin list --json
+```
+
+These native commands acquire and enable the package; the diagnostic never does.
+Keep existing `.agents/skills` copies and legacy locks. Select the installed/cache
+package path reported by the client, then compare its actual files:
+
+```sh
+uv run --locked python -B scripts/inspect_skill_installation.py \
+  --candidate dist/plugin-packages/codex/plugins/product-development \
+  --installed /absolute/path/to/installed/product-development \
+  --discovery-root /absolute/path/to/consumer/.agents/skills
+```
+
+Pass only existing roots you deliberately want inspected; omit a discovery root
+that does not exist. A matching version alone is insufficient: inspect workflow
+fingerprints, changed/missing files, and duplicate groups. Begin or reload the
+chosen task using the client's supported controls, confirm its available skill
+catalog, and try a bounded read-only request such as:
+
+> Use $product-development:understand-codebase to explain how this repository's
+> main command reaches its output. Finish locally; do not change files.
+
+Retain the selected body's path and exact file SHA-256 alongside the session and
+outcome. This is explicit invocation, separate from automatic selection. If the
+session cannot discover the qualified skill, report that gap; explicitly reading
+a built body qualifies a procedure but does not prove plugin activation.
+`manage-codex-agents`, hook consent, role installation and role-selection evidence
+remain a separate optional workflow. No role setup is required for a parent to
+use the ordinary procedures.
+
+## Read-only installation diagnostic
+
+`scripts/inspect_skill_installation.py` prints JSON to stdout. It reads only the
+supplied candidate, repeatable `--installed` package paths and repeatable
+`--discovery-root` directories. It does not search the home/configuration, execute
+Codex, install, reload, delete or run inference. Run Python with `-B` to suppress
+interpreter bytecode writes. Missing or malformed inputs produce exit code 2;
+a completed inspection produces 0 even when differences exist, since this is a
+diagnostic rather than an adoption gate.
+
+Plugin identity/version and declared repository are reported separately from the
+workflow fingerprint. The fingerprint covers non-hidden regular files beneath
+`skills/`, including references; cache directories, credential filenames and
+`.pyc`, `.pem`, `.key` files are excluded. Descendant package links are rejected.
+Roles, hooks, runtime code and acquisition origin are outside that fingerprint.
+Discovery scans skip descendant directory links; explicitly supply a linked
+skill's resolved directory if it needs inspection. Coverage is limited to supplied
+locations. Reports contain metadata, paths and hashes, never skill or config text.
+
+Duplicate names and duplicate literal bodies are separate groups. Body comparison
+ignores frontmatter, normalizes CRLF and strips outer whitespace; it does not
+establish semantic equivalence or matching supporting references. Repeated
+observation of the same resolved file path is counted once. The candidate is not
+counted as an installed duplicate.
+
+Optional `--native-inventory /path/to/existing-plugin-list.json` retains that
+supplied JSON's digest as provenance. It does not infer discovery from installation
+or enablement, or guess an undocumented native output schema.
+`--session-observations /path/to/observations.json --session-id SESSION` can compare
+supplied observations to exact candidate file hashes using this narrow format:
+
+```json
+{
+  "kind": "active-session-skill-read",
+  "session_id": "SESSION",
+  "skills": [{"qualified_name": "product-development:understand-codebase",
+              "file_sha256": "<exact 64-character lowercase SHA-256>"}]
+}
+```
+
+A matching observation covers only its listed skill body. The diagnostic cannot
+authenticate supplied observations or establish that all references were loaded.
+Its `reload_verified` and `automatic_selection_verified` fields remain false;
+on-disk matches alone always leave active-session discovery unverified.
+
 ## Former dependency names
 
 These are procedure replacements, not exact behavioral aliases. They preserve
@@ -92,6 +188,11 @@ check, corrected interface, better tool or bounded reference when that fixes the
 cause. Add a discoverable skill only for a distinct recurring task. Test positive
 requests, near misses, outcomes and authority boundaries with independent
 expected evidence. Proxy keyword scores and larger catalogs do not prove value.
+
+The [author-only workflow trial corpus](../evals/owned-workflows/README.md) provides
+five bounded fixtures, independent assertions and explicit evaluation planning
+commands. Its offline tests qualify the graders; model usefulness and native
+discovery require separate observed trials.
 
 The local candidate retains existing package versions and is unreleased. Assign
 release versions, qualify native acquisition/discovery and update downstream

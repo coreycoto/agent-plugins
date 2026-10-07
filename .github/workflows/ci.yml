@@ -19,7 +19,7 @@ jobs:
       - run: uv run --locked python scripts/validate_agent_plugins.py
       - run: uv run --locked python scripts/build_codex_package.py
       - run: uv run --locked python scripts/build_codex_package.py --check
-      - run: uv run --locked ruff check adapters scripts tests
+      - run: uv run --locked ruff check adapters scripts tests evals/owned-workflows
 
       - name: Set up Node for archive and legacy hash contract tests
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6

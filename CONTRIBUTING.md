@@ -8,7 +8,7 @@ uv run --locked python scripts/validate_agent_plugins.py
 uv run --locked python scripts/build_codex_package.py
 uv run --locked python scripts/build_codex_package.py --check
 uv run --locked python scripts/verify_skill_dependencies.py
-uv run --locked ruff check adapters scripts tests
+uv run --locked ruff check adapters scripts tests evals/owned-workflows
 uv run --locked pytest
 ```
 
@@ -22,6 +22,11 @@ For local testing, add `dist/plugin-packages/codex` with the native marketplace
 command; the Git catalog uses exact npm versions after an authorized release.
 Public registry publication is a separate promotion gate, including account/scope
 ownership and package-version availability. Build and test never publish packages.
+
+Use the [installation diagnostic and local trial recipe](docs/owned-workflows.md#read-only-installation-diagnostic)
+to compare explicit candidate/cache and discovery roots without installing or
+changing client configuration. Run it with `python -B`; file matches and native
+inventory alone do not prove active-session discovery or reload.
 
 With Codex installed, run `uv run --locked python scripts/smoke_codex_agents.py`
 for an optional native check. It uses temporary homes and repositories, tests
