@@ -132,7 +132,12 @@ def test_committed_mixed_versions_cannot_qualify(candidate):
 
 def test_first_new_version_dispatch_is_allowed():
     require_first_publication([{'id': 1, 'display_title': 'Agent Plugins 0.9.0'},
-                               {'id': 2, 'display_title': 'Agent Plugins 0.9.1'}], 2, 1, '0.9.1')
+                               {'id': 2, 'display_title': 'Agent Plugins 0.9.2'}], 2, 1, '0.9.2')
+
+
+def test_known_failed_version_cannot_claim_initial_publication_when_history_is_missing():
+    with pytest.raises(ValueError, match='already attempted'):
+        require_first_publication([], 999, 1, '0.9.1')
 
 
 @pytest.mark.parametrize('status', ['completed', 'in_progress', 'queued'])

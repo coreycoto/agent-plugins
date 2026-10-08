@@ -48,7 +48,8 @@ def require_first_publication(runs: list[dict], run_id: int, run_attempt: int,
              and run["display_title"] == f"Agent Plugins {version}"]
     if run_attempt != 1:
         raise ValueError("Publication already attempted; inspect prior receipts before reviewed recovery")
-    if not prior and recovery_run is None and recovery_jobs is None:
+    if (not prior and recovery_run is None and recovery_jobs is None
+            and version != REVIEWED_FAILURE_VERSION):
         return {"publication_mode": "initial-publication"}
     if (version != REVIEWED_FAILURE_VERSION or len(prior) != 1
             or prior[0]["id"] != REVIEWED_FAILURE_RUN_ID
