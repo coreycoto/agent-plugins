@@ -16,6 +16,9 @@ REPOSITORY = Path(__file__).resolve().parents[1]
 REGISTRY = "https://npm.pkg.github.com"
 REPOSITORY_NAME = "coreycoto/agent-plugins"
 PLUGINS = ("communication", "product-development", "product-management", "project-management")
+REVIEWED_FAILURE_RUN_ID = 37705082572
+REVIEWED_FAILURE_VERSION = "0.9.1"
+REVIEWED_FAILURE_REVISION = "5be0b7b1dae318ebc0cf31eb5515226d9424c905"
 
 
 def package_name(plugin: str) -> str:
@@ -24,14 +27,70 @@ def package_name(plugin: str) -> str:
     return f"@coreycoto/agent-plugin-{plugin}"
 
 
+def require_successful_ci(runs: list[dict], revision: str) -> dict:
+    """The API selects source only; establish successful main CI from actual fields."""
+    matches = [run for run in runs if (
+        run.get("head_sha") == revision and run.get("head_branch") == "main"
+        and run.get("status") == "completed" and run.get("conclusion") == "success"
+        and run.get("event") == "push" and run.get("path") == ".github/workflows/ci.yml"
+        and (run.get("repository") or {}).get("full_name") == REPOSITORY_NAME)]
+    if not matches:
+        raise ValueError("No successful exact-source main CI")
+    return {"source_revision": revision, "ci_run_id": matches[0]["id"],
+            "ci_status": "completed", "ci_conclusion": "success"}
+
+
 def require_first_publication(runs: list[dict], run_id: int, run_attempt: int,
-                              version: str) -> None:
-    """A prior same-version dispatch holds the entire coordinated release."""
-    if run_attempt != 1 or any(
-        run["id"] != run_id and run["display_title"] == f"Agent Plugins {version}"
-        for run in runs
-    ):
+                              version: str, *, recovery_run: dict | None = None,
+                              recovery_jobs: list[dict] | None = None) -> dict:
+    """Allow only the explicitly reviewed qualification failure; never replay publication."""
+    prior = [run for run in runs if run["id"] != run_id
+             and run["display_title"] == f"Agent Plugins {version}"]
+    if run_attempt != 1:
         raise ValueError("Publication already attempted; inspect prior receipts before reviewed recovery")
+    if not prior and recovery_run is None and recovery_jobs is None:
+        return {"publication_mode": "initial-publication"}
+    if (version != REVIEWED_FAILURE_VERSION or len(prior) != 1
+            or prior[0]["id"] != REVIEWED_FAILURE_RUN_ID
+            or recovery_run is None or recovery_jobs is None):
+        raise ValueError("Publication already attempted; only the exact reviewed qualification failure may recover")
+    expected_run = {"id": REVIEWED_FAILURE_RUN_ID, "head_sha": REVIEWED_FAILURE_REVISION,
+                    "display_title": f"Agent Plugins {REVIEWED_FAILURE_VERSION}",
+                    "head_branch": "main", "event": "workflow_dispatch", "run_attempt": 1,
+                    "path": ".github/workflows/publish-plugins.yml", "status": "completed",
+                    "conclusion": "failure"}
+    if (any(recovery_run.get(key) != value for key, value in expected_run.items())
+            or (recovery_run.get("repository") or {}).get("full_name") != REPOSITORY_NAME
+            or len(recovery_jobs) != 2 or {job.get("name") for job in recovery_jobs} != {"qualify", "publish"}
+            or any(job.get("run_id") != REVIEWED_FAILURE_RUN_ID
+                   or job.get("run_attempt") != 1 or job.get("head_sha") != REVIEWED_FAILURE_REVISION
+                   or job.get("status") != "completed" for job in recovery_jobs)):
+        raise ValueError("Reviewed recovery requires complete exact-run and attempt evidence")
+    jobs = {job["name"]: job for job in recovery_jobs}
+    steps = jobs["qualify"].get("steps") or []
+    expected_steps = {"Require exact dispatch source and successful main CI": "failure",
+                      "Hold any previous attempt for this version": "skipped",
+                      "Build and qualify all four exact package candidates": "skipped"}
+    if (jobs["qualify"].get("conclusion") != "failure"
+            or jobs["publish"].get("conclusion") != "skipped"
+            or jobs["publish"].get("steps") != []
+            or any(len([step for step in steps if step.get("name") == name
+                        and step.get("status") == "completed" and step.get("conclusion") == conclusion]) != 1
+                   for name, conclusion in expected_steps.items())):
+        raise ValueError("Reviewed recovery requires positive proof that publication never started")
+    return {"publication_mode": "reviewed-qualification-recovery",
+            "prior_run_id": REVIEWED_FAILURE_RUN_ID, "prior_run_attempt": 1,
+            "prior_source_revision": REVIEWED_FAILURE_REVISION, "version": version,
+            "publication_never_started_verified": True}
+
+
+def require_unchanged_recovery_inputs(root: Path) -> None:
+    """The workflow repair cannot silently replace the already reviewed package candidate."""
+    result = subprocess.run(["git", "diff", "--exit-code", REVIEWED_FAILURE_REVISION, "HEAD", "--",
+                             "plugins", "adapters", "LICENSE", ".agents/plugins",
+                             "scripts/build_codex_package.py"], cwd=root, capture_output=True, check=False)
+    if result.returncode:
+        raise ValueError("Reviewed recovery requires unchanged package inputs and builder")
 
 
 def qualify_registry_metadata(metadata: dict, plugin: str) -> dict:

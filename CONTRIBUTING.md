@@ -99,3 +99,10 @@ Retain the exact source SHA, package version, archive digest, observed visibilit
 repository association and fresh download verification in the release receipt.
 Verify native materialization and fresh-session discovery separately from
 publication; a running desktop chat still requires a supported reload.
+
+The reviewed 0.9.1 qualification failure in run `37705082572` has one bounded
+recovery path: a fresh dispatch may name that exact run only after the workflow
+verifies its failed CI lookup, skipped build and never-started publication job.
+It also requires unchanged package inputs from that run's source. Any additional
+same-version dispatch or attempted publication restores the normal hold. This
+exception cannot authorize retries of an upload or ambiguous publication.

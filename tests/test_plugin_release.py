@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+import copy
 import hashlib
 import json
 import shutil
@@ -13,10 +14,14 @@ import yaml
 from build_codex_package import distribution_projection
 from qualify_plugin_release import (
     PLUGINS,
+    REVIEWED_FAILURE_REVISION,
+    REVIEWED_FAILURE_RUN_ID,
     qualify,
     qualify_registry_metadata,
     qualify_registry_version,
     require_first_publication,
+    require_successful_ci,
+    require_unchanged_recovery_inputs,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -142,6 +147,137 @@ def test_rerun_requires_reviewed_recovery():
         require_first_publication([], 2, 2, '0.9.1')
 
 
+def successful_ci():
+    return {'id': 37705011151, 'head_sha': REVIEWED_FAILURE_REVISION, 'head_branch': 'main',
+            'event': 'push', 'status': 'completed', 'conclusion': 'success',
+            'path': '.github/workflows/ci.yml', 'repository': {'full_name': 'coreycoto/agent-plugins'}}
+
+
+def test_exact_source_ci_is_qualified_from_actual_fields():
+    run = successful_ci()
+    receipt = require_successful_ci([run], REVIEWED_FAILURE_REVISION)
+    assert receipt['ci_run_id'] == 37705011151
+
+
+@pytest.mark.parametrize('field,value', [('head_sha', '0' * 40), ('head_branch', 'topic'),
+                                       ('event', 'pull_request'), ('status', 'in_progress'),
+                                       ('conclusion', 'failure'), ('path', '.github/workflows/other.yml'),
+                                       ('repository', {'full_name': 'other/agent-plugins'})])
+def test_ci_projection_cannot_replace_exact_main_push_success(field, value):
+    run = successful_ci()
+    run[field] = value
+    with pytest.raises(ValueError, match='exact-source main CI'):
+        require_successful_ci([run], REVIEWED_FAILURE_REVISION)
+
+
+@pytest.fixture
+def reviewed_failure():
+    run = {'id': REVIEWED_FAILURE_RUN_ID, 'head_sha': REVIEWED_FAILURE_REVISION,
+           'display_title': 'Agent Plugins 0.9.1', 'head_branch': 'main', 'event': 'workflow_dispatch',
+           'run_attempt': 1, 'path': '.github/workflows/publish-plugins.yml', 'status': 'completed',
+           'conclusion': 'failure', 'repository': {'full_name': 'coreycoto/agent-plugins'}}
+    base = {'run_id': REVIEWED_FAILURE_RUN_ID, 'run_attempt': 1,
+            'head_sha': REVIEWED_FAILURE_REVISION, 'status': 'completed'}
+    jobs = [{**base, 'name': 'qualify', 'conclusion': 'failure', 'steps': [
+        {'name': 'Require exact dispatch source and successful main CI', 'status': 'completed', 'conclusion': 'failure'},
+        {'name': 'Hold any previous attempt for this version', 'status': 'completed', 'conclusion': 'skipped'},
+        {'name': 'Build and qualify all four exact package candidates', 'status': 'completed', 'conclusion': 'skipped'},
+    ]}, {**base, 'name': 'publish', 'conclusion': 'skipped', 'steps': []}]
+    return run, jobs
+
+
+def test_only_reviewed_qualification_failure_may_use_fresh_dispatch(reviewed_failure):
+    run, jobs = reviewed_failure
+    receipt = require_first_publication([run], 999, 1, '0.9.1', recovery_run=run, recovery_jobs=jobs)
+    assert receipt['publication_never_started_verified']
+    assert receipt['prior_run_id'] == REVIEWED_FAILURE_RUN_ID
+    assert receipt['prior_source_revision'] == REVIEWED_FAILURE_REVISION
+
+
+@pytest.mark.parametrize('change', ['run_id', 'source', 'attempt', 'event', 'branch', 'workflow',
+                                  'run_status', 'run_conclusion', 'repository', 'missing_jobs',
+                                  'extra_job', 'job_attempt', 'job_source', 'job_run', 'job_status',
+                                  'publish_ran', 'publish_has_steps', 'missing_steps', 'build_ran',
+                                  'different_failure_step', 'duplicate_failure_step'])
+def test_recovery_requires_complete_positive_no_publication_evidence(reviewed_failure, change):
+    run, jobs = reviewed_failure
+    history = [copy.deepcopy(run)]
+    if change == 'run_id':
+        run['id'] = 123
+    elif change == 'source':
+        run['head_sha'] = '0' * 40
+    elif change == 'attempt':
+        run['run_attempt'] = 2
+    elif change == 'event':
+        run['event'] = 'push'
+    elif change == 'branch':
+        run['head_branch'] = 'topic'
+    elif change == 'workflow':
+        run['path'] = '.github/workflows/other.yml'
+    elif change == 'run_status':
+        run['status'] = 'in_progress'
+    elif change == 'run_conclusion':
+        run['conclusion'] = 'cancelled'
+    elif change == 'repository':
+        run['repository'] = None
+    elif change == 'missing_jobs':
+        jobs.pop()
+    elif change == 'extra_job':
+        jobs.append(copy.deepcopy(jobs[-1]))
+    elif change == 'job_attempt':
+        jobs[-1]['run_attempt'] = 2
+    elif change == 'job_source':
+        jobs[-1]['head_sha'] = '0' * 40
+    elif change == 'job_run':
+        jobs[-1]['run_id'] = 123
+    elif change == 'job_status':
+        jobs[-1]['status'] = 'queued'
+    elif change == 'publish_ran':
+        jobs[-1]['conclusion'] = 'failure'
+    elif change == 'publish_has_steps':
+        jobs[-1]['steps'] = [{'name': 'npm publish', 'conclusion': 'skipped'}]
+    elif change == 'missing_steps':
+        jobs[0]['steps'] = []
+    elif change == 'build_ran':
+        jobs[0]['steps'][-1]['conclusion'] = 'success'
+    elif change == 'different_failure_step':
+        jobs[0]['steps'][0]['name'] = 'Unrelated failure'
+    else:
+        jobs[0]['steps'].append(copy.deepcopy(jobs[0]['steps'][0]))
+    with pytest.raises(ValueError, match='Reviewed recovery'):
+        require_first_publication(history, 999, 1, '0.9.1', recovery_run=run, recovery_jobs=jobs)
+
+
+@pytest.mark.parametrize('change', ['extra_dispatch', 'other_version', 'rerun', 'no_prior'])
+def test_reviewed_recovery_is_one_time_and_cannot_exempt_other_attempts(reviewed_failure, change):
+    run, jobs = reviewed_failure
+    history = [run]
+    version = '0.9.1'
+    attempt = 1
+    if change == 'extra_dispatch':
+        history.append({**run, 'id': 987})
+    elif change == 'other_version':
+        version = '0.9.2'
+    elif change == 'rerun':
+        attempt = 2
+    else:
+        history = []
+    with pytest.raises(ValueError, match='already attempted'):
+        require_first_publication(history, 999, attempt, version, recovery_run=run, recovery_jobs=jobs)
+
+
+def test_recovery_source_repair_preserves_reviewed_package_inputs(candidate, monkeypatch):
+    root, revision, _, _ = candidate
+    monkeypatch.setattr('qualify_plugin_release.REVIEWED_FAILURE_REVISION', revision)
+    (root / 'workflow-repair.md').write_text('Reviewed read-only qualification repair')
+    commit(root)
+    require_unchanged_recovery_inputs(root)
+    (root / 'LICENSE').write_text('Changed package bytes')
+    commit(root)
+    with pytest.raises(ValueError, match='unchanged package inputs'):
+        require_unchanged_recovery_inputs(root)
+
+
 def package_metadata(visibility='private'):
     return {'visibility': visibility, 'name': 'agent-plugin-communication',
             'package_type': 'npm', 'repository': {'full_name': 'coreycoto/agent-plugins'}}
@@ -240,6 +376,23 @@ def test_workflow_contains_publication_and_independent_receipt_gates():
     assert '--cache "$RUNNER_TEMP/fresh-npm-cache"' in acquire['run']
     assert 'qualify_registry_version' in acquire['run']
     assert steps[-1]['if'] == 'always()'
+
+
+def test_workflow_ci_and_history_reads_do_not_use_fragile_outcome_filters():
+    workflow = yaml.safe_load((ROOT / '.github/workflows/publish-plugins.yml').read_text())
+    steps = workflow['jobs']['qualify']['steps']
+    ci = next(step for step in steps if step.get('name') == 'Require exact dispatch source and successful main CI')
+    assert 'head_sha=$GITHUB_SHA&per_page=100' in ci['run']
+    assert 'status=success' not in ci['run']
+    assert 'event=push' not in ci['run']
+    assert 'require_successful_ci' in ci['run']
+    history = next(step for step in steps if step.get('name') == 'Hold any previous attempt for this version')
+    assert 'event=workflow_dispatch' not in history['run']
+    assert 'test "$QUALIFICATION_FAILURE_RUN_ID" = 37705082572' in history['run']
+    assert '/attempts/1/jobs?per_page=100' in history['run']
+    assert 'receipts/recovery-run.json' in history['run']
+    assert 'receipts/recovery-jobs.json' in history['run']
+    assert 'require_unchanged_recovery_inputs' in history['run']
 
 
 def test_workflow_embedded_shell_is_syntactically_valid():
