@@ -91,7 +91,8 @@ def projection(source: Path, format: str = "codex", repository: Path = REPOSITOR
     files = source_files(source)
     manifest = json.loads(files["plugin.json"])
     extension = manifest.get("extensions", {}).get("com.openai", {})
-    if (source / "com.openai/agents/catalog.json").is_file():
+    if ((source / "com.openai/agents/catalog.json").is_file()
+            or (source / "com.openai/hooks/routes.json").is_file()):
         files.update({"com.openai/codex_agents/" + name: data
                       for name, data in runtime_projection(repository).items()})
     if format == "codex":

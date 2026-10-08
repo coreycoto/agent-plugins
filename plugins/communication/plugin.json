@@ -23,7 +23,8 @@
         "defaultPrompt": [
           "Write clearly for the intended audience while preserving meaning and evidence."
         ]
-      }
+      },
+      "hooks": "./com.openai/hooks/hooks.json"
     }
   }
 }

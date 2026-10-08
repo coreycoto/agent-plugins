@@ -6,6 +6,7 @@ loading, delegation, authorization and interpretation remain with the parent.
 from __future__ import annotations
 
 import contextlib
+import copy
 import hashlib
 import json
 import os
@@ -17,14 +18,29 @@ from pathlib import Path
 
 from manager import AgentError, digest, encode, plugin_manifest, read, safe_path
 
-HANDLER_VERSION = 1
+HANDLER_VERSION = 2
 MAX_RECORDS = 128
 MAX_FILES = 4096
 MAX_BYTES = 16 * 1024 * 1024
 MAX_FILE_BYTES = 1024 * 1024
 TASK_STATUSES = {"active", "paused", "blocked", "waiting_for_approval", "complete"}
-CONDITIONS = {"repeated_check_failure", "review_needed", "governance_mismatch"}
-EVIDENCE_CONDITIONS = {"check_failed", "check_passed", "governance_mismatch"}
+CHECKPOINT_CONDITIONS = {
+    "prose_review_requested", "communication_report_requested", "document_draft_requested",
+    "customer_evidence_recorded", "product_comparison_requested", "requirements_handoff_requested",
+    "experiment_results_recorded",
+}
+CHECKPOINT_OWNERS = {
+    "prose_review_requested": "communication",
+    "communication_report_requested": "communication",
+    "document_draft_requested": "communication",
+    "customer_evidence_recorded": "product-management",
+    "product_comparison_requested": "product-management",
+    "requirements_handoff_requested": "product-management",
+    "experiment_results_recorded": "product-management",
+}
+CONDITIONS = {"repeated_check_failure", "review_needed", "governance_mismatch"} | CHECKPOINT_CONDITIONS
+BASIC_EVIDENCE_CONDITIONS = {"check_failed", "check_passed", "governance_mismatch"}
+EVIDENCE_CONDITIONS = BASIC_EVIDENCE_CONDITIONS | CHECKPOINT_CONDITIONS | {"experiment_criteria_recorded"}
 
 
 def bounded(value: object, label: str, limit: int = 1024) -> str:
@@ -44,6 +60,59 @@ def exact_keys(value: object, required: set[str], optional: set[str] = frozenset
     if not isinstance(value, dict) or not required <= value.keys() or value.keys() - required - optional:
         raise AgentError("The workflow record has missing or unsupported fields.")
     return value
+
+
+def text(value: object, label: str) -> str:
+    value = bounded(value, label, 512)
+    if not value.strip():
+        raise AgentError(f"Provide a nonblank {label}.")
+    return value
+
+
+def route_assets(root: Path) -> tuple[list[dict], str]:
+    """Read only the owning plugin's route and, when needed, role assets."""
+    root = Path(root)
+    plugin = plugin_manifest(root)["name"]
+    path = root / "com.openai/hooks/routes.json"
+    safe_path(path)
+    data = read(path)
+    asset = json.loads(data)
+    exact_keys(asset, {"schemaVersion", "routes"})
+    if type(asset["schemaVersion"]) is not int or asset["schemaVersion"] != 1 or not isinstance(asset["routes"], list) or len(asset["routes"]) > 32:
+        raise AgentError("Unsupported workflow route catalog.")
+    for item in asset["routes"]:
+        exact_keys(item, {"condition", "skill", "description"}, {"role"})
+    catalog_data, names = b"", set()
+    if any("role" in item for item in asset["routes"]):
+        catalog_path = root / "com.openai/agents/catalog.json"
+        safe_path(catalog_path)
+        catalog_data = read(catalog_path)
+        catalog = json.loads(catalog_data)
+        if catalog.get("schemaVersion") != 1 or not isinstance(catalog.get("roles"), list):
+            raise AgentError("Unsupported role catalog.")
+        names = {entry["name"] for entry in catalog["roles"]}
+        namespace = bounded(catalog.get("namespace"), "role namespace", 16)
+        if any(not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) for name in names):
+            raise AgentError("The role catalog contains a role outside this plugin's namespace.")
+    routes, seen = [], set()
+    for item in asset["routes"]:
+        if not isinstance(item["condition"], str) or item["condition"] not in CONDITIONS or item["condition"] in seen:
+            raise AgentError("Unsupported or duplicate workflow route condition.")
+        if item["condition"] in CHECKPOINT_OWNERS and CHECKPOINT_OWNERS[item["condition"]] != plugin:
+            raise AgentError("The workflow checkpoint is not owned by this plugin.")
+        skill = bounded(item["skill"], "skill name", 128)
+        if not re.fullmatch(r"[a-z][a-z0-9-]*", skill):
+            raise AgentError("Workflow skills must belong to the owning plugin.")
+        skill_path = root / "skills" / skill / "SKILL.md"
+        safe_path(skill_path)
+        if not skill_path.is_file() or not skill_path.resolve(strict=True).is_relative_to(root.resolve() / "skills"):
+            raise AgentError("The workflow target skill is not packaged by this plugin.")
+        if "role" in item and (not isinstance(item["role"], str) or item["role"] not in names):
+            raise AgentError("The workflow role is not owned by this plugin.")
+        bounded(item["description"], "route description", 1024)
+        seen.add(item["condition"])
+        routes.append(dict(item))
+    return routes, digest(data + catalog_data)
 
 
 class WorkflowManager:
@@ -74,41 +143,7 @@ class WorkflowManager:
         return cls(root or Path(__file__).resolve().parents[2], home, Path(cwd), session_id)
 
     def _route_assets(self) -> tuple[list[dict], str]:
-        path = self.root / "com.openai/hooks/routes.json"
-        safe_path(path)
-        data = read(path)
-        asset = json.loads(data)
-        exact_keys(asset, {"schemaVersion", "routes"})
-        if type(asset["schemaVersion"]) is not int or asset["schemaVersion"] != 1 or not isinstance(asset["routes"], list) or len(asset["routes"]) > 32:
-            raise AgentError("Unsupported workflow route catalog.")
-        catalog_path = self.root / "com.openai/agents/catalog.json"
-        safe_path(catalog_path)
-        catalog_data = read(catalog_path)
-        catalog = json.loads(catalog_data)
-        if catalog.get("schemaVersion") != 1 or not isinstance(catalog.get("roles"), list):
-            raise AgentError("Unsupported role catalog.")
-        names = {entry["name"] for entry in catalog["roles"]}
-        namespace = bounded(catalog.get("namespace"), "role namespace", 16)
-        if any(not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) for name in names):
-            raise AgentError("The role catalog contains a role outside this plugin's namespace.")
-        routes, seen = [], set()
-        for item in asset["routes"]:
-            exact_keys(item, {"condition", "skill", "role", "description"})
-            if item["condition"] not in CONDITIONS or item["condition"] in seen:
-                raise AgentError("Unsupported or duplicate workflow route condition.")
-            skill = bounded(item["skill"], "skill name", 128)
-            if not re.fullmatch(r"[a-z][a-z0-9-]*", skill):
-                raise AgentError("Workflow skills must belong to the owning plugin.")
-            skill_path = self.root / "skills" / skill / "SKILL.md"
-            safe_path(skill_path)
-            if not skill_path.is_file() or not skill_path.resolve(strict=True).is_relative_to(self.root / "skills"):
-                raise AgentError("The workflow target skill is not packaged by this plugin.")
-            if item["role"] not in names:
-                raise AgentError("The workflow role is not owned by this plugin.")
-            bounded(item["description"], "route description", 1024)
-            seen.add(item["condition"])
-            routes.append(dict(item))
-        return routes, digest(data + catalog_data)
+        return route_assets(self.root)
 
     def _path(self, value: object, *, file: bool = False) -> str:
         value = bounded(value, "repository-relative path", 1024)
@@ -309,9 +344,15 @@ class WorkflowManager:
         except (AgentError, OSError, ValueError):
             return False
 
+    def _evidence_valid(self, evidence: dict) -> bool:
+        return self._reference_valid(evidence["reference"], evidence["reference_stat"]) and all(
+            self._reference_valid(link["reference"], link["stat"])
+            for link in evidence.get("linked_references", []))
+
     def _route_current(self, route: dict, task: dict, candidate: str | None) -> bool:
         return bool(candidate and route["candidate"] == candidate and route.get("scope") == self._scope(task)
                     and route.get("asset_digest") == self.asset_digest
+                    and route.get("handler_version") == HANDLER_VERSION
                     and all(self._reference_valid(item["reference"], item["stat"]) for item in route.get("evidence_receipts", []))
                     and (route.get("status") != "completed" or self._reference_valid(route.get("reference"), route.get("reference_stat"))))
 
@@ -323,7 +364,7 @@ class WorkflowManager:
         scope = self._scope(state["task"])
         return {"state": "ready" if candidate else "candidate_unknown", "plugin": self.plugin,
                 "candidate": candidate, "task": state["task"], "continuations": state["continuations"],
-                "evidence": [item for item in state["evidence"] if candidate and item["candidate"] == candidate and item.get("scope") == scope and self._reference_valid(item["reference"], item["reference_stat"])],
+                "evidence": [item for item in state["evidence"] if candidate and item["candidate"] == candidate and item.get("scope") == scope and self._evidence_valid(item)],
                 "routes": [{**item, "current": self._route_current(item, state["task"], candidate)} for item in state["routes"]]}
 
     def status(self) -> dict:
@@ -343,8 +384,52 @@ class WorkflowManager:
             self._save(state)
             return self._view(state)
 
+    def _details(self, condition: str, details: object) -> dict:
+        if condition == "prose_review_requested":
+            exact_keys(details, {"kind"})
+            if details["kind"] != "prose":
+                raise AgentError("Prose review requires the explicit prose kind.")
+        elif condition == "communication_report_requested":
+            exact_keys(details, {"verified_refs", "unfinished"})
+            self._text_list(details["unfinished"], "unfinished item", 0, 32)
+            refs = details["verified_refs"]
+            if not isinstance(refs, list) or len(refs) > 32 or not refs and not details["unfinished"]:
+                raise AgentError("A communication report requires verified references or unfinished items.")
+            details = {**details, "verified_refs": [self._path(reference, file=True) for reference in refs]}
+        elif condition == "document_draft_requested":
+            exact_keys(details, {"audience", "purpose"})
+            text(details["audience"], "audience")
+            text(details["purpose"], "purpose")
+        elif condition == "customer_evidence_recorded":
+            exact_keys(details, {"change"})
+            if not isinstance(details["change"], str) or details["change"] not in {"new", "conflicting"}:
+                raise AgentError("Customer evidence must identify new or conflicting evidence.")
+        elif condition == "product_comparison_requested":
+            exact_keys(details, {"options", "constraints"})
+            self._text_list(details["options"], "option", 2, 16)
+            if len(set(details["options"])) != len(details["options"]):
+                raise AgentError("Product comparison options must be unique.")
+            self._text_list(details["constraints"], "constraint", 1, 32)
+        elif condition == "requirements_handoff_requested":
+            exact_keys(details, {"direction", "outcome"})
+            text(details["direction"], "direction")
+            text(details["outcome"], "outcome")
+        elif condition in {"experiment_criteria_recorded", "experiment_results_recorded"}:
+            exact_keys(details, {"experiment_id"} | ({"criteria_observation_id"} if condition == "experiment_results_recorded" else set()))
+            identity(details["experiment_id"], "experiment id")
+            if condition == "experiment_results_recorded":
+                identity(details["criteria_observation_id"], "criteria observation id")
+        return copy.deepcopy(details)
+
+    @staticmethod
+    def _text_list(values: object, label: str, minimum: int, maximum: int) -> None:
+        if not isinstance(values, list) or not minimum <= len(values) <= maximum:
+            raise AgentError(f"Provide a bounded {label} list.")
+        for value in values:
+            text(value, label)
+
     def _evidence(self, evidence: object, task: dict) -> dict:
-        evidence = exact_keys(evidence, {"observation_id", "candidate", "condition", "reference"}, {"check_id", "signature"})
+        evidence = exact_keys(evidence, {"observation_id", "candidate", "condition", "reference"}, {"check_id", "signature", "details"})
         identity(evidence["observation_id"], "observation id")
         if not isinstance(evidence["candidate"], str) or not re.fullmatch(r"[0-9a-f]{64}", evidence["candidate"]):
             raise AgentError("Evidence requires a known candidate fingerprint.")
@@ -352,15 +437,42 @@ class WorkflowManager:
             raise AgentError("Unsupported typed evidence condition.")
         reference = self._path(evidence["reference"], file=True)
         if evidence["condition"].startswith("check_"):
+            if "details" in evidence:
+                raise AgentError("Check evidence does not accept checkpoint details.")
             identity(evidence.get("check_id"), "check id")
             bounded(evidence.get("signature"), "failure equivalence signature", 256)
             if not any(check["id"] == evidence["check_id"] for check in task["checks"]):
                 raise AgentError("The evidence check is not part of the explicit task.")
-        elif "check_id" in evidence or "signature" in evidence:
-            raise AgentError("Governance evidence must not claim a check result.")
+        else:
+            if "check_id" in evidence or "signature" in evidence:
+                raise AgentError("Checkpoint evidence must not claim a check result.")
+            if evidence["condition"] == "governance_mismatch":
+                if "details" in evidence:
+                    raise AgentError("Governance evidence does not accept checkpoint details.")
+            else:
+                condition = evidence["condition"]
+                route_condition = "experiment_results_recorded" if condition == "experiment_criteria_recorded" else condition
+                if not any(route["condition"] == route_condition for route in self.routes):
+                    raise AgentError("The evidence checkpoint is not configured by this plugin.")
+                evidence = {**evidence, "details": self._details(condition, evidence.get("details"))}
         return {**evidence, "reference": reference}
 
+    def _evidence_links(self, state: dict, evidence: dict) -> dict:
+        if evidence["condition"] == "communication_report_requested":
+            return {"linked_references": [{"reference": reference, "stat": self._reference_stat(reference)}
+                for reference in evidence["details"]["verified_refs"]]}
+        if evidence["condition"] != "experiment_results_recorded":
+            return {}
+        details = evidence["details"]
+        criteria = next((item for item in state["evidence"] if item["observation_id"] == details["criteria_observation_id"]), None)
+        if criteria is None or criteria["condition"] != "experiment_criteria_recorded" or criteria.get("details", {}).get("experiment_id") != details["experiment_id"] or criteria["scope"] != self._scope(state["task"]) or not self._evidence_valid(criteria):
+            raise AgentError("Results require previously recorded, unchanged criteria for the same experiment and task contract.")
+        link = {"observation_id": criteria["observation_id"], "reference": criteria["reference"],
+                "stat": criteria["reference_stat"], "payload_digest": criteria["payload_digest"]}
+        return {"linked_references": [link]}
+
     def _append_evidence(self, state: dict, evidence: dict) -> None:
+        links = self._evidence_links(state, evidence)
         existing = next((item for item in state["evidence"] if item["observation_id"] == evidence["observation_id"]), None)
         payload = dict(evidence)
         if existing:
@@ -371,6 +483,7 @@ class WorkflowManager:
             raise AgentError("The workflow evidence record limit has been reached.")
         check = next((check for check in state["task"]["checks"] if check["id"] == evidence.get("check_id")), None)
         state["evidence"].append({**payload, "scope": self._scope(state["task"]),
+                                  **links,
                                   "reference_stat": self._reference_stat(payload["reference"]),
                                   "payload_digest": digest(encode(payload)),
                                   **({"checker": check["checker"], "environment": check["environment"], "command": check["command"]} if check else {})})
@@ -423,9 +536,12 @@ class WorkflowManager:
         scope = self._scope(task)
         evidence = [item for item in state["evidence"] if item["candidate"] == candidate and item["scope"] == scope]
         conditions = {"review_needed": []} if task["review_requested"] else {}
-        mismatches = [item["reference"] for item in evidence if item["condition"] == "governance_mismatch" and self._reference_valid(item["reference"], item["reference_stat"])]
+        mismatches = [item["reference"] for item in evidence if item["condition"] == "governance_mismatch" and self._evidence_valid(item)]
         if mismatches:
             conditions["governance_mismatch"] = mismatches
+        for item in evidence:
+            if item["condition"] in CHECKPOINT_CONDITIONS and self._evidence_valid(item):
+                conditions.setdefault(item["condition"], []).append(item["reference"])
         for check in task["checks"]:
             streak, signature = [], None
             unknown_after = max((item["after"] for item in state.get("unknown_checks", [])
@@ -435,7 +551,7 @@ class WorkflowManager:
                     continue
                 if item.get("check_id") != check["id"] or item.get("checker") != check["checker"] or item.get("environment") != check["environment"] or item.get("command") != check["command"]:
                     continue
-                if not self._reference_valid(item["reference"], item["reference_stat"]):
+                if not self._evidence_valid(item):
                     streak, signature = [], None
                     continue
                 if item["condition"] == "check_passed":
@@ -467,25 +583,31 @@ class WorkflowManager:
                 continue
             if len(state["routes"]) >= MAX_RECORDS:
                 raise AgentError("The workflow route record limit has been reached.")
+            selected = [entry for entry in state["evidence"] if entry["candidate"] == candidate and entry["scope"] == scope
+                        and entry["reference"] in conditions[route["condition"]] and self._evidence_valid(entry)
+                        and (entry["condition"] == route["condition"] or route["condition"] == "repeated_check_failure" and entry["condition"] == "check_failed")]
             item = {"id": key, **route, "candidate": candidate, "scope": scope, "asset_digest": self.asset_digest,
+                    "handler_version": HANDLER_VERSION,
                     "status": "nominated", "evidence_references": sorted(set(conditions[route["condition"]])),
-                    "evidence_receipts": [{"reference": item["reference"], "stat": item["reference_stat"]}
-                        for item in state["evidence"] if item["candidate"] == candidate and item["scope"] == scope
-                        and item["reference"] in conditions[route["condition"]]
-                        and self._reference_valid(item["reference"], item["reference_stat"])]}
+                    "evidence_receipts": [{"reference": entry["reference"], "stat": entry["reference_stat"]} for entry in selected]}
+            item["evidence_receipts"].extend(link for entry in selected for link in entry.get("linked_references", []))
+            item["evidence_references"] = sorted({receipt["reference"] for receipt in item["evidence_receipts"]})
             state["routes"].append(item)
             new.append(item)
         return new
 
     def _instructions(self, routes: list[dict]) -> str:
-        return "\n".join(
-            f"Workflow nomination {route['id']} for candidate {route['candidate']}: {route['description']} "
-            f"Use ${self.plugin}:{route['skill']}; delegate to {route['role']} only if the registered role is currently available and useful. "
-            "The parent must assign bounded work and preserve current scope, instructions and delivery authority. "
-            "This nomination grants no authority and does not load a skill or spawn an agent. "
-            f"Evidence references: {', '.join(route['evidence_references']) or 'explicit task review request'}. "
-            "Record assignment and completion through the workflow tools."
-            for route in routes)
+        lines = ["Read codex_workflow_status for nomination evidence and details. The parent assigns bounded work, "
+                 "preserves current scope, instructions and delivery authority, and records assignment/completion. "
+                 "Nominations do not execute workflows or grant authority."]
+        if routes:
+            lines.append("Candidate: " + routes[0]["candidate"])
+        for route in routes:
+            line = f"{route['id']} {route['condition']}: use ${self.plugin}:{route['skill']}."
+            if "role" in route:
+                line += f" Delegate to {route['role']} only if currently available and useful."
+            lines.append(line)
+        return "\n".join(lines)
 
     def _event_workdir(self, event: dict) -> bool:
         tool_input = event.get("tool_input")
@@ -648,11 +770,55 @@ TASK_SCHEMA = {"type": "object", "properties": {
     "checks": {"type": "array", "items": _CHECK_SCHEMA, "maxItems": 32},
     "review_requested": {"type": "boolean"}, "continuation_limit": {"type": "integer", "minimum": 0, "maximum": 1}},
     "required": ["id", "issue", "delivery_stage", "status", "paths", "checks", "review_requested", "continuation_limit"], "additionalProperties": False}
-EVIDENCE_SCHEMA = {"type": "object", "properties": {
-    "observation_id": {**_STRING, "maxLength": 128}, "candidate": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "condition": {"type": "string", "enum": sorted(EVIDENCE_CONDITIONS)}, "reference": _STRING,
-    "check_id": {**_STRING, "maxLength": 128}, "signature": {**_STRING, "maxLength": 256}},
-    "required": ["observation_id", "candidate", "condition", "reference"], "additionalProperties": False}
+_TEXT_SCHEMA = {"type": "string", "minLength": 1, "maxLength": 512, "pattern": r"^(?![\s\S]*[\u0000-\u001f])(?=.*\S)[\s\S]+$"}
+_ID_SCHEMA = {"type": "string", "minLength": 1, "maxLength": 128, "pattern": r"^[A-Za-z0-9][A-Za-z0-9_.:-]*$(?![\s\S])"}
+
+
+def _detail_schema(properties: dict, **extra: object) -> dict:
+    return {"type": "object", "properties": properties, "required": list(properties),
+            "additionalProperties": False, **extra}
+
+
+DETAIL_SCHEMAS = {
+    "prose_review_requested": _detail_schema({"kind": {"const": "prose"}}),
+    "communication_report_requested": _detail_schema({
+        "verified_refs": {"type": "array", "items": _STRING, "maxItems": 32},
+        "unfinished": {"type": "array", "items": _TEXT_SCHEMA, "maxItems": 32}},
+        anyOf=[{"properties": {"verified_refs": {"minItems": 1}}}, {"properties": {"unfinished": {"minItems": 1}}}]),
+    "document_draft_requested": _detail_schema({"audience": _TEXT_SCHEMA, "purpose": _TEXT_SCHEMA}),
+    "customer_evidence_recorded": _detail_schema({"change": {"type": "string", "enum": ["new", "conflicting"]}}),
+    "product_comparison_requested": _detail_schema({
+        "options": {"type": "array", "items": _TEXT_SCHEMA, "minItems": 2, "maxItems": 16, "uniqueItems": True},
+        "constraints": {"type": "array", "items": _TEXT_SCHEMA, "minItems": 1, "maxItems": 32}}),
+    "requirements_handoff_requested": _detail_schema({"direction": _TEXT_SCHEMA, "outcome": _TEXT_SCHEMA}),
+    "experiment_criteria_recorded": _detail_schema({"experiment_id": _ID_SCHEMA}),
+    "experiment_results_recorded": _detail_schema({"experiment_id": _ID_SCHEMA, "criteria_observation_id": _ID_SCHEMA}),
+}
+
+
+def evidence_schema(conditions: set[str]) -> dict:
+    branches = []
+    for condition in sorted(conditions):
+        branch = {"properties": {"condition": {"const": condition}}}
+        if condition in DETAIL_SCHEMAS:
+            branch["properties"]["details"] = DETAIL_SCHEMAS[condition]
+            branch["required"] = ["details"]
+            branch["not"] = {"anyOf": [{"required": ["check_id"]}, {"required": ["signature"]}]}
+        elif condition.startswith("check_"):
+            branch["required"] = ["check_id", "signature"]
+            branch["not"] = {"required": ["details"]}
+        else:
+            branch["not"] = {"anyOf": [{"required": ["check_id"]}, {"required": ["signature"]}, {"required": ["details"]}]}
+        branches.append(branch)
+    return {"type": "object", "properties": {
+        "observation_id": _ID_SCHEMA, "candidate": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"},
+        "condition": {"type": "string", "enum": sorted(conditions)}, "reference": _STRING,
+        "check_id": _ID_SCHEMA, "signature": {**_STRING, "maxLength": 256}, "details": {}},
+        "required": ["observation_id", "candidate", "condition", "reference"], "additionalProperties": False,
+        "oneOf": branches}
+
+
+EVIDENCE_SCHEMA = evidence_schema(EVIDENCE_CONDITIONS)
 
 
 def _definition(name: str, description: str, extra: dict, required: list[str], *, readonly: bool = False) -> dict:
@@ -671,6 +837,18 @@ TOOL_DEFINITIONS = [
         "agent_id": {**_STRING, "maxLength": 128}, "outcome": {"type": "string", "enum": ["passed", "findings", "unknown"]}, "reference": _STRING}, ["route_id", "status"]),
     _definition("codex_workflow_status", "Read private task, current candidate, evidence references and route freshness; does not create state.", {}, [], readonly=True),
 ]
+
+
+def tool_definitions(root: Path) -> list[dict]:
+    """Constrain typed checkpoint discovery to the owning plugin's routes."""
+    safe_path(Path(root).absolute())
+    routes, _ = route_assets(Path(root).resolve(strict=True))
+    conditions = BASIC_EVIDENCE_CONDITIONS | {route["condition"] for route in routes if route["condition"] in CHECKPOINT_CONDITIONS}
+    if "experiment_results_recorded" in conditions:
+        conditions.add("experiment_criteria_recorded")
+    definitions = copy.deepcopy(TOOL_DEFINITIONS)
+    next(item for item in definitions if item["name"] == "codex_workflow_evidence")["inputSchema"]["properties"]["evidence"] = evidence_schema(conditions)
+    return definitions
 
 
 def dispatch(name: str, args: dict, root: Path | None = None) -> dict:

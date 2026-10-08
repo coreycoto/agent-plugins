@@ -11,6 +11,16 @@ from jsonschema import Draft202012Validator
 
 from author_checks.owned_workflows import validate_markdown_references, validate_source_lineage
 
+CHECKPOINT_OWNERS = {
+    "prose_review_requested": "communication",
+    "communication_report_requested": "communication",
+    "document_draft_requested": "communication",
+    "customer_evidence_recorded": "product-management",
+    "product_comparison_requested": "product-management",
+    "requirements_handoff_requested": "product-management",
+    "experiment_results_recorded": "product-management",
+}
+
 
 def _openai_settings(manifest: dict[str, object]) -> dict[str, object]:
     extensions = manifest.get("extensions", {})
@@ -83,32 +93,40 @@ def _validate_workflow_routes(root: Path) -> list[str]:
         return []
     try:
         data = _read_manifest_file(path)
-        catalog = _read_manifest_file(root / "com.openai/agents/catalog.json")
-        namespace = catalog.get("namespace")
-        if not isinstance(namespace, str) or not re.fullmatch(r"[a-z][a-z0-9]{1,15}", namespace):
-            raise ValueError("invalid owned role namespace")
-        roles = catalog.get("roles")
-        if catalog.get("schemaVersion") != 1 or not isinstance(roles, list):
-            raise ValueError("invalid owned role catalog")
-        names = {role["name"] for role in roles}
-        if any(not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) for name in names):
-            raise ValueError("roles must belong to the owning plugin namespace")
+        manifest = _read_manifest_file(root / "plugin.json")
+        catalog_path = root / "com.openai/agents/catalog.json"
+        names = set()
+        if catalog_path.exists() or catalog_path.is_symlink():
+            catalog = _read_manifest_file(catalog_path)
+            namespace = catalog.get("namespace")
+            if not isinstance(namespace, str) or not re.fullmatch(r"[a-z][a-z0-9]{1,15}", namespace):
+                raise ValueError("invalid owned role namespace")
+            roles = catalog.get("roles")
+            if catalog.get("schemaVersion") != 1 or not isinstance(roles, list):
+                raise ValueError("invalid owned role catalog")
+            names = {role["name"] for role in roles}
+            if any(not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) for name in names):
+                raise ValueError("roles must belong to the owning plugin namespace")
         routes = data.get("routes")
         if (set(data) != {"schemaVersion", "routes"} or type(data["schemaVersion"]) is not int
                 or data["schemaVersion"] != 1 or not isinstance(routes, list) or len(routes) > 32):
             raise ValueError("invalid workflow route catalog")
         seen = set()
         for route in routes:
-            if not isinstance(route, dict) or set(route) != {"condition", "skill", "role", "description"}:
+            if (not isinstance(route, dict) or not {"condition", "skill", "description"} <= route.keys()
+                    or route.keys() - {"condition", "skill", "role", "description"}):
                 raise ValueError("unsupported workflow route fields")
             condition, skill = route["condition"], route["skill"]
-            if condition not in {"repeated_check_failure", "review_needed", "governance_mismatch"} or condition in seen:
+            if condition not in {"repeated_check_failure", "review_needed", "governance_mismatch", *CHECKPOINT_OWNERS} or condition in seen:
                 raise ValueError("unsupported or duplicate workflow route condition")
+            if condition in CHECKPOINT_OWNERS and CHECKPOINT_OWNERS[condition] != manifest["name"]:
+                raise ValueError("workflow checkpoint must belong to the owning plugin")
             if not isinstance(skill, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", skill):
                 raise ValueError("workflow skills must belong to the owning plugin")
             target = root / "skills" / skill / "SKILL.md"
             target.resolve(strict=True).relative_to((root / "skills").resolve())
-            if target.is_symlink() or not target.is_file() or route["role"] not in names:
+            if (target.is_symlink() or not target.is_file()
+                    or ("role" in route and (not isinstance(route["role"], str) or route["role"] not in names))):
                 raise ValueError("workflow target skill and role must be packaged by the owning plugin")
             description = route["description"]
             if not isinstance(description, str) or not 0 < len(description) <= 1024 or any(ord(c) < 32 for c in description):

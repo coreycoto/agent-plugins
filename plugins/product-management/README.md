@@ -29,3 +29,6 @@ covers authorized execution and tracking; Product Development covers
 implementation; Communication covers prose. Drafting a brief or experiment
 does not authorize outreach, live instrumentation, tracker updates, rollout or
 provider mutations.
+
+Product Management's optional evidence-based skill routes are documented in
+the [workflow hooks guide](https://github.com/coreycoto/agent-plugins/blob/main/docs/workflow-hooks.md).

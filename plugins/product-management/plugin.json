@@ -16,5 +16,10 @@
     "customer-evidence",
     "product-requirements",
     "roadmap"
-  ]
+  ],
+  "extensions": {
+    "com.openai": {
+      "hooks": "./com.openai/hooks/hooks.json"
+    }
+  }
 }

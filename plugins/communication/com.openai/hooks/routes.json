@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "condition": "prose_review_requested",
+      "skill": "edit-prose",
+      "description": "Review the requested prose candidate while preserving its meaning, factual evidence and necessary limits."
+    },
+    {
+      "condition": "communication_report_requested",
+      "skill": "agent-communication",
+      "description": "Prepare the requested progress or handoff report from recorded verification references and unfinished work; preserve recipient and publication authority."
+    },
+    {
+      "condition": "document_draft_requested",
+      "skill": "write-prose",
+      "description": "Draft the requested document for its recorded audience and purpose, using the supplied evidence and consumer terminology."
+    }
+  ]
+}

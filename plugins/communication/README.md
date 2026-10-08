@@ -26,3 +26,6 @@ Product discovery belongs to Product Management, delivery tracking to Project
 Management and code changes to Product Development. Campaign strategy and brand
 positioning need their own context. These skills do not grant messaging or
 publication authority.
+
+Communication's optional prose and handoff hook routes are documented in the
+[workflow hooks guide](https://github.com/coreycoto/agent-plugins/blob/main/docs/workflow-hooks.md).
