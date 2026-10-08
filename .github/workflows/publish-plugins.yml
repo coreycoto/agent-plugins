@@ -12,6 +12,11 @@ on:
         description: Exact new coordinated public plugin version
         required: true
         type: string
+      qualification_failure_run_id:
+        description: Only reviewed pre-publication failure 37705082572 for version 0.9.1
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: read
@@ -23,6 +28,7 @@ concurrency:
 env:
   RELEASE_REVISION: ${{ inputs.source_revision }}
   RELEASE_VERSION: ${{ inputs.version }}
+  QUALIFICATION_FAILURE_RUN_ID: ${{ inputs.qualification_failure_run_id }}
 
 jobs:
   qualify:
@@ -36,6 +42,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Require exact dispatch source and successful main CI
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,27 +50,43 @@ jobs:
           mkdir -p receipts
           test "$GITHUB_SHA" = "$RELEASE_REVISION"
           test "$(gh api "repos/$GITHUB_REPOSITORY" --jq .visibility)" = public
-          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&status=success&event=push" > receipts/ci.json
-          python3 - <<'PY'
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&per_page=100" > receipts/ci.json
+          PYTHONPATH=scripts python3 - <<'PY'
           import json, os
           from pathlib import Path
-          runs = json.loads(Path('receipts/ci.json').read_text())['workflow_runs']
-          assert any(run['head_sha'] == os.environ['GITHUB_SHA'] and run['head_branch'] == 'main'
-                     and run['conclusion'] == 'success' and run['event'] == 'push' for run in runs), 'No successful exact-source main CI'
+          from qualify_plugin_release import require_successful_ci
+          pages = json.loads(Path('receipts/ci.json').read_text())
+          runs = [run for page in pages for run in page['workflow_runs']]
+          receipt = require_successful_ci(runs, os.environ['GITHUB_SHA'])
+          Path('receipts/ci-qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
           PY
       - name: Hold any previous attempt for this version
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/workflows/publish-plugins.yml/runs?event=workflow_dispatch&per_page=100" > receipts/publication-history.json
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/workflows/publish-plugins.yml/runs?per_page=100" > receipts/publication-history.json
+          if test -n "$QUALIFICATION_FAILURE_RUN_ID"; then
+            # This is a reviewed fresh dispatch after qualification failed, never a job rerun.
+            test "$QUALIFICATION_FAILURE_RUN_ID" = 37705082572
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$QUALIFICATION_FAILURE_RUN_ID" > receipts/recovery-run.json
+            gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$QUALIFICATION_FAILURE_RUN_ID/attempts/1/jobs?per_page=100" > receipts/recovery-jobs.json
+          fi
           PYTHONPATH=scripts python3 - <<'PY'
           import json, os
           from pathlib import Path
-          from qualify_plugin_release import require_first_publication
+          from qualify_plugin_release import require_first_publication, require_unchanged_recovery_inputs
           pages = json.loads(Path('receipts/publication-history.json').read_text())
           runs = [run for page in pages for run in page['workflow_runs']]
-          require_first_publication(runs, int(os.environ['GITHUB_RUN_ID']),
-                                    int(os.environ['GITHUB_RUN_ATTEMPT']), os.environ['RELEASE_VERSION'])
+          recovery = {}
+          if os.environ['QUALIFICATION_FAILURE_RUN_ID']:
+              job_pages = json.loads(Path('receipts/recovery-jobs.json').read_text())
+              recovery = {'recovery_run': json.loads(Path('receipts/recovery-run.json').read_text()),
+                          'recovery_jobs': [job for page in job_pages for job in page['jobs']]}
+          receipt = require_first_publication(runs, int(os.environ['GITHUB_RUN_ID']),
+                                              int(os.environ['GITHUB_RUN_ATTEMPT']), os.environ['RELEASE_VERSION'], **recovery)
+          if recovery:
+              require_unchanged_recovery_inputs(Path.cwd())
+          Path('receipts/publication-history-qualification.json').write_text(json.dumps(receipt, indent=2) + '\n')
           PY
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
