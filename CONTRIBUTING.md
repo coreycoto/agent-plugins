@@ -80,9 +80,9 @@ preserves publication, metadata and fresh acquisition receipts. Do not rerun a
 failed publication or dispatch the same version again: inspect each package's
 actual registry state and retained receipts before a separately reviewed recovery.
 
-GitHub initially creates packages as private. Inspect each package's repository
-association and visibility, and use its GitHub package settings to make the four
-public plugin packages public. This visibility change is irreversible. Keep
+Inspect each package's actual repository association and visibility; do not infer
+visibility from repository access or the publish command. If a public plugin was
+created as private, use its GitHub package settings to make it public. This visibility change is irreversible. Keep
 Agent Development private in its separate publisher. A successful publish or
 acquisition alone does not qualify public visibility.
 
