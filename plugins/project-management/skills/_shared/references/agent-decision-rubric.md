@@ -13,6 +13,25 @@ consumer policy or product intent, present the gap and ask before choosing a
 policy. Keep proposed changes small, explain their rationale, and make the
 affected records clear.
 
+## Delivery authority
+
+Resolve the requested endpoint from the task and existing authorization. Continue
+routine repairs, relevant checks and read-only diagnosis within that scope.
+Do not create another approval gate merely because a workflow changes phase.
+
+Before an uncovered promotion, prepare the concrete candidate and identify the
+actions, repositories or recipients, environments, exact artifacts and any
+attempt limit. One user decision can cover several ready steps when each is
+explicitly included and consumer policy permits it. Keep their review records
+and provider receipts distinct. A plan that does not yet exist, a future artifact
+or an excluded stage cannot inherit exact-candidate approval.
+
+Request a new decision for changed scope, a violated candidate restriction,
+consumed one-shot authority or an uncovered consequential action. Reconcile
+failed or ambiguous writes before proposing another attempt. If a client rejects
+an authorized action, report its stated reason and use its supported approval
+path; skill instructions cannot override the denial.
+
 ## GitHub Work
 
 Use the `gh-steward` plugin when a request requires composing or validating a
