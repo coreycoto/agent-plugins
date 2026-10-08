@@ -13,8 +13,11 @@ one endpoint does not establish the next.
 Prepare the concrete candidate before asking about an uncovered promotion.
 Check the final diff, relevant validation, unresolved findings and source or
 artifact identity. Describe the problem and resulting behavior in reviewer-facing
-text, with validation and material limitations. Use the consumer's templates
-where required; omit conversational history and abandoned approaches.
+text, with validation and material limitations. When several ready steps need a
+decision, present them together with their destinations, exact artifacts and
+limits under the [delivery authority rubric](../_shared/references/agent-decision-rubric.md#delivery-authority).
+Use the consumer's templates where required; omit conversational history and
+abandoned approaches.
 
 For authorized delegation, assign `pm_release_preparer` bounded local files,
 accepted version or release scope, and required evidence. Read the
