@@ -29,7 +29,7 @@ def regular(path: Path) -> bytes:
 
 def runtime_projection(repository: Path = REPOSITORY) -> dict[str, bytes]:
     return {name: regular(repository / "adapters/codex_agents" / name)
-            for name in ("manager.py", "server.py", "hook.py")}
+            for name in ("manager.py", "server.py", "hook.py", "workflow.py", "workflow_hook.py")}
 
 
 def source_files(source: Path) -> dict[str, bytes]:

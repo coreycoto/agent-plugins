@@ -9,6 +9,7 @@ import os
 import queue
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 from pathlib import Path
@@ -102,6 +103,51 @@ def status(rpc: Rpc, thread_id: str, repo: Path) -> dict:
     })["structuredContent"]
 
 
+def workflow_probe(rpc: Rpc, thread_id: str, repo: Path, package: Path, env: dict) -> dict:
+    """Exercise connected tools and the command envelope, without a model turn."""
+    def call(name: str, **arguments) -> dict:
+        response = rpc.call("mcpServer/tool/call", {
+            "threadId": thread_id, "server": rpc.server, "tool": name,
+            "arguments": {"cwd": str(repo), "session_id": thread_id, **arguments},
+        })
+        assert json.loads(response["content"][0]["text"]) == response["structuredContent"]
+        return response["structuredContent"]
+
+    assert call("codex_workflow_status")["state"] == "absent"
+    source = repo / "workflow-source.txt"
+    source.write_text("Isolated workflow qualification fixture.\n")
+    subprocess.run(["git", "-C", str(repo), "add", source.name], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(repo), "-c", "user.name=Qualification fixture", "-c",
+                    "user.email=qualification@example.invalid", "commit", "-qm", "fixture"],
+                   check=True, capture_output=True)
+    task = {"id": "qualification", "issue": "isolated fixture", "delivery_stage": "local qualification",
+            "status": "active", "paths": [source.name], "checks": [],
+            "review_requested": False, "continuation_limit": 1}
+    assert call("codex_workflow_task", task=task)["state"] == "ready"
+    evidence_file = repo / "workflow-evidence.json"
+    evidence_file.write_text('{"observation":"qualification fixture"}\n')
+    plugin = json.loads((package / ".codex-plugin/plugin.json").read_text())["name"]
+    if plugin == "product-development":
+        task["review_requested"] = True
+        call("codex_workflow_task", task=task)
+    else:
+        call("codex_workflow_evidence", evidence={"observation_id": "fixture", "condition": "governance_mismatch",
+             "candidate": call("codex_workflow_status")["candidate"], "reference": evidence_file.name})
+    command = package / "com.openai/codex_agents/workflow_hook.py"
+    result = subprocess.run([sys.executable, "-S", str(command)], cwd=repo, env=env, text=True,
+                            input=json.dumps({"hook_event_name": "SessionStart", "cwd": str(repo), "session_id": thread_id}),
+                            capture_output=True, check=True, timeout=10)
+    output = json.loads(result.stdout)
+    validate(output, HOOK_SCHEMA)
+    routes = call("codex_workflow_status")["routes"]
+    assert len(routes) == 1 and routes[0]["current"] and routes[0]["status"] == "nominated"
+    call("codex_workflow_route", route_id=routes[0]["id"], status="assigned")
+    completed = call("codex_workflow_route", route_id=routes[0]["id"], status="completed",
+                     outcome="passed", reference=evidence_file.name)
+    assert completed["routes"][0]["status"] == "completed"
+    return {"connectedTools": True, "commandEnvelope": True, "nativeEventDispatch": "unverified"}
+
+
 def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
     plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
     home, repo, catalog = work / "user", work / "repo", work / "marketplace"
@@ -113,12 +159,16 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         f"model = \"gpt-6.1-sol\"\n[projects.{json.dumps(str(repo))}]\ntrust_level = \"trusted\"\n")
     destination = catalog / "plugins" / plugin
     shutil.copytree(package, destination, ignore=shutil.ignore_patterns("__pycache__"))
-    # Qualify catalog growth from the original PD pilot or a smaller owned catalog.
+    # Qualify catalog growth from a smaller catalog that retains every route target.
     role_catalog = destination / "com.openai/agents/catalog.json"
     expanded_catalog = role_catalog.read_bytes()
     previous_catalog = json.loads(expanded_catalog)
-    previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in {
-        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}] if plugin == "product-development" else previous_catalog["roles"][:2]
+    route_path = destination / "com.openai/hooks/routes.json"
+    route_roles = ({route["role"] for route in json.loads(route_path.read_bytes())["routes"]}
+                   if route_path.is_file() else set())
+    retained = ({"pd_explorer", "pd_reviewer", "pd_architecture_adviser"}
+                if plugin == "product-development" else {entry["name"] for entry in previous_catalog["roles"][:2]})
+    previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in retained | route_roles]
     initial_count, final_count = len(previous_catalog["roles"]), len(json.loads(expanded_catalog)["roles"])
     role_catalog.write_text(json.dumps(previous_catalog))
     marketplace = catalog / ".agents/plugins/marketplace.json"
@@ -164,6 +214,8 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         form_method = "openai/elicitation/create" if expected_mode == "openaiForm" else "elicitation/create"
         assert len(rpc.forms) == 2 and all(form["mode"] == expected_mode for form in rpc.forms)
         form_modes = [form["mode"] for form in rpc.forms]
+        workflow = (workflow_probe(rpc, thread_id, repo, destination, env)
+                    if (package / "com.openai/hooks/routes.json").is_file() else {"state": "not_configured"})
     finally:
         rpc.close()
     # Simulate a native package upgrade only in this isolated local source.
@@ -200,7 +252,7 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
             "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": form_method, "formModes": form_modes,
             "declinePreservedFiles": True, "install": "installed", "upgrade": "upgraded", "hookOutputSchemaVerified": True,
             "generatedRoles": sorted(path.name for path in target.glob("*.toml")),
-            "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending"}
+            "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending", "workflow": workflow}
 
 
 def main() -> int:

@@ -61,6 +61,11 @@ namespaces, hooks, consent summaries, install directories
 and upgrade state remain independent. A change to one plugin cannot replace
 another plugin's owned roles.
 
+Codex workflow hooks can opt into task records that use deterministic evidence
+to nominate an installed skill or an eligible agent role. See the
+[workflow hooks guide](docs/workflow-hooks.md) for task setup, route review,
+evidence rules, lifecycle semantics and local activation limits.
+
 Codex owns package acquisition through its native `npm` source, the package
 format used by GitHub Packages; install scripts are disabled. GitHub registry
 reads require GitHub authentication, including for public packages. See

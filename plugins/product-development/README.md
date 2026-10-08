@@ -202,3 +202,6 @@ References: [portable plugin packaging](https://developers.openai.com/plugins/bu
 the [plugin onboarding extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#plugin-onboarding),
 the [current form extension](https://github.com/openai/mcp-extensions/blob/main/docs/spec.md#openai-form-elicitation),
 and [Codex's rich form client implementation](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/rmcp-client/src/elicitation_client_service.rs).
+
+Product Development's optional evidence-based workflow hook routes are
+documented in the [workflow hooks guide](https://github.com/coreycoto/agent-plugins/blob/main/docs/workflow-hooks.md).

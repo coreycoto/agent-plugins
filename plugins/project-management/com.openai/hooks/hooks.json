@@ -21,6 +21,13 @@
             },
             "timeout": 30,
             "statusMessage": "Checking Codex role installation and upgrades"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/workflow_hook.py\"",
+            "timeout": 5,
+            "statusMessage": "Restoring opted-in workflow state",
+            "additionalContextLimit": 1500
           }
         ]
       }
@@ -34,6 +41,57 @@
             "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/hook.py\"",
             "timeout": 10,
             "statusMessage": "Recording native Codex role selection"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/workflow_hook.py\"",
+            "timeout": 5,
+            "statusMessage": "Identifying an opted-in check candidate"
+          }
+        ],
+        "matcher": "^Bash$"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/workflow_hook.py\"",
+            "timeout": 5,
+            "statusMessage": "Routing recorded workflow evidence",
+            "additionalContextLimit": 1500
+          }
+        ],
+        "matcher": "^(Bash|mcp__.*__codex_workflow_(task|evidence|route))$"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/workflow_hook.py\"",
+            "timeout": 5,
+            "statusMessage": "Checking bounded workflow handoffs"
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/com.openai/codex_agents/workflow_hook.py\"",
+            "timeout": 1,
+            "statusMessage": "Checkpointing opted-in workflow state"
           }
         ]
       }

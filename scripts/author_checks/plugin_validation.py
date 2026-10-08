@@ -76,6 +76,49 @@ def _validate_skill(path: Path) -> list[str]:
     return []
 
 
+def _validate_workflow_routes(root: Path) -> list[str]:
+    """Check optional owned routing assets without executing a runtime adapter."""
+    path = root / "com.openai/hooks/routes.json"
+    if not path.exists() and not path.is_symlink():
+        return []
+    try:
+        data = _read_manifest_file(path)
+        catalog = _read_manifest_file(root / "com.openai/agents/catalog.json")
+        namespace = catalog.get("namespace")
+        if not isinstance(namespace, str) or not re.fullmatch(r"[a-z][a-z0-9]{1,15}", namespace):
+            raise ValueError("invalid owned role namespace")
+        roles = catalog.get("roles")
+        if catalog.get("schemaVersion") != 1 or not isinstance(roles, list):
+            raise ValueError("invalid owned role catalog")
+        names = {role["name"] for role in roles}
+        if any(not re.fullmatch(re.escape(namespace) + r"_[a-z_]+", name) for name in names):
+            raise ValueError("roles must belong to the owning plugin namespace")
+        routes = data.get("routes")
+        if (set(data) != {"schemaVersion", "routes"} or type(data["schemaVersion"]) is not int
+                or data["schemaVersion"] != 1 or not isinstance(routes, list) or len(routes) > 32):
+            raise ValueError("invalid workflow route catalog")
+        seen = set()
+        for route in routes:
+            if not isinstance(route, dict) or set(route) != {"condition", "skill", "role", "description"}:
+                raise ValueError("unsupported workflow route fields")
+            condition, skill = route["condition"], route["skill"]
+            if condition not in {"repeated_check_failure", "review_needed", "governance_mismatch"} or condition in seen:
+                raise ValueError("unsupported or duplicate workflow route condition")
+            if not isinstance(skill, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", skill):
+                raise ValueError("workflow skills must belong to the owning plugin")
+            target = root / "skills" / skill / "SKILL.md"
+            target.resolve(strict=True).relative_to((root / "skills").resolve())
+            if target.is_symlink() or not target.is_file() or route["role"] not in names:
+                raise ValueError("workflow target skill and role must be packaged by the owning plugin")
+            description = route["description"]
+            if not isinstance(description, str) or not 0 < len(description) <= 1024 or any(ord(c) < 32 for c in description):
+                raise ValueError("workflow route description must be concise plain text")
+            seen.add(condition)
+    except (OSError, ValueError, RuntimeError, TypeError, KeyError) as error:
+        return [f"{path}: {error}"]
+    return []
+
+
 def validate_portable_plugin(root: Path, schema: dict[str, object]) -> list[str]:
     errors: list[str] = []
     if root.is_symlink() or not root.is_dir():
@@ -109,6 +152,7 @@ def validate_portable_plugin(root: Path, schema: dict[str, object]) -> list[str]
         errors.extend(validate_markdown_references(root))
         errors.extend(validate_source_lineage(root))
     settings = _openai_settings(manifest)
+    errors.extend(_validate_workflow_routes(root))
     mcp = root / "mcp.json"
     if mcp.exists() or mcp.is_symlink():
         try:

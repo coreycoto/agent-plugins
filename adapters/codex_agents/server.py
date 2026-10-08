@@ -10,6 +10,8 @@ from typing import Callable
 
 from hook import context
 from manager import AgentError, Manager, plugin_manifest
+from workflow import TOOL_DEFINITIONS
+from workflow import dispatch as workflow_dispatch
 
 ARGUMENTS = {
     "type": "object",
@@ -95,6 +97,7 @@ class Server:
         self.root = root or Path(__file__).resolve().parents[2]
         self.manifest = plugin_manifest(self.root)
         self.namespace = json.loads((self.root / "com.openai/agents/catalog.json").read_bytes())["namespace"]
+        self.workflow_tools = TOOL_DEFINITIONS if (self.root / "com.openai/hooks/routes.json").is_file() else []
         self.input = input_stream
         self.output = output_stream
         self.capabilities = {}
@@ -146,7 +149,13 @@ class Server:
             } for name, description in (
                 ("codex_agents_status", "Read packaged-role registration, upgrade conflicts and native session-selection receipts."),
                 ("codex_agents_onboard", "Preview and offer a native install/upgrade form for missing or outdated Codex roles; changes require affirmative form consent."),
-            )]}
+            )] + self.workflow_tools}
+        if method == "tools/call" and params.get("name") in {
+            tool["name"] for tool in self.workflow_tools
+        }:
+            result = workflow_dispatch(params["name"], params.get("arguments", {}), root=self.root)
+            return {"content": [{"type": "text", "text": json.dumps(result)}],
+                    "structuredContent": result}
         if method != "tools/call" or params.get("name") not in {"codex_agents_status", "codex_agents_onboard"}:
             raise AgentError("Unknown MCP method or tool.")
         args = params.get("arguments", {})

@@ -72,6 +72,9 @@ permissions; their sandbox defaults grant no authority. See the
 assignments and legacy helper migration, and the
 [pinned projection guide](com.openai/agents/ADOPTION.md) for CI/cloud consumers.
 
+Project Management's optional governance-mismatch workflow hook route is
+documented in the [workflow hooks guide](https://github.com/coreycoto/agent-plugins/blob/main/docs/workflow-hooks.md).
+
 Its authored extension lives in `com.openai/`. Complete portable and Codex
 distributions are built into ignored `dist/plugin-packages/`; no runtime copies
 or distribution trees are committed. The catalog pins an exact npm package,
