@@ -20,7 +20,7 @@ owning plugin's `codex_workflow_task` MCP tool. The task object requires:
 | `delivery_stage` | The requested local, review, or later delivery stage as a record; it grants no authority. |
 | `status` | `active`, `paused`, `blocked`, `waiting_for_approval`, or `complete`. Only active tasks receive nominations or a Stop continuation. |
 | `paths` | Nonempty repository-relative input scope used for the current candidate fingerprint. |
-| `checks` | An array of exact Bash command records, each with `id`, `command`, `checker`, and `environment`; it may be empty. |
+| `checks` | An array of exact Bash command records, each with `id`, `command`, `checker`, and `environment`; optional `capture_mode` is `hook` (default) or `parent`. It may be empty. |
 | `review_requested` | Whether the task explicitly requests a review nomination. |
 | `continuation_limit` | `0` or `1`; bounds a Stop-triggered continuation for this task. |
 
@@ -47,6 +47,54 @@ fingerprint, check identity and private receipt reference. It does not retain
 the command output or transcript. If the tool response lacks a typed exit code,
 the work directory differs, or the candidate changes between pre- and
 post-tool hooks, the result stays unknown and cannot trigger a failure route.
+
+### Native shell status and explicit evidence
+
+Codex's [hook contract](https://learn.chatgpt.com/docs/hooks) describes
+`tool_response` as tool-specific JSON; it does not guarantee a shell exit code.
+In the qualified Codex CLI 0.160.0 implementation,
+[`ExecCommandToolOutput::post_tool_use_response`](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/core/src/tools/context.rs)
+sends completed unified-exec command output as a string. Its structured
+tool-caller result carries the exit code separately. A quiet success and quiet
+failure can therefore produce the same hook response. A running command does
+not yet have a completed hook response; a later `write_stdin` poll can deliver
+the original command's completion. CLI qualification does not establish the
+version of a separate desktop runtime.
+
+For a correctly paired current check without a typed hook exit status, the hook
+records an unknown reason and emits an advisory checkpoint. The parent reads
+`codex_workflow_status`, checks the actual tool-caller result for a completed
+integer exit code, saves a bounded repository artifact describing the observed
+command and result, and records explicit evidence with `codex_workflow_evidence`.
+Use `check_passed` for exit code zero, `check_failed` otherwise, and
+`signature: "exit:<code>"`. Keep the configured check identity, current candidate
+and a fresh observation id. This is parent-recorded evidence, not an automatic
+native hook receipt.
+
+If the caller result is incomplete or untyped, or the candidate or task contract
+changed during the command, leave the result unknown. Never infer success from
+an empty output, parse status-looking output text, or rerun a command merely to
+manufacture evidence. Current unknown check summaries in workflow status explain
+which checks still need evidence. A subsequent valid observation resolves that
+status; an unknown still breaks the consecutive failure streak. The checkpoint
+does not execute a check, grant permission, or request a Stop continuation.
+
+On a client without typed native hook status, configure future checks with
+`capture_mode: "parent"`. This explicitly disables native observation for those
+checks; the parent records each actual tool-caller result through the evidence
+tool. Otherwise every untyped native completion breaks the failure streak, even
+when the parent later records its result. Selecting parent capture changes the
+task contract, so earlier evidence is stale and must not be carried across that
+change. Other checks can keep the default hook capture mode.
+
+Parent capture requires a complete observed check history. Wait for a running
+command to finish when appropriate. If completion cannot be established, record
+`check_unknown`, with the configured `check_id`, an explanatory bounded
+`signature` such as `unknown:completion_unavailable`, and a real artifact of
+that observation. Unknown evidence never nominates a failure route and breaks
+the streak, including when its artifact later becomes unavailable. Do not claim
+consecutive failures across an incomplete or ambiguous result. Parent capture
+does not execute a command or relax the caller's permissions.
 
 The candidate fingerprint covers the Git HEAD, configured input scope, index
 entries, and contents of scoped tracked and staged files plus nonignored
@@ -122,7 +170,7 @@ assignment without `agent_id`, including when the parent loads and follows a
 skill in the current chat.
 
 For manual evidence, call `codex_workflow_evidence` with `observation_id`,
-`candidate`, `condition` (`check_failed`, `check_passed`, or
+`candidate`, `condition` (`check_failed`, `check_passed`, `check_unknown`, or
 `governance_mismatch`, or one of the skill-route conditions above), and
 `reference`. Check evidence also requires the configured `check_id` and a
 bounded `signature`; governance and skill-route evidence must omit those check
@@ -163,8 +211,9 @@ check was performed. Criteria alone do not nominate Product Experiments.
 
 ## Parent-managed skill and agent handoff
 
-Use `codex_workflow_status` to read the task, candidate, current evidence, route
-freshness, and continuation count. It creates no task state. When a route is
+Use `codex_workflow_status` to read the task, candidate, current evidence,
+unresolved unknown checks, route freshness, and continuation count. It creates
+no task state. When a route is
 nominated, the parent should:
 
 1. Check that its candidate, scope, evidence and route freshness still match
@@ -204,8 +253,10 @@ policy and permission boundaries stay in the consuming repository.
   scope and current candidate. On compact restore, historical task instructions
   remain subordinate to the latest user and session instructions. Read the
   status tool for current evidence and route state.
-- **PreToolUse / PostToolUse:** Pair only a matching configured Bash invocation
-  with its typed exit code and unchanged candidate. Other commands are ignored.
+- **PreToolUse / PostToolUse:** For checks in hook capture mode, pair only a matching configured Bash invocation
+  with its typed exit code and unchanged candidate. A paired current command
+  without typed status prompts the parent to record supported explicit evidence;
+  checks in parent capture mode and other commands are ignored.
 - **Stop:** With an active task, `continuation_limit: 1` permits at most one
   continuation when a new route is nominated and `stop_hook_active` is not
   already true. Set the limit to `0` to disable this. The hook does not repeat

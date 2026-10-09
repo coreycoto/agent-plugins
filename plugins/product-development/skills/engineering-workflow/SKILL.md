@@ -45,6 +45,17 @@ and assign the role through the current spawn tool when useful. Record assignmen
 and completion separately, with the actual candidate and evidence. Unknown
 results remain unknown; task records and hook output grant no new authority.
 
+Check records default to native `capture_mode: "hook"`. If the client does not
+provide typed shell status to hooks, explicitly configure future checks with
+`capture_mode: "parent"` and record every actual tool-caller result through
+`codex_workflow_evidence`. Use completed structured integer results for pass or
+failure; if completion cannot be established, record `check_unknown` with a real
+bounded artifact. The parent owns complete observed check history and must not
+claim consecutive failures across an incomplete or ambiguous result. Changing
+capture mode changes the task contract and makes earlier evidence stale. Never
+infer exit status from command output. Hooks neither execute checks nor change
+capture mode for the parent.
+
 Finish with the result, evidence and remaining uncertainty at the requested
 endpoint. Source edits, merge, release, deployment and provider operation are
 distinct actions; routing grants none of them by itself.
