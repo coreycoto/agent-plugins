@@ -29,6 +29,10 @@ explicitly. A local pass does not establish hosted qualification or the next
 publication endpoint. Advisory hooks are reminders unless their enforcement
 has been independently verified.
 
+The parent agent owns final readiness: inspect the actual candidate-bound
+receipts, then state which delivery endpoint is complete and which gates
+remain. A delegated success summary alone does not establish readiness.
+
 For authorized delegation, assign `pm_release_preparer` bounded local files,
 accepted version or release scope, and required evidence. Read the
 [agent routing guide](../_shared/references/codex-agent-routing.md). The parent
