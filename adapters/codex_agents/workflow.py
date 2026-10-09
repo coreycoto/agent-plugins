@@ -18,7 +18,7 @@ from pathlib import Path
 
 from manager import AgentError, digest, encode, plugin_manifest, read, safe_path
 
-HANDLER_VERSION = 2
+HANDLER_VERSION = 3
 MAX_RECORDS = 128
 MAX_FILES = 4096
 MAX_BYTES = 16 * 1024 * 1024
@@ -39,8 +39,10 @@ CHECKPOINT_OWNERS = {
     "experiment_results_recorded": "product-management",
 }
 CONDITIONS = {"repeated_check_failure", "review_needed", "governance_mismatch"} | CHECKPOINT_CONDITIONS
-BASIC_EVIDENCE_CONDITIONS = {"check_failed", "check_passed", "governance_mismatch"}
+BASIC_EVIDENCE_CONDITIONS = {"check_failed", "check_passed", "check_unknown", "governance_mismatch"}
 EVIDENCE_CONDITIONS = BASIC_EVIDENCE_CONDITIONS | CHECKPOINT_CONDITIONS | {"experiment_criteria_recorded"}
+UNKNOWN_REASONS = {"unpaired_result", "tool_or_workdir_mismatch", "command_mismatch",
+                   "candidate_unknown", "candidate_changed", "task_changed", "missing_typed_exit_status", "parent_reported_unknown"}
 
 
 def bounded(value: object, label: str, limit: int = 1024) -> str:
@@ -173,11 +175,13 @@ class WorkflowManager:
             raise AgentError("Provide a bounded check list.")
         checks, ids, commands = [], set(), set()
         for check in task["checks"]:
-            exact_keys(check, {"id", "command", "checker", "environment"})
+            exact_keys(check, {"id", "command", "checker", "environment"}, {"capture_mode"})
             identity(check["id"], "check id")
             bounded(check["command"], "exact check command", 4096)
             bounded(check["checker"], "checker identity", 256)
             bounded(check["environment"], "environment identity", 256)
+            if "capture_mode" in check and (not isinstance(check["capture_mode"], str) or check["capture_mode"] not in {"hook", "parent"}):
+                raise AgentError("Check capture mode must be hook or parent.")
             if check["id"] in ids or check["command"] in commands:
                 raise AgentError("Check ids and exact command identities must be unique.")
             ids.add(check["id"])
@@ -261,6 +265,17 @@ class WorkflowManager:
             raise AgentError("Invalid private workflow state.")
         if not isinstance(state.get("unknown_checks", []), list) or len(state.get("unknown_checks", [])) > MAX_RECORDS:
             raise AgentError("The private unknown-check record exceeds its bound.")
+        for item in state.get("unknown_checks", []):
+            exact_keys(item, {"candidate", "check_id", "after"}, {"scope", "reason", "advised"})
+            identity(item["check_id"], "check id")
+            if not isinstance(item["candidate"], str) or not re.fullmatch(r"[0-9a-f]{64}", item["candidate"]) or type(item["after"]) is not int or not -1 <= item["after"] < len(state["evidence"]):
+                raise AgentError("Invalid private unknown-check identity or checkpoint.")
+            if any(key in item for key in ("scope", "reason", "advised")):
+                if not {"scope", "reason", "advised"} <= item.keys() or not isinstance(item["scope"], str) or not re.fullmatch(r"[0-9a-f]{64}", item["scope"]) or not isinstance(item["reason"], str) or item["reason"] not in UNKNOWN_REASONS or type(item["advised"]) is not bool:
+                    raise AgentError("Invalid private unknown-check metadata.")
+        calls = state.get("processed_unknown_calls", [])
+        if not isinstance(calls, list) or len(calls) > MAX_RECORDS or any(not isinstance(key, str) or not re.fullmatch(r"[0-9a-f]{64}", key) for key in calls) or len(set(calls)) != len(calls):
+            raise AgentError("Invalid private unknown-completion replay guards.")
         return state
 
     def _private_reference(self, reference: str) -> None:
@@ -359,13 +374,33 @@ class WorkflowManager:
     def _view(self, state: dict | None) -> dict:
         if state is None:
             return {"state": "absent", "plugin": self.plugin, "candidate": None, "task": None,
-                    "evidence": [], "routes": [], "continuations": 0}
+                    "evidence": [], "routes": [], "unknown_checks": [], "continuations": 0}
         candidate = self._candidate(state["task"])
         scope = self._scope(state["task"])
         return {"state": "ready" if candidate else "candidate_unknown", "plugin": self.plugin,
                 "candidate": candidate, "task": state["task"], "continuations": state["continuations"],
                 "evidence": [item for item in state["evidence"] if candidate and item["candidate"] == candidate and item.get("scope") == scope and self._evidence_valid(item)],
+                "unknown_checks": self._current_unknowns(state, candidate, scope),
                 "routes": [{**item, "current": self._route_current(item, state["task"], candidate)} for item in state["routes"]]}
+
+    def _current_unknowns(self, state: dict, candidate: str | None, scope: str) -> list[dict]:
+        current = []
+        for item in state.get("unknown_checks", []):
+            # Legacy records have no proven task contract; retain them privately.
+            if candidate is None or item["candidate"] != candidate or item.get("scope") != scope:
+                continue
+            check = next((check for check in state["task"]["checks"] if check["id"] == item["check_id"]), None)
+            if check is None:
+                continue
+            resolved = any(index > item["after"] and evidence["candidate"] == candidate and evidence.get("scope") == scope
+                           and evidence["condition"] in {"check_passed", "check_failed"}
+                           and evidence.get("check_id") == check["id"]
+                           and all(evidence.get(key) == check[key] for key in ("command", "checker", "environment"))
+                           and self._evidence_valid(evidence)
+                           for index, evidence in enumerate(state["evidence"]))
+            if not resolved:
+                current.append({key: value for key, value in item.items() if key != "advised"})
+        return current
 
     def status(self) -> dict:
         return self._view(self._load())
@@ -376,7 +411,7 @@ class WorkflowManager:
             if state is None or state["task"]["id"] != task["id"]:
                 state = {"schemaVersion": 1, "plugin": self.plugin, "repo": str(self.repo),
                          "session": self.session_id, "task": task, "evidence": [], "routes": [],
-                         "pending": {}, "continuations": 0, "unknown_checks": []}
+                         "pending": {}, "continuations": 0, "unknown_checks": [], "processed_unknown_calls": []}
             else:
                 if task != state["task"]:
                     state["pending"] = {}
@@ -487,6 +522,8 @@ class WorkflowManager:
                                   "reference_stat": self._reference_stat(payload["reference"]),
                                   "payload_digest": digest(encode(payload)),
                                   **({"checker": check["checker"], "environment": check["environment"], "command": check["command"]} if check else {})})
+        if evidence["condition"] == "check_unknown":
+            self._unknown(state, evidence["candidate"], check["id"], self._scope(state["task"]), "parent_reported_unknown")
 
     def record_evidence(self, evidence: dict) -> dict:
         with self._mutation() as state:
@@ -545,11 +582,15 @@ class WorkflowManager:
         for check in task["checks"]:
             streak, signature = [], None
             unknown_after = max((item["after"] for item in state.get("unknown_checks", [])
-                                 if item["candidate"] == candidate and item["check_id"] == check["id"]), default=-1)
+                                 if item["candidate"] == candidate and item["check_id"] == check["id"]
+                                 and ("scope" not in item or item["scope"] == scope)), default=-1)
             for index, item in enumerate(state["evidence"]):
                 if index <= unknown_after or item not in evidence:
                     continue
                 if item.get("check_id") != check["id"] or item.get("checker") != check["checker"] or item.get("environment") != check["environment"] or item.get("command") != check["command"]:
+                    continue
+                if item["condition"] == "check_unknown":
+                    streak, signature = [], None
                     continue
                 if not self._evidence_valid(item):
                     streak, signature = [], None
@@ -634,9 +675,11 @@ class WorkflowManager:
         if set(tool_input) - {"command", "cwd", "workdir", "working_directory", "timeout", "description"}:
             return
         check = next((check for check in state["task"]["checks"] if check["command"] == tool_input.get("command")), None)
-        if check is None:
+        if check is None or check.get("capture_mode", "hook") == "parent":
             return
         call = identity(event.get("tool_use_id"), "tool use id")
+        if digest(call.encode()) in state.get("processed_unknown_calls", []):
+            return
         candidate = self._candidate(state["task"])
         if candidate is None or call in state["pending"]:
             return
@@ -644,15 +687,46 @@ class WorkflowManager:
             raise AgentError("The pending check receipt limit has been reached.")
         state["pending"][call] = {"candidate": candidate, "check": check, "scope": self._scope(state["task"])}
 
-    def _unknown(self, state: dict, candidate: str, check_id: str) -> None:
-        unknown = {"candidate": candidate, "check_id": check_id, "after": len(state["evidence"]) - 1}
+    def _unknown(self, state: dict, candidate: str, check_id: str, scope: str, reason: str, *, advise: bool = False) -> bool:
+        after = len(state["evidence"]) - 1
+        previous = next((item for item in state.get("unknown_checks", [])
+                         if (item["candidate"], item["check_id"], item.get("scope")) == (candidate, check_id, scope)), None)
+        # A duplicate Post has no pending receipt. It cannot erase the stronger
+        # paired diagnosis while its evidence checkpoint remains unresolved.
+        if reason == "unpaired_result" and previous and previous["after"] == after and previous["reason"] == "missing_typed_exit_status":
+            return False
+        advised = bool(previous and previous["after"] == after and previous.get("advised"))
+        unknown = {"candidate": candidate, "check_id": check_id, "scope": scope, "reason": reason,
+                   "after": after, "advised": advised or advise}
         state.setdefault("unknown_checks", [])[:] = [item for item in state.get("unknown_checks", [])
-            if (item["candidate"], item["check_id"]) != (candidate, check_id)] + [unknown]
+            if (item["candidate"], item["check_id"], item.get("scope")) != (candidate, check_id, scope)] + [unknown]
         if len(state["unknown_checks"]) > MAX_RECORDS:
             raise AgentError("The unknown-check receipt limit has been reached.")
+        return advise and not advised
 
-    def _after(self, state: dict, event: dict) -> bool:
+    def _remember_unknown_call(self, state: dict, key: str | None) -> None:
+        if key is None:
+            return
+        calls = state.setdefault("processed_unknown_calls", [])
+        if key not in calls:
+            if len(calls) >= MAX_RECORDS:
+                raise AgentError("The unknown-completion replay guard limit has been reached.")
+            calls.append(key)
+
+    def _after(self, state: dict, event: dict) -> tuple[bool, str | None]:
         call = event.get("tool_use_id")
+        paired = isinstance(call, str) and call in state["pending"]
+        tool_input = event.get("tool_input")
+        if not paired and event.get("tool_name") == "Bash" and isinstance(tool_input, dict) and any(
+                check["command"] == tool_input.get("command") and check.get("capture_mode", "hook") == "parent"
+                for check in state["task"]["checks"]):
+            return False, None
+        try:
+            call_key = digest(identity(call, "tool use id").encode())
+        except AgentError:
+            call_key = None
+        if call_key in state.get("processed_unknown_calls", []):
+            return False, None
         if not isinstance(call, str) or call not in state["pending"]:
             if isinstance(call, str):
                 existing = next((item for item in state["evidence"] if item["observation_id"] == "hook-" + digest(call.encode())), None)
@@ -661,27 +735,49 @@ class WorkflowManager:
                     code = response.get("exit_code") if isinstance(response, dict) else None
                     if type(code) is not int or existing.get("signature") != "exit:" + str(code):
                         raise AgentError("A hook observation id was reused with a different result.")
-                    return False
+                    return False, None
             tool_input = event.get("tool_input")
             if event.get("tool_name") == "Bash" and isinstance(tool_input, dict):
                 check = next((check for check in state["task"]["checks"] if check["command"] == tool_input.get("command")), None)
                 candidate = self._candidate(state["task"])
                 if check is not None and candidate is not None:
-                    self._unknown(state, candidate, check["id"])
-            return False
+                    self._remember_unknown_call(state, call_key)
+                    self._unknown(state, candidate, check["id"], self._scope(state["task"]), "unpaired_result")
+            return False, None
         pending = state["pending"].pop(call)
         if event.get("tool_name") != "Bash" or not self._event_workdir(event):
-            self._unknown(state, pending["candidate"], pending["check"]["id"])
-            return False
-        if event["tool_input"].get("command") != pending["check"]["command"]:
-            self._unknown(state, pending["candidate"], pending["check"]["id"])
-            return False
+            reason = "tool_or_workdir_mismatch"
+        elif event["tool_input"].get("command") != pending["check"]["command"]:
+            reason = "command_mismatch"
+        else:
+            reason = None
         response = event.get("tool_response")
         exit_code = response.get("exit_code") if isinstance(response, dict) else None
         candidate = self._candidate(state["task"])
-        if type(exit_code) is not int or candidate is None or candidate != pending["candidate"] or pending["scope"] != self._scope(state["task"]):
-            self._unknown(state, pending["candidate"], pending["check"]["id"])
-            return False
+        if reason is None:
+            if candidate is None:
+                reason = "candidate_unknown"
+            elif candidate != pending["candidate"]:
+                reason = "candidate_changed"
+            elif pending["scope"] != self._scope(state["task"]):
+                reason = "task_changed"
+            elif type(exit_code) is not int:
+                reason = "missing_typed_exit_status"
+        if reason is not None:
+            self._remember_unknown_call(state, call_key)
+            advise = self._unknown(state, pending["candidate"], pending["check"]["id"], pending["scope"], reason,
+                                   advise=reason == "missing_typed_exit_status")
+            context = None
+            if advise:
+                context = (f"Check {pending['check']['id']} remains unknown for candidate {pending['candidate']}: missing typed integer exit status. "
+                           "Read codex_workflow_status. The parent may use only the actual tool caller's completed structured integer exit result, "
+                           "when available for this paired command and unchanged candidate/task scope, to save a bounded real repository artifact "
+                           "and record it with codex_workflow_evidence. If typed completion is unavailable or the candidate/task changed, leave it unknown. "
+                           "For future checks on a client without typed hook status, the parent may explicitly configure capture_mode parent "
+                           "and own the complete check history, including check_unknown observations. Changing mode invalidates current evidence and routes; "
+                           "it does not resolve this unknown observation. No capture mode is changed automatically. "
+                           "Never infer status from output text. This advisory executes no skill or agent, grants no authority and requests no Stop continuation.")
+            return False, context
         # Keep only typed status and stable identity; tool output is never retained.
         receipt_name = "check-" + digest(call.encode()) + ".json"
         receipt_path = self.directory / receipt_name
@@ -699,7 +795,7 @@ class WorkflowManager:
                     "check_id": pending["check"]["id"], "signature": "exit:" + str(exit_code),
                     "reference": "private-check-receipt:" + receipt_name}
         self._append_evidence(state, evidence)
-        return True
+        return True, None
 
     def handle_event(self, event: dict) -> dict:
         if not isinstance(event, dict) or event.get("hook_event_name") not in {"SessionStart", "PreToolUse", "PostToolUse", "Stop", "Interrupt"}:
@@ -742,11 +838,12 @@ class WorkflowManager:
                 if name == "PreToolUse":
                     self._before(state, event)
                 elif name == "PostToolUse":
-                    recorded = self._after(state, event)
+                    recorded, advisory = self._after(state, event)
                     workflow_call = isinstance(event.get("tool_name"), str) and bool(re.fullmatch(r"mcp__.+__codex_workflow_(task|evidence|route)", event["tool_name"]))
                     new = self._nominate(state) if recorded or workflow_call else []
-                    if new:
-                        output = {"hookSpecificOutput": {"hookEventName": name, "additionalContext": self._instructions(new)}}
+                    context = self._instructions(new) if new else advisory
+                    if context:
+                        output = {"hookSpecificOutput": {"hookEventName": name, "additionalContext": context}}
                 elif name == "Stop" and event.get("stop_hook_active") is not True and state["continuations"] < state["task"]["continuation_limit"]:
                     new = self._nominate(state)
                     if new:
@@ -760,7 +857,9 @@ class WorkflowManager:
 _STRING = {"type": "string", "minLength": 1, "maxLength": 1024}
 _CHECK_SCHEMA = {"type": "object", "properties": {
     "id": {**_STRING, "maxLength": 128}, "command": {**_STRING, "maxLength": 4096},
-    "checker": {**_STRING, "maxLength": 256}, "environment": {**_STRING, "maxLength": 256}},
+    "checker": {**_STRING, "maxLength": 256}, "environment": {**_STRING, "maxLength": 256},
+    "capture_mode": {"type": "string", "enum": ["hook", "parent"],
+                     "description": "Absent defaults to hook. Parent mode ignores native shell observations; the caller records complete check history."}},
     "required": ["id", "command", "checker", "environment"], "additionalProperties": False}
 TASK_SCHEMA = {"type": "object", "properties": {
     "id": {**_STRING, "maxLength": 128}, "issue": _STRING,
