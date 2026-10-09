@@ -8,6 +8,17 @@ a skill, spawn an agent, authorize an action, or replace the parent agent's
 judgment. The parent loads the named skill, decides whether delegation helps,
 assigns bounded work, and records the result.
 
+## Final candidate verification
+
+Implementation and publication require the consumer's complete locally runnable
+CI-selected checks against the same base and candidate before push. Preserve
+typed results and invalidate affected evidence when source changes. Repository
+commands and enforced pre-push checks belong to the consumer; this adapter
+records candidate-bound observations and routes advisory reminders. It does
+not execute the consumer's check suite or turn missing, failed or unknown
+evidence into a pass. Source merge, package installation and runtime activation
+remain separately verified endpoints.
+
 ## Opt in with an explicit task
 
 Without a task record, workflow hooks do nothing. Initialize one through the
