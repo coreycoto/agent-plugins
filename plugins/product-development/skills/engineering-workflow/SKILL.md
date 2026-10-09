@@ -37,6 +37,14 @@ repairs and checks; return changed scope or uncovered promotion for decision.
 For delivery tracking or publication, use available
 `project-management:delivery-lifecycle` within its consumer policy.
 
+For an opted-in task with available `codex_workflow_*` tools, maintain an explicit
+task record with its issue, delivery stage, status and scoped candidate inputs.
+Record check evidence and request review only at the intended checkpoint. Hook
+nominations name a workflow and optional owned role; read that installed skill
+and assign the role through the current spawn tool when useful. Record assignment
+and completion separately, with the actual candidate and evidence. Unknown
+results remain unknown; task records and hook output grant no new authority.
+
 Finish with the result, evidence and remaining uncertainty at the requested
 endpoint. Source edits, merge, release, deployment and provider operation are
 distinct actions; routing grants none of them by itself.

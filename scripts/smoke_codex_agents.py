@@ -9,6 +9,7 @@ import os
 import queue
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 from pathlib import Path
@@ -21,8 +22,9 @@ HOOK_SCHEMA = json.loads((Path(__file__).resolve().parents[1] /
 
 
 class Rpc:
-    def __init__(self, codex: str, home: Path, repo: Path, plugin: str, extra_env: dict | None = None):
-        self.server = plugin + "-agents"
+    def __init__(self, codex: str, home: Path, repo: Path, plugin: str, extra_env: dict | None = None,
+                 *, server: str | None = None):
+        self.server = server or plugin + "-agents"
         env = dict(os.environ, HOME=str(home), CODEX_HOME=str(home / ".codex"),
                    PYTHONDONTWRITEBYTECODE="1")
         env.update(extra_env or {})
@@ -102,7 +104,120 @@ def status(rpc: Rpc, thread_id: str, repo: Path) -> dict:
     })["structuredContent"]
 
 
+def workflow_probe(rpc: Rpc, thread_id: str, repo: Path, package: Path, env: dict) -> dict:
+    """Exercise connected tools and the command envelope, without a model turn."""
+    def call(name: str, **arguments) -> dict:
+        response = rpc.call("mcpServer/tool/call", {
+            "threadId": thread_id, "server": rpc.server, "tool": name,
+            "arguments": {"cwd": str(repo), "session_id": thread_id, **arguments},
+        })
+        assert json.loads(response["content"][0]["text"]) == response["structuredContent"]
+        return response["structuredContent"]
+
+    assert call("codex_workflow_status")["state"] == "absent"
+    source = repo / "workflow-source.txt"
+    source.write_text("Isolated workflow qualification fixture.\n")
+    subprocess.run(["git", "-C", str(repo), "add", source.name], check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(repo), "-c", "user.name=Qualification fixture", "-c",
+                    "user.email=qualification@example.invalid", "commit", "-qm", "fixture"],
+                   check=True, capture_output=True)
+    task = {"id": "qualification", "issue": "isolated fixture", "delivery_stage": "local qualification",
+            "status": "active", "paths": [source.name], "checks": [],
+            "review_requested": False, "continuation_limit": 1}
+    assert call("codex_workflow_task", task=task)["state"] == "ready"
+    evidence_file = repo / "workflow-evidence.json"
+    evidence_file.write_text('{"observation":"qualification fixture"}\n')
+    plugin = json.loads((package / ".codex-plugin/plugin.json").read_text())["name"]
+    if plugin == "product-development":
+        task["review_requested"] = True
+        call("codex_workflow_task", task=task)
+    elif plugin == "project-management":
+        call("codex_workflow_evidence", evidence={"observation_id": "fixture", "condition": "governance_mismatch",
+             "candidate": call("codex_workflow_status")["candidate"], "reference": evidence_file.name})
+    else:
+        checkpoints = ([
+            ("prose_review_requested", {"kind": "prose"}),
+            ("communication_report_requested", {"verified_refs": [evidence_file.name], "unfinished": []}),
+            ("document_draft_requested", {"audience": "fixture readers", "purpose": "explain the fixture"}),
+        ] if plugin == "communication" else [
+            ("customer_evidence_recorded", {"change": "new"}),
+            ("product_comparison_requested", {"options": ["first", "second"], "constraints": ["local fixture"]}),
+            ("requirements_handoff_requested", {"direction": "fixture direction", "outcome": "fixture outcome"}),
+            ("experiment_criteria_recorded", {"experiment_id": "fixture-experiment"}),
+            ("experiment_results_recorded", {"experiment_id": "fixture-experiment", "criteria_observation_id": "experiment_criteria_recorded"}),
+        ])
+        for condition, details in checkpoints:
+            call("codex_workflow_evidence", evidence={"observation_id": condition, "condition": condition,
+                 "candidate": call("codex_workflow_status")["candidate"], "reference": evidence_file.name, "details": details})
+    command = package / "com.openai/codex_agents/workflow_hook.py"
+    result = subprocess.run([sys.executable, "-S", str(command)], cwd=repo, env=env, text=True,
+                            input=json.dumps({"hook_event_name": "SessionStart", "cwd": str(repo), "session_id": thread_id}),
+                            capture_output=True, check=True, timeout=10)
+    output = json.loads(result.stdout)
+    validate(output, HOOK_SCHEMA)
+    routes = call("codex_workflow_status")["routes"]
+    expected = {"product-development": 1, "project-management": 1, "communication": 3, "product-management": 4}[plugin]
+    assert len(routes) == expected and all(route["current"] and route["status"] == "nominated" for route in routes)
+    for route in routes:
+        call("codex_workflow_route", route_id=route["id"], status="assigned")
+        completed = call("codex_workflow_route", route_id=route["id"], status="completed",
+                         outcome="passed", reference=evidence_file.name)
+    assert all(route["status"] == "completed" for route in completed["routes"])
+    return {"connectedTools": True, "commandEnvelope": True, "routesVerified": expected,
+            "nativeEventDispatch": "unverified"}
+
+
+def qualify_skill_only(codex: str, work: Path, package: Path) -> dict:
+    """Qualify workflow-only packages without role setup or inference."""
+    plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
+    home, repo, catalog = work / "user", work / "repo", work / "marketplace"
+    home.mkdir(parents=True)
+    repo.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repo)], check=True, capture_output=True)
+    (home / ".codex").mkdir()
+    (home / ".codex/config.toml").write_text(
+        f'model = "gpt-6.1-sol"\n[projects.{json.dumps(str(repo))}]\ntrust_level = "trusted"\n')
+    destination = catalog / "plugins" / plugin
+    shutil.copytree(package, destination, ignore=shutil.ignore_patterns("__pycache__"))
+    marketplace = catalog / ".agents/plugins/marketplace.json"
+    marketplace.parent.mkdir(parents=True)
+    marketplace.write_text(json.dumps({"name": "codex-workflow-qualification", "plugins": [
+        {"name": plugin, "source": {"source": "local", "path": "./plugins/" + plugin},
+         "policy": {"installation": "AVAILABLE"}, "category": "Productivity"}]}))
+    env = dict(os.environ, HOME=str(home), CODEX_HOME=str(home / ".codex"), PYTHONDONTWRITEBYTECODE="1")
+    subprocess.run([codex, "plugin", "marketplace", "add", str(catalog)], cwd=repo, env=env,
+                   capture_output=True, check=True, timeout=30)
+    rpc = Rpc(codex, home, repo, plugin, server=plugin + "-workflows")
+    try:
+        rpc.initialize()
+        params = {"marketplacePath": str(marketplace), "pluginName": plugin}
+        rpc.call("plugin/install", params)
+        detail = rpc.call("plugin/read", params)["plugin"]
+        hooks = json.loads((package / "com.openai/hooks/hooks.json").read_bytes())["hooks"]
+        assert len(detail["hooks"]) == sum(len(row["hooks"]) for rows in hooks.values() for row in rows)
+        assert not detail.get("onboardingSkill")
+    finally:
+        rpc.close()
+    original_config = (home / ".codex/config.toml").read_bytes()
+    rpc = Rpc(codex, home, repo, plugin, server=plugin + "-workflows")
+    try:
+        rpc.initialize()
+        thread_id = rpc.call("thread/start", {"cwd": str(repo), "ephemeral": True})["thread"]["id"]
+        statuses = rpc.call("mcpServerStatus/list", {"threadId": thread_id})["data"]
+        assert any(server["name"] == rpc.server and server["runtimeStatus"] == "connected" for server in statuses)
+        workflow = workflow_probe(rpc, thread_id, repo, destination, env)
+        assert not rpc.forms
+        assert not (home / ".codex/agents").exists() and not (repo / ".codex/agents").exists()
+        assert (home / ".codex/config.toml").read_bytes() == original_config
+    finally:
+        rpc.close()
+    return {"plugin": plugin, "scope": "workflow-only", "hookEvents": [hook["eventName"] for hook in detail["hooks"]],
+            "roleOnboarding": "not_required", "configPreserved": True, "workflow": workflow}
+
+
 def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
+    if not (package / "com.openai/agents/catalog.json").is_file():
+        return qualify_skill_only(codex, work, package)
     plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
     home, repo, catalog = work / "user", work / "repo", work / "marketplace"
     home.mkdir(parents=True)
@@ -113,12 +228,16 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         f"model = \"gpt-6.1-sol\"\n[projects.{json.dumps(str(repo))}]\ntrust_level = \"trusted\"\n")
     destination = catalog / "plugins" / plugin
     shutil.copytree(package, destination, ignore=shutil.ignore_patterns("__pycache__"))
-    # Qualify catalog growth from the original PD pilot or a smaller owned catalog.
+    # Qualify catalog growth from a smaller catalog that retains every route target.
     role_catalog = destination / "com.openai/agents/catalog.json"
     expanded_catalog = role_catalog.read_bytes()
     previous_catalog = json.loads(expanded_catalog)
-    previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in {
-        "pd_explorer", "pd_reviewer", "pd_architecture_adviser"}] if plugin == "product-development" else previous_catalog["roles"][:2]
+    route_path = destination / "com.openai/hooks/routes.json"
+    route_roles = ({route["role"] for route in json.loads(route_path.read_bytes())["routes"]}
+                   if route_path.is_file() else set())
+    retained = ({"pd_explorer", "pd_reviewer", "pd_architecture_adviser"}
+                if plugin == "product-development" else {entry["name"] for entry in previous_catalog["roles"][:2]})
+    previous_catalog["roles"] = [entry for entry in previous_catalog["roles"] if entry["name"] in retained | route_roles]
     initial_count, final_count = len(previous_catalog["roles"]), len(json.loads(expanded_catalog)["roles"])
     role_catalog.write_text(json.dumps(previous_catalog))
     marketplace = catalog / ".agents/plugins/marketplace.json"
@@ -164,6 +283,8 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
         form_method = "openai/elicitation/create" if expected_mode == "openaiForm" else "elicitation/create"
         assert len(rpc.forms) == 2 and all(form["mode"] == expected_mode for form in rpc.forms)
         form_modes = [form["mode"] for form in rpc.forms]
+        workflow = (workflow_probe(rpc, thread_id, repo, destination, env)
+                    if (package / "com.openai/hooks/routes.json").is_file() else {"state": "not_configured"})
     finally:
         rpc.close()
     # Simulate a native package upgrade only in this isolated local source.
@@ -200,7 +321,7 @@ def qualify(codex: str, work: Path, scope: str, package: Path) -> dict:
             "onboardingSkill": detail["onboardingSkill"]["name"], "formMethod": form_method, "formModes": form_modes,
             "declinePreservedFiles": True, "install": "installed", "upgrade": "upgraded", "hookOutputSchemaVerified": True,
             "generatedRoles": sorted(path.name for path in target.glob("*.toml")),
-            "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending"}
+            "unrelatedConfigPreserved": True, "sessionSelectionVerification": "pending", "workflow": workflow}
 
 
 def main() -> int:
@@ -223,10 +344,11 @@ def main() -> int:
             else:
                 distribution = work / "distribution"
                 write_generated(distribution, marketplace_projection(root))
-                packages = [distribution / "plugins" / name for name in ("product-development", "project-management")]
+                packages = [distribution / "plugins" / name for name in
+                            ("product-development", "project-management", "communication", "product-management")]
             for package in packages:
                 plugin = json.loads((package / ".codex-plugin/plugin.json").read_bytes())["name"]
-                for scope in ("user", "project"):
+                for scope in (("user", "project") if (package / "com.openai/agents/catalog.json").is_file() else ("workflow",)):
                     receipt["cases"].append(qualify(args.codex, work / plugin / scope, scope, package))
         receipt["verified"] = True
     except Exception as error:

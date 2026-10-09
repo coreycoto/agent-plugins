@@ -111,7 +111,7 @@ def test_archive_contains_complete_native_package_and_independent_owned_roles() 
             for role in catalog["roles"]:
                 assert archive.extractfile("package/com.openai/agents/" + role["file"]).read() == (
                     REPOSITORY / "plugins" / name / "com.openai/agents" / role["file"]).read_bytes()
-            for module in ("manager.py", "hook.py", "server.py"):
+            for module in ("manager.py", "hook.py", "server.py", "workflow.py", "workflow_hook.py"):
                 assert archive.extractfile("package/com.openai/codex_agents/" + module).read() == (
                     REPOSITORY / "adapters/codex_agents" / module).read_bytes()
 

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "condition": "repeated_check_failure",
+      "skill": "diagnose-problem",
+      "role": "pd_diagnostician",
+      "description": "Distinguish a source defect from a harness or environment failure using the recorded check evidence. Diagnosis does not edit product source."
+    },
+    {
+      "condition": "review_needed",
+      "skill": "review-code",
+      "role": "pd_reviewer",
+      "description": "Review the exact candidate against the accepted intent and consumer requirements; return findings and verification gaps."
+    }
+  ]
+}

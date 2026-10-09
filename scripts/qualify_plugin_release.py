@@ -133,7 +133,8 @@ def require_committed_inputs(root: Path) -> None:
     for name in PLUGINS:
         plugin = Path("plugins") / name
         inputs += [plugin / name for name in source_files(root / plugin)]
-    inputs += [Path("adapters/codex_agents") / name for name in ("manager.py", "server.py", "hook.py")]
+    inputs += [Path("adapters/codex_agents") / name for name in
+               ("manager.py", "server.py", "hook.py", "workflow.py", "workflow_hook.py")]
     inputs += [Path("LICENSE"), Path(".agents/plugins/distribution.json"),
                Path(".agents/plugins/marketplace.json")]
     for name in ("publisher.json", "public-source.json"):

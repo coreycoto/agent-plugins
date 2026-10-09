@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local MCP adapter using negotiated Codex rich forms for role consent."""
+"""Local workflow tools and optional negotiated Codex forms for role consent."""
 
 from __future__ import annotations
 
@@ -9,7 +9,9 @@ from pathlib import Path
 from typing import Callable
 
 from hook import context
-from manager import AgentError, Manager, plugin_manifest
+from manager import AgentError, Manager, plugin_manifest, read, safe_path
+from workflow import dispatch as workflow_dispatch
+from workflow import tool_definitions
 
 ARGUMENTS = {
     "type": "object",
@@ -94,7 +96,14 @@ class Server:
     def __init__(self, input_stream=sys.stdin, output_stream=sys.stdout, root: Path | None = None):
         self.root = root or Path(__file__).resolve().parents[2]
         self.manifest = plugin_manifest(self.root)
-        self.namespace = json.loads((self.root / "com.openai/agents/catalog.json").read_bytes())["namespace"]
+        catalog = self.root / "com.openai/agents/catalog.json"
+        safe_path(catalog)
+        self.has_agents = catalog.exists()
+        self.namespace = (json.loads(read(catalog))["namespace"] if self.has_agents
+                          else self.manifest["name"].replace("-", "_"))
+        routes = self.root / "com.openai/hooks/routes.json"
+        safe_path(routes)
+        self.workflow_tools = tool_definitions(self.root) if routes.is_file() else []
         self.input = input_stream
         self.output = output_stream
         self.capabilities = {}
@@ -135,7 +144,8 @@ class Server:
             self.capabilities = params.get("capabilities", {})
             self.client_name = params.get("clientInfo", {}).get("name", "")
             return {"protocolVersion": "2025-06-18", "capabilities": {"tools": {}},
-                    "serverInfo": {"name": self.manifest["name"] + "-agents", "version": self.manifest["version"]}}
+                    "serverInfo": {"name": self.manifest["name"] + ("-agents" if self.has_agents else "-workflows"),
+                                   "version": self.manifest["version"]}}
         if method == "ping":
             return {}
         if method == "tools/list":
@@ -146,8 +156,14 @@ class Server:
             } for name, description in (
                 ("codex_agents_status", "Read packaged-role registration, upgrade conflicts and native session-selection receipts."),
                 ("codex_agents_onboard", "Preview and offer a native install/upgrade form for missing or outdated Codex roles; changes require affirmative form consent."),
-            )]}
-        if method != "tools/call" or params.get("name") not in {"codex_agents_status", "codex_agents_onboard"}:
+            ) if self.has_agents] + self.workflow_tools}
+        if method == "tools/call" and params.get("name") in {
+            tool["name"] for tool in self.workflow_tools
+        }:
+            result = workflow_dispatch(params["name"], params.get("arguments", {}), root=self.root)
+            return {"content": [{"type": "text", "text": json.dumps(result)}],
+                    "structuredContent": result}
+        if not self.has_agents or method != "tools/call" or params.get("name") not in {"codex_agents_status", "codex_agents_onboard"}:
             raise AgentError("Unknown MCP method or tool.")
         args = params.get("arguments", {})
         if not isinstance(args.get("cwd"), str) or not isinstance(args.get("session_id"), str) or set(args) - ARGUMENTS["properties"].keys():
@@ -190,7 +206,7 @@ class Server:
                     self.send({"id": request["id"], "error": {
                         "code": -32000,
                         "message": str(error) if isinstance(error, AgentError) else
-                                   "The role operation could not complete; inspect configuration and owned files before retrying.",
+                                   "The plugin operation could not complete; inspect configuration and owned files before retrying.",
                     }})
             finally:
                 self.active_request_id = None

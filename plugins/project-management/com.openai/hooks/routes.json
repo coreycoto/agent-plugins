@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "condition": "governance_mismatch",
+      "skill": "project-governance",
+      "role": "pm_governance_auditor",
+      "description": "Audit the specific recorded mismatch against current project policy and affected records; policy decisions and writes stay with the parent."
+    }
+  ]
+}

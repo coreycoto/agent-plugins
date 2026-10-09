@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "condition": "customer_evidence_recorded",
+      "skill": "product-discovery",
+      "description": "Interpret the recorded new or conflicting customer evidence, preserving source limits, unknowns and competing explanations."
+    },
+    {
+      "condition": "product_comparison_requested",
+      "skill": "product-prioritization",
+      "description": "Compare the requested options against the supplied constraints; judgments and commitments remain with the consumer and parent."
+    },
+    {
+      "condition": "requirements_handoff_requested",
+      "skill": "product-requirements",
+      "description": "Prepare or review requirements for the recorded product direction and user outcome before the requested handoff."
+    },
+    {
+      "condition": "experiment_results_recorded",
+      "skill": "product-experiments",
+      "description": "Interpret recorded results against previously recorded unchanged criteria, preserving confounds and uncertainty; recording does not authorize live experimentation."
+    }
+  ]
+}

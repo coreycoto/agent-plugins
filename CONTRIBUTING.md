@@ -29,10 +29,12 @@ changing client configuration. Run it with `python -B`; file matches and native
 inventory alone do not prove active-session discovery or reload.
 
 With Codex installed, run `uv run --locked python scripts/smoke_codex_agents.py`
-for an optional native check. It uses temporary homes and repositories, tests
-hook discovery and rich-form decline/accept/upgrade in both scopes, and makes
-zero inference requests. It does not qualify desktop rendering or live role
-selection; those remain separate checks after reviewed consumer activation.
+for an optional native check. It uses temporary homes and repositories to test
+hook discovery, connected workflow tools and command-hook envelopes across all
+four plugins. It also tests rich-form decline/accept/upgrade in both scopes for
+the two plugins that own agents, and makes zero inference requests. Native event
+delivery, desktop rendering and live role selection remain separate checks after
+reviewed consumer activation.
 
 `uv run --locked python scripts/smoke_npm_plugin.py --archive <built-npm-tgz>`
 qualifies Codex's native npm materialization and role setup in both scopes using
