@@ -19,6 +19,16 @@ limits under the [delivery authority rubric](../_shared/references/agent-decisio
 Use the consumer's templates where required; omit conversational history and
 abandoned approaches.
 
+Before push, require the consumer's final verification procedure for the same
+base and candidate: every locally runnable CI-selected check, with commands,
+typed exit statuses and candidate identity. Focused development tests do not
+substitute for the complete selected suites. Use an existing repository gate;
+do not duplicate its command registry in this plugin. Recheck evidence after
+source changes, and retain failed, interrupted, unknown and unavailable results
+explicitly. A local pass does not establish hosted qualification or the next
+publication endpoint. Advisory hooks are reminders unless their enforcement
+has been independently verified.
+
 For authorized delegation, assign `pm_release_preparer` bounded local files,
 accepted version or release scope, and required evidence. Read the
 [agent routing guide](../_shared/references/codex-agent-routing.md). The parent

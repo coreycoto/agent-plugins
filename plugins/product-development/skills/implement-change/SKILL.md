@@ -32,6 +32,15 @@ the final diff for omissions and unintended changes. Use
 user behavior, and [review-code](../review-code/SKILL.md) when review is needed.
 Do not repeat broad checks after they pass without a new change or uncertainty.
 
+Before pushing a release candidate, resolve the consumer's CI selection for
+the same base and final candidate and run every locally runnable selected
+check. Focused tests do not replace the complete selected suites. Use the
+repository's verification command or gate when provided; keep its commands and
+policy in the consumer. Retain candidate-bound commands, typed exit statuses
+and unavailable prerequisites. Later changes invalidate affected results;
+failed, interrupted or unknown checks do not establish readiness. Keep
+hosted-only qualification pending until separately observed.
+
 For authorized delegation, assign `pd_implementer` bounded intent, owned files
 and success conditions; `pd_transformer` suits explicit mechanical rules with
 deterministic completion. Both preserve concurrent work. Use native Git
