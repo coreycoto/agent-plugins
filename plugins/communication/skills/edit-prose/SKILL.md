@@ -8,6 +8,11 @@ Preserve intended position, audience, terminology, factual qualifiers and
 consumer style. Improving clarity does not authorize a new thesis or stronger
 claims. Inspect context for factual answers before questioning the author.
 
+When matching an author's voice or learning from supplied draft-to-final edits,
+read [voice calibration](../_shared/references/voice-calibration.md). Distinguish
+style preferences from factual corrections and choices specific to one audience
+or occasion; preserve the requested editing depth.
+
 Identify how the text will be used: explanation, instruction, reference or a
 decision brief. Put the reader's need first. Repair order and transitions so an
 explanation develops its reasoning, an instruction follows dependencies and

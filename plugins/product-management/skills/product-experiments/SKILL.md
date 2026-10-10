@@ -25,6 +25,14 @@ comparison. Match the method to the claim. State exposure or assignment,
 observation period, comparison and relevant confounds: selection, novelty,
 seasonality, learning, missing data or simultaneous changes.
 
+When the uncertainty is whether an outcome is useful, consider delivering it
+manually before automating it. For example, prepare one report from supplied
+inputs before building a reporting pipeline. Record the inputs, delivery steps,
+output, effort and observed response. Manual success may support usefulness
+while leaving automation feasibility, scale and economics unresolved. Treat
+willingness to pay as a separate claim when relevant; payment, customer counts
+and a weekend deadline are not universal validation requirements.
+
 Specify instrumented observations: events or measures, source, eligible users,
 denominator, timing, missingness and guardrails. Use supplied baselines, targets
 and sample constraints; do not fabricate expected lift, statistical power or

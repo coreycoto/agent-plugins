@@ -17,6 +17,10 @@ to the reader's task, available tools and inspectable evidence. Routine answers
 stay compact. An optional
 [technical writing profile](skills/_shared/references/technical-writing.md)
 supports precise procedures without claiming formal standard compliance.
+For requested author matching, [voice calibration](skills/_shared/references/voice-calibration.md)
+uses supplied writing and draft-to-final edits; personal profiles and examples
+stay consumer-owned. Source adaptations preserve factual support and attribution
+while changing structure for the requested audience or format.
 Ask targeted questions only when answers change the result, without inventing
 recipients or deadlines. A substantial handoff may use available
 `project-management:handoff-work` to preserve exact checkout, evidence,
