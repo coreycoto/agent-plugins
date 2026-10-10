@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "product-development",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Owned workflows for understanding, designing, implementing, testing, reviewing and verifying products.",
   "author": {
     "name": "Corey Coto",

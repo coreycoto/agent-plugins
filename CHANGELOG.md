@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.2 — 2026-10-10
+
+- Add failure-first behavioral test design, canonical suite ownership, bounded
+  test consolidation and selective mutation checks with independent oracles.
+- Calibrate writing from consumer-owned samples and draft-to-final corrections;
+  preserve facts, attribution, audience and publication authority.
+- Review API call sites for plausible misuse and support bounded manual product
+  experiments before investing in automation.
+- Route optional workflow hooks from recorded evidence, support skill-only
+  checkpoints and preserve explicit parent-captured shell check results when
+  native hooks cannot establish exit status.
+- Require final CI-selected local verification before push and keep final delivery
+  readiness with the parent through routine authorized continuation.
+- Clarify registry visibility qualification without replaying publication.
+
+Tracking: #8; source changes: #12, #14, #17, #19, #20, #22 and #24.
+
 ## 0.9.1 — 2026-10-07
 
 - Publish all four packages exclusively to GitHub Packages through an explicitly

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "communication",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Clear agent communication and evidence-preserving document writing and editing.",
   "author": {
     "name": "Corey Coto",
