@@ -29,6 +29,12 @@ external or generated clients and discovery paths where relevant. Confirm the
 contract from accepted policy or independent evidence rather than the candidate
 alone.
 
+For a changed API, inspect the call a reasonable consumer would naturally make.
+Does it preserve the accepted rule, or require knowledge of a hidden helper,
+flag combination or call sequence? Trace reachable bypasses and legitimate
+exceptions. Support a finding with a concrete failing call; retain compatibility
+constraints when recommending a remedy at the owning boundary.
+
 ## Performance and resources
 
 Check realistic work size, repeated I/O, unbounded collections, contention,

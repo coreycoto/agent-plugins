@@ -8,6 +8,11 @@ routine choices from context. Inspect supplied facts first; ask about a missing
 choice only if it materially changes the result. Preserve domain terminology,
 authorial position and the requested medium.
 
+When asked to match an author's voice or develop a style profile, read
+[voice calibration](../_shared/references/voice-calibration.md). Use supplied
+preferences and examples; keep personal rules and writing samples in the
+consumer's context.
+
 Choose a shape that serves the reader:
 
 - Explanation develops understanding: lead with the idea, connect cause and
@@ -39,6 +44,13 @@ links and factual qualifiers. Do not invent metrics, quotations, customer
 evidence, deadlines, recipients or endorsements. Mark a material evidence gap
 in the draft or ask for the missing fact. Draft questions neutrally when a
 questionnaire is requested; avoid suggesting the preferred answer.
+
+When adapting supplied material for another audience or format, keep each
+factual claim traceable to its support and retain necessary qualifications.
+Choose structure and emphasis for the destination; a shorter version or changed
+character count alone may not suit it. Make each draft understandable on its
+own, retain attribution, and do not turn source material into an invented
+first-person experience or a new commitment.
 
 Read the complete draft for logic, reader effort, repetition and evidence
 limits. Deliver the requested editable format, with assumptions or unresolved

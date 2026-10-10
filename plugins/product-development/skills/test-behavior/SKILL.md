@@ -8,8 +8,9 @@ description: Add or improve independent regression evidence through an appropria
 Identify the accepted behavior and its source, invariant, credible failures and
 independent expected results before meaningful behavioral implementation.
 Inspect current tests and public entry points; name the owning boundary and
-prefer its existing suite. Match the seam to the actual scenario: a multi-caller or persistent-state
-bug cannot be locked down by an unrelated shallow helper test. Read the
+prefer its existing suite. Match the seam to the actual scenario: a multi-caller
+or persistent-state bug cannot be locked down by an unrelated shallow helper
+test. Read the
 [behavioral testing guide](../_shared/references/behavioral-testing.md) when
 selecting or strengthening the evidence.
 
@@ -23,8 +24,8 @@ For test-first work or a regression repair, observe the intended failure before
 implementation or repair, then the pass afterward. Import or setup errors do
 not establish the behavioral failure. Build one useful test-and-code slice at
 a time; exhaustive failure lists and all tests up front are unnecessary.
-Existing behavior may still need new tests. For
-consequential tests or consolidation, use a known bad case or bounded mutation
+Existing behavior may still need new tests. For consequential tests or
+consolidation, use a known bad case or bounded mutation
 in isolated scratch when it adds confidence; investigate survivors rather than
 chasing a universal mutation score.
 

@@ -6,6 +6,15 @@ not a closeout requirement. Identify the known mistake, accepted invariant and
 owning boundary. Include a nearby legitimate case that must remain possible;
 a guard that rejects both has merely moved the bug.
 
+For a fragile public API, inspect the call a reasonable consumer would naturally
+make and the relevant callers. Check whether it preserves the accepted invariant
+without a hidden helper, flag combination or prerequisite call. Where scope and
+compatibility allow, make that ordinary operation enforce the rule, narrow
+invalid inputs or expose an exceptional operation explicitly. A wrapper does
+not remove the trap while ordinary callers can bypass it. Preserve legitimate
+exceptions and external or persisted contracts; an absent local caller alone
+does not establish that a compatibility path is unused.
+
 Choose the cheapest effective remedy that fits the consumer's tools:
 
 - Concentrate a duplicated rule at its actual owner, with a narrow API that
@@ -26,10 +35,11 @@ architecture scope still needs an accepted change boundary.
 
 Qualify through the known bad case and the legitimate near miss. Depending on
 the remedy, retain a negative type compilation, targeted forbidden dependency,
-independent invariant test or old-bug sensitivity in isolated scratch. Confirm
-that the guard's ordinary command is part of the consumer's relevant check path;
-a check nobody invokes does not prevent recurrence. Do not mutate a shared
-candidate during another validation run.
+independent invariant test or old-bug sensitivity in isolated scratch. For an
+API remedy, exercise the ordinary public call and the legitimate exception.
+Confirm that the guard's ordinary command is part of the consumer's relevant
+check path; a check nobody invokes does not prevent recurrence. Do not mutate
+a shared candidate during another validation run.
 
 Report the guarded invariant, owner, evidence, command and remaining escape paths.
 When useful and requested, [capture-solution](../../capture-solution/SKILL.md)
