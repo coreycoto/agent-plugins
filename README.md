@@ -14,7 +14,7 @@ live under `extensions.com.openai` and files under `com.openai/`.
 The owned workflow release contains 33 public skills across four independently
 selectable packages. See [workflow selection and migration](docs/owned-workflows.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
-The four public packages use version 0.9.1. See [release notes](CHANGELOG.md)
+The four public packages use version 0.9.2. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest
 specification 1.0.0. Verify registry availability and installed contents when upgrading.
 
