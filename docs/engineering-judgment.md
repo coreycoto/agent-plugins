@@ -1,10 +1,10 @@
 # Engineering judgment and specialist verification
 
-This source iteration adds three Product Development entrypoints and strengthens
+Version 0.10.0 adds three Product Development entrypoints and strengthens
 existing design, diagnosis, implementation, review, refactoring and knowledge
 procedures. It does not add a plugin, runtime, role, hook or mandatory workflow
-chain. New source content is unreleased until the normal reviewed release;
-version 0.9.3 in unchanged manifests does not identify these candidate bytes.
+chain. Registry availability and exact acquired contents require verification
+before consumer adoption.
 
 ## Choose by outcome
 
@@ -50,10 +50,11 @@ Run normal author checks from CONTRIBUTING.md and the focused suite:
 uv run --locked pytest tests/test_engineering_workflows.py
 ```
 
-Do not publish changed content under an existing version. Release, registry
-acquisition, consumer pins, installation and fresh-session discovery are separate
-from this PR. Nothing here changes the private Agent Development authoring
-runtime or any consumer repository's operations or verification policy.
+Do not publish changed content under an existing version. Source preparation,
+release, registry acquisition, consumer pins, installation and fresh-session
+discovery require separate evidence. Nothing here changes the private Agent
+Development authoring runtime or any consumer repository's operations or
+verification policy.
 
 The potential Data Engineering package stays a [backlog proposal](https://github.com/coreycoto/agent-plugins/issues/30).
 Its go/no-go decision must justify independent selection and non-duplicating
