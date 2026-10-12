@@ -36,10 +36,10 @@ optional; no evaluator runtime is copied into this publisher.
 
 ## Promotion
 
-This is an unreleased source contribution. Package versions and marketplace pins
-are deliberately unchanged. Do not publish changed bytes as an existing version
-or infer registry availability from the source branch. Before consumer adoption,
-qualify a reviewed new release through the existing publisher workflow, update
-consumer pins to that actual release, verify acquired bytes, and confirm fresh
-session discovery. A separately authorized source trial can use the existing
-skills-only/local-package recipe without changing production locks or hook trust.
+The testing and verification library is included from Product Development 0.9.3.
+Source changes and marketplace pins alone do not establish registry availability.
+Do not publish changed bytes as an existing version. Before consumer adoption,
+verify the actual release through the existing publisher receipts, update consumer
+pins to that release, verify acquired bytes, and confirm fresh session discovery.
+A separately authorized source trial can use the existing skills-only/local-package
+recipe without changing production locks or hook trust.

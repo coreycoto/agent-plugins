@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.3 — 2026-10-11
+
+- Expand five existing Product Development workflows with an eleven-document,
+  progressively loaded testing and verification library grounded in six books.
+- Distinguish specification from characterization, strengthen independent test
+  oracles, and preserve fixture, double and suite-organization tradeoffs.
+- Guide behavior-preserving legacy changes and test-suite refactoring while
+  retaining meaningful fault detection, real callers and existing consumer gates.
+- Name the actual asynchronous completion, persistence, recovery and delivery
+  boundaries behind verification claims; label modern distributed adaptations.
+- Add a test-behavior evaluation corpus with independent fault-detection graders
+  and adversarial scenarios. Deterministic qualification does not establish agent
+  effectiveness; paired agent trials remain unrun.
+
+Tracking: #8; source change: #27, originating issue: #26.
+
 ## 0.9.2 — 2026-10-10
 
 - Add failure-first behavioral test design, canonical suite ownership, bounded
