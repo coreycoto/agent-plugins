@@ -1,0 +1,149 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:design-change",
+  "grader_support": [
+    "_engineering_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "stable-code",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case A and recommend the smallest warranted work.",
+      "expected_output": "Recognizes the label-only request and stable formatter; does not infer rewrite priority from generated churn or age. Keeps change proportional, with focused behavioral verification and no mandatory modernization project.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Recognizes the label-only request and stable formatter; does not infer rewrite priority from generated churn or age. Keeps change proportional, with focused behavioral verification and no mandatory modernization project."
+        }
+      ]
+    },
+    {
+      "id": "caller-complexity",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case B: does the proposed abstraction reduce complexity?",
+      "expected_output": "Explains that coordinating the same four steps in every caller does not concentrate the rule. Compares a coherent owning boundary while preserving partial-failure semantics; does not equate smaller files with simpler callers.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Explains that coordinating the same four steps in every caller does not concentrate the rule. Compares a coherent owning boundary while preserving partial-failure semantics; does not equate smaller files with simpler callers."
+        }
+      ]
+    },
+    {
+      "id": "different-semantics",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case C before approving a shared ingestion framework.",
+      "expected_output": "Preserves revision/snapshot absence semantics; considers shared mechanics separately from policy and a no-framework alternative. Does not erase the distinguishing rule for reuse.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Preserves revision/snapshot absence semantics; considers shared mechanics separately from policy and a no-framework alternative. Does not erase the distinguishing rule for reuse."
+        }
+      ]
+    },
+    {
+      "id": "system-limiter",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case D and propose a discriminating next measurement, not a speculative optimization.",
+      "expected_output": "Relates 2 ms helper cost to 2 s path without claiming an observed total speedup; separates waiting and service, logical work and retries, and hypotheses from a proven cause. Proposes bounded trace/queue evidence rather than just longer timeouts.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Relates 2 ms helper cost to 2 s path without claiming an observed total speedup; separates waiting and service, logical work and retries, and hypotheses from a proven cause. Proposes bounded trace/queue evidence rather than just longer timeouts."
+        }
+      ]
+    },
+    {
+      "id": "stale-plan",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case E and identify the missing guarantee and its decisive check.",
+      "expected_output": "A pure planner is not an atomic claim. Identifies an apply-time conflict/ownership obligation and a competing-call test or bounded protocol check. Does not assert an unobserved production defect or prescribe a distributed service unnecessarily.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "A pure planner is not an atomic claim. Identifies an apply-time conflict/ownership obligation and a competing-call test or bounded protocol check. Does not assert an unobserved production defect or prescribe a distributed service unnecessarily."
+        }
+      ]
+    }
+  ]
+}

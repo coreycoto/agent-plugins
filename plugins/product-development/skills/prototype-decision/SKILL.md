@@ -16,6 +16,10 @@ do not invent targets or claim production feasibility from a toy scenario.
 If the criteria are unresolved product decisions, return them while progressing
 independent setup.
 
+State what result would reverse the preferred choice and when to stop investing
+in the experiment. Keep materially different alternatives alive while the decisive
+uncertainty remains; do not construct a polished demo that assumes it away.
+
 Choose the cheapest faithful experiment: an isolated script, narrow interface,
 small UI flow or limited integration harness. Put it in disposable scratch or
 the consumer's designated prototype area, preserving working changes. Mock a

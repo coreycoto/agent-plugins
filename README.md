@@ -11,8 +11,9 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The owned workflow release contains 33 public skills across four independently
-selectable packages. See [workflow selection and migration](docs/owned-workflows.md)
+The 0.9.3 release contains 33 public skills across four independently selectable
+packages. Current source adds three unreleased engineering specialists (36 total);
+see [engineering judgment and verification](docs/engineering-judgment.md). See [workflow selection and migration](docs/owned-workflows.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
 The four public packages use version 0.9.3. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest

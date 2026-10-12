@@ -1,0 +1,51 @@
+# Source scope and adaptation record
+
+This iteration implements agreed engineering workflows, not a claim to have
+reread all newly recommended books. Skills are original operational instructions;
+source ideas inform them but do not prove that they improve any particular model.
+No book text, diagrams, consumer-private examples or copyrighted PDFs are shipped.
+
+## Supplied editions consulted
+
+- Freeman and Pryce, Growing Object-Oriented Software, Guided by Tests (2009):
+  chapter 1, internal/external quality and listening to test difficulty; chapter
+  26, separating functionality and concurrency policy. Use the supplied edition's
+  terminology, not a claim that its unit tests prove distributed correctness.
+- Feathers, Working Effectively with Legacy Code (2004): chapters 16-17,
+  understanding code and telling the system's story; chapters 4 and 13 remain
+  the basis for seams and characterization in the [testing library](../testing/sources.md).
+- Humble and Farley, Continuous Delivery (2010): chapter 12, especially printed
+  pp. 327-334 (supplied PDF pp. 361-368), incremental change, data preservation
+  and decoupled application/database transitions. The book's relational examples
+  are not blanket guarantees about another database or a cloud runtime.
+- Beck, Test-Driven Development: By Example (2002): the preface explicitly limits
+  TDD's mechanical demonstration of security and concurrency (supplied PDF p. 9).
+- Fowler et al., Refactoring (1999): the introduction excludes concurrent and
+  distributed programming from its scope (supplied PDF p. 10).
+- Meszaros, xUnit Test Patterns (2007): independent fixtures, verification and
+  testability remain grounded in the existing [source map](../testing/sources.md),
+  rather than reinterpreted as a data-quality or formal-verification standard.
+
+## Public primary material consulted
+
+- [TLC configuration](https://learning.tlapl.us/intro/tlc-config/): explicitly
+  enabled invariant/temporal checks and fairness/configuration limits. The
+  finite Python example in the author corpus is our own; it does not run TLC.
+- [Donella Meadows, Leverage Points](https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/):
+  stocks, flows, delays and feedback; the essay warns against general recipes.
+  The retry/backlog diagnostic procedure is an original software adaptation.
+- [John Ousterhout's book page](https://web.stanford.edu/~ouster/cgi-bin/aposd.php):
+  identifies second-edition changes and disagreements about method length and
+  comments. This is limited author material, not a full-text book study.
+
+The broader reading list (Kill It with Fire, Software Design Decoded, Thinking
+in Systems, A Philosophy of Software Design, Your Code as a Crime Scene,
+Grokking Simplicity, Domain Modeling Made Functional, DDIA, Enterprise Integration
+Patterns and Release It!) remains candidate input for later source-specific
+extraction. Those full texts were not supplied in this iteration. Do not invent
+chapter locators or attribute these whole workflows to those books.
+
+For a later source extraction, preserve claim, locator, applicable situation,
+proposed agent behavior, counterexample and evaluation case separately. Keep
+disagreements visible. Existing private authoring/evaluation workflows own that
+work; this library introduces no second authoring runtime or automatic learning.

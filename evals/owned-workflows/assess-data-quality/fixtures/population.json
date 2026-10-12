@@ -1,0 +1,9 @@
+{
+  "authority": "independent coverage contract",
+  "expected_sources": [
+    "north",
+    "south",
+    "east"
+  ],
+  "dataset_id": "survey-snapshot-1"
+}

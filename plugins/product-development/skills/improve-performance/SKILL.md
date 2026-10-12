@@ -17,6 +17,11 @@ or configuration when they may dominate. A local hot function is not necessarily
 the end-to-end bottleneck. If no cause is supported, investigate rather than
 performing speculative rewrites.
 
+For queueing, retries or distributed work, use the
+[systems guide](../_shared/references/judgment/systems-diagnosis.md). Separate
+requests from attempts, service from waiting, and throughput from timely useful
+completion. Check downstream accumulation and recovery, not only local speed.
+
 Choose a bounded hypothesis and change only the relevant variable where
 practical. Preserve output semantics, failure behavior and resource limits.
 Use realistic input and production-relevant configuration. Keep correctness

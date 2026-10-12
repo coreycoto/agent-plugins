@@ -28,6 +28,12 @@ independence or explicitly labeled characterization, executed assertions,
 meaningful double boundaries, test discovery and honest recovery/stage claims.
 Do not infer correctness from coverage, fewer files or reviewer agreement.
 
+For new abstractions, compare actual caller obligations using the
+[design judgment guide](../_shared/references/judgment/modernization-and-design.md).
+For protocol or migration evidence, inspect enabled properties, model limits,
+implementation correspondence and tested intermediate versions. A model pass
+or destination test does not establish an unexercised production transition.
+
 For each retained finding, state the concrete trigger, incorrect consequence,
 location, supporting contract and smallest resolving check. Reproduce a
 suspected defect where practical. Mark an unproven concern and its missing

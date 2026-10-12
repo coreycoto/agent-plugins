@@ -34,6 +34,11 @@ revision, relevant components or search terms, applicability limits and last
 verification status. Link concise redacted artifacts instead of copying
 sensitive logs. Distinguish a proven remedy from an untested recommendation.
 
+For a consequential design, retain the real-world constraint the structure serves,
+what would invalidate the decision, and links to assumptions or counterexamples.
+A file-change summary is not the system's rationale. Do not invent historical
+motives or preserve an untested inference as an established reason.
+
 Validate important claims against current code and retained checks. A candidate
 record may describe historical evidence, but it must not imply a later revision
 or provider environment was verified. Keep independent product policy intact.

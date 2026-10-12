@@ -30,6 +30,12 @@ invalid states, duplicated assumptions or caller burden; indirection alone is
 not improvement. Keep runtime validation where external data can violate static
 types.
 
+For entangled decisions and effects, use the
+[boundary guide](../_shared/references/judgment/decision-effect-boundaries.md).
+Distinguish static representations from runtime evidence: a verified/trusted type
+must be earned at its boundary, not asserted by a cast. Separate source identity,
+execution identity and observations when their lifetimes differ.
+
 Walk concrete valid and invalid examples through the proposed model. Identify
 what it makes impossible, what still requires validation and how migration
 preserves existing identities and data. Capture unresolved semantic choices for

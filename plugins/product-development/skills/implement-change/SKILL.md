@@ -25,6 +25,11 @@ reproducer; use [test-behavior](../test-behavior/SKILL.md) when independent
 regression evidence is warranted. Reversible low-impact edits need proportionate
 checks rather than tests that mirror their implementation.
 
+When policy is tangled with orchestration, use the
+[decision/effect guide](../_shared/references/judgment/decision-effect-boundaries.md)
+for a small extraction that earns its cost. Preserve real effect-boundary tests;
+a pure plan neither makes apply atomic nor protects it from stale observations.
+
 Run focused validation, then consumer-required checks. Fix failures caused by
 the change and identify pre-existing or environment failures separately. Inspect
 the final diff for omissions and unintended changes. Use

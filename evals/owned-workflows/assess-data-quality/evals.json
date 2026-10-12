@@ -1,0 +1,59 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:assess-data-quality",
+  "grader_support": [
+    "_engineering_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "independent-population",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess the provided survey snapshot for its declared use. Use the supplied sources and contract, execute read-only checks, retain evidence, and explain both defects and legitimate exceptions. Do not repair data or invent quality thresholds.",
+      "expected_output": "An evidence-grounded bounded result; unchanged source; real execution and honest unverified limits. See grader-only assertions and rubrics.",
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/data.csv",
+          "path": "data.csv"
+        },
+        {
+          "source": "fixtures/discovered.json",
+          "path": "discovered.json"
+        },
+        {
+          "source": "fixtures/population.json",
+          "path": "population.json"
+        }
+      ],
+      "checks": [
+        {
+          "id": "artifacts-and-scope",
+          "type": "assertion",
+          "script": "oracles/check.py"
+        },
+        {
+          "id": "completed-command",
+          "type": "assertion",
+          "script": "oracles/execution.py"
+        },
+        {
+          "id": "independent-computation",
+          "type": "rubric",
+          "text": "Inspect assessment.py and command evidence. It computes findings from the supplied CSV and independent population, not hardcoded answers or the pipeline discovery list. It examines all six rows and does not silently remove problematic records."
+        },
+        {
+          "id": "honest-fitness",
+          "type": "rubric",
+          "text": "Explains missing coverage, a repeated revision triple and an invalid unit while preserving legitimate later revisions, not-reported blanks and zero. Does not invent freshness/accuracy evidence, extrapolate to unseen data or use a numerical quality score as a substitute for the use-specific conclusion."
+        }
+      ]
+    }
+  ]
+}

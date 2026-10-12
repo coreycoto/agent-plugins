@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "skill_name": "product-development:check-protocol",
+  "queries": [
+    {
+      "id": "train-positive",
+      "query": "Explore whether a dispatch with a lost reply and a competing recovery can accept the same operation twice.",
+      "split": "train",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/protocol.py",
+          "path": "protocol.py"
+        }
+      ]
+    },
+    {
+      "id": "train-near-miss",
+      "query": "Explain the fields of this job record. No protocol verification or code changes.",
+      "split": "train",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/protocol.py",
+          "path": "protocol.py"
+        }
+      ]
+    },
+    {
+      "id": "validation-positive",
+      "query": "Build and run a small state model for the lease handoff, including delayed completion and expiry.",
+      "split": "validation",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/protocol.py",
+          "path": "protocol.py"
+        }
+      ]
+    },
+    {
+      "id": "validation-near-miss",
+      "query": "Add a unit test for this pure date formatter.",
+      "split": "validation",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/protocol.py",
+          "path": "protocol.py"
+        }
+      ]
+    }
+  ]
+}

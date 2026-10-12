@@ -20,6 +20,9 @@ Choose by the unresolved task:
 - Assess a candidate: [review-code](../review-code/SKILL.md).
 - Strengthen regression evidence: [test-behavior](../test-behavior/SKILL.md).
 - Exercise user behavior: [verify-product](../verify-product/SKILL.md).
+- Explore a disputed coordination protocol: [check-protocol](../check-protocol/SKILL.md).
+- Exercise a planned multi-version transition: [rehearse-migration](../rehearse-migration/SKILL.md).
+- Assess a specific dataset for its intended use: [assess-data-quality](../assess-data-quality/SKILL.md).
 
 Use specialist procedures only when they answer the task: domain modeling,
 performance work, a decision prototype, verification maintenance, a substantial

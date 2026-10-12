@@ -13,6 +13,11 @@ Churn, file size, a health score or an unfamiliar abstraction is a lead, not pro
 of a structural defect. Distinguish accidental coupling from required product,
 compatibility, generated-code or framework constraints.
 
+For modernization prioritization, use the [design judgment guide](judgment/modernization-and-design.md).
+Separate semantic change from generated/mechanical churn and connect hotspots to
+actual maintenance cost or upcoming work. History is incomplete evidence, not a
+competence score or automatic rewrite priority.
+
 For material friction, retain a concrete example: the change or failure, affected
 callers, the rule that was hard to preserve, its current owner and practical
 consequence. Compare alternatives that concentrate the rule at its owning

@@ -1,7 +1,8 @@
 # Owned workflow selection and migration
 
-The four public packages contain 33 self-contained skills. Choose a direct task
-entry point; `product-development:engineering-workflow` is an optional router.
+Current source contains 36 self-contained skills across four public packages;
+the three new specialists are unreleased additions to the 33-skill 0.9.3 release.
+Choose a direct task entry point; `product-development:engineering-workflow` is an optional router.
 Product policy, verification commands, permissions and knowledge remain in the
 consumer repository. A local task ends with a verified local result; publication
 requires the corresponding delivery authority.
@@ -20,6 +21,9 @@ requires the corresponding delivery authority.
 | Test an uncertain technical approach | `product-development:prototype-decision` |
 | Improve measured performance | `product-development:improve-performance` |
 | Clarify identity, state and invariants | `product-development:model-domain` |
+| Explore competing protocol executions | `product-development:check-protocol` |
+| Exercise a migration through supported intermediate states | `product-development:rehearse-migration` |
+| Assess a dataset for its declared use | `product-development:assess-data-quality` |
 | Retain or refresh reusable project reasoning | `product-development:capture-solution`, `product-development:refresh-solutions` |
 | Change a substantial structure | `product-development:phased-refactor` |
 | Plan, sequence and deliver work | `project-management:intake`, `backlog-planning`, `delivery-lifecycle` |
@@ -32,7 +36,7 @@ requires the corresponding delivery authority.
 ## Improving the environment and human decisions
 
 The existing entry points support six additional mechanisms through conditional
-references, without increasing the 33-skill catalog:
+references rather than separate entrypoints for those mechanisms:
 
 | Need | Concrete result and owning workflow |
 | --- | --- |
@@ -215,10 +219,11 @@ requests, near misses, outcomes and authority boundaries with independent
 expected evidence. Proxy keyword scores and larger catalogs do not prove value.
 
 The [author-only workflow trial corpus](../evals/owned-workflows/README.md) provides
-five deterministic suites and four additional semantic cases, independent
-assertions and explicit evaluation planning commands. Its offline tests qualify
-the graders; model usefulness and native
-discovery require separate observed trials.
+deterministic artifacts, separate semantic cases, independent assertions and
+evaluation planning commands. The [specialist trial plan](../evals/owned-workflows/engineering-judgment/README.md)
+compares general skills, reference-only guidance and specialist entrypoints.
+Offline tests qualify graders; model usefulness and native discovery require
+separate observed trials.
 
 Version 0.9.3 delivers the four public owned-workflow packages through GitHub
 Packages only. Version 0.9.0 remains the original GitHub release artifact. Upgrades must
