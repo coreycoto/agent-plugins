@@ -1,8 +1,8 @@
 # Owned workflow selection and migration
 
-Current source contains 36 self-contained skills across four public packages;
-the three new specialists are unreleased additions to the 33-skill 0.9.3 release.
-Choose a direct task entry point; `product-development:engineering-workflow` is an optional router.
+Version 0.10.0 contains 36 self-contained skills across four public packages,
+including 19 Product Development skills. Choose a direct task entry point;
+`product-development:engineering-workflow` is an optional router.
 Product policy, verification commands, permissions and knowledge remain in the
 consumer repository. A local task ends with a verified local result; publication
 requires the corresponding delivery authority.
@@ -225,7 +225,7 @@ compares general skills, reference-only guidance and specialist entrypoints.
 Offline tests qualify graders; model usefulness and native discovery require
 separate observed trials.
 
-Version 0.9.3 delivers the four public owned-workflow packages through GitHub
+Version 0.10.0 delivers the four public owned-workflow packages through GitHub
 Packages only. Version 0.9.0 remains the original GitHub release artifact. Upgrades must
 qualify native acquisition/discovery and update downstream source pins from the
 exact reviewed release. Retain a rollback copy until the replacement is verified.

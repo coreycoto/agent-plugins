@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.10.0 — 2026-10-12
+
+- Add `check-protocol`, `rehearse-migration` and `assess-data-quality` to Product
+  Development, bringing its catalog to 19 skills and the public total to 36.
+- Strengthen existing workflows with conditional guidance for modernization,
+  caller obligations, decision/effect boundaries and measured system behavior.
+- Preserve design constraints and invalidating assumptions in project knowledge;
+  distinguish supplied sources, public primary material and original adaptations.
+- Add synthetic protocol, migration and data-quality fixtures with independent
+  artifact and execution graders, plus a three-arm specialist evaluation plan.
+  Deterministic qualification does not establish model effectiveness; agent
+  trials and fresh-session discovery remain separate, unrun qualifications.
+- Publish all four public plugin packages at the coordinated 0.10.0 version.
+
+Tracking: #8; source change: #31, originating issue: #29.
+
 ## 0.9.3 — 2026-10-11
 
 - Expand five existing Product Development workflows with an eleven-document,
