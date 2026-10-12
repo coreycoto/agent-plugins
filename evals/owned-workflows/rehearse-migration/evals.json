@@ -1,0 +1,59 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:rehearse-migration",
+  "grader_support": [
+    "_engineering_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "intermediate-state",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Rehearse the proposed mixed-version money migration with the supplied SQL and contract. Preserve inputs; exercise first backfill, a late V1 write, connection reopen, resumption, and backup restore in isolated SQLite. Retain the requested artifacts and explain transition and recovery findings.",
+      "expected_output": "An evidence-grounded bounded result; unchanged source; real execution and honest unverified limits. See grader-only assertions and rubrics.",
+      "workspace_files": [
+        {
+          "source": "fixtures/backfill.sql",
+          "path": "backfill.sql"
+        },
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/expand.sql",
+          "path": "expand.sql"
+        },
+        {
+          "source": "fixtures/schema.sql",
+          "path": "schema.sql"
+        }
+      ],
+      "checks": [
+        {
+          "id": "artifacts-and-scope",
+          "type": "assertion",
+          "script": "oracles/check.py"
+        },
+        {
+          "id": "completed-command",
+          "type": "assertion",
+          "script": "oracles/execution.py"
+        },
+        {
+          "id": "real-transition",
+          "type": "rubric",
+          "text": "Inspect rehearsal.py and command evidence. It executes the unchanged migration SQL, commits before connection reopen, inspects before/after/resumed/restored states, and obtains outputs from actual database observations rather than constructing expected artifacts directly."
+        },
+        {
+          "id": "recovery-and-scope",
+          "type": "rubric",
+          "text": "Explains fractional truncation and the late V1 writer gap without blaming a legitimate zero. Distinguishes binary reversion, schema repair and backup restore; does not claim fresh-process, V2 writer, production database locking or deployment qualification."
+        }
+      ]
+    }
+  ]
+}

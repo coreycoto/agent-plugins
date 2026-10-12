@@ -10,6 +10,12 @@ reports identify candidates; actual source, caller and behavior evidence decide
 whether to change them. Read consumer ownership, permissions and delivery rules.
 Use [design-change](../design-change/SKILL.md) when technical choices remain open.
 
+State the concrete change cost or capability this work should improve and when
+to stop. Use the [design judgment guide](../_shared/references/judgment/modernization-and-design.md)
+when choosing scope; old technology or churn alone does not justify replacement.
+For persistent or mixed-version transitions, retain
+[rehearsal evidence](../rehearse-migration/SKILL.md), not only destination tests.
+
 Record the checkout, branch, baseline revision, existing edits and relevant tool
 versions. Give selected findings a disposition: implement, consolidate, defer,
 accept or reject with reason. Inspect generated files, migrations and framework

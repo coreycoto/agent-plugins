@@ -18,6 +18,12 @@ structure where useful. Evaluate caller complexity, locality of rules,
 observability, failure modes, compatibility and implementation cost supported
 by evidence. Avoid speculative abstractions that merely relocate complexity.
 
+For modernization or a consequential abstraction, use the
+[design judgment guide](../_shared/references/judgment/modernization-and-design.md).
+Tie the change to a concrete capability or maintenance cost, show representative
+caller obligations before/after, and set a stopping condition. Prefer a useful
+local seam over a framework that merely moves complexity.
+
 Describe interface behavior beyond signatures: identity, state, ordering,
 errors, configuration and resource ownership. Use
 [model-domain](../model-domain/SKILL.md) when ambiguous vocabulary or invalid
@@ -29,6 +35,11 @@ Identify the assumption on which safety depends and how to check it. If a
 small experiment can settle a key uncertainty, use
 [prototype-decision](../prototype-decision/SKILL.md). A prototype result does
 not establish rollout readiness.
+
+Use [check-protocol](../check-protocol/SKILL.md) for a disputed coordination
+sequence that needs executable state exploration. Use
+[rehearse-migration](../rehearse-migration/SKILL.md) to exercise an accepted
+multi-version transition. Neither is a mandatory stage for a local design.
 
 For demonstrated recurring corrections or fragile invariants, use the
 [prevention guide](../_shared/references/recurrence-prevention.md) to compare a

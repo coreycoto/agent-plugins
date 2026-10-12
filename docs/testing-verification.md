@@ -1,7 +1,7 @@
 # Testing and verification procedures
 
-Product Development keeps the same sixteen skill IDs. This contribution extends
-existing entrypoints with a progressively loaded testing reference library; it
+The testing library extends existing Product Development entrypoints through
+progressively loaded references; it
 does not introduce a second plugin, test runner, deployment gate, role or hook.
 Start at the [decision guide](../plugins/product-development/skills/_shared/references/testing/README.md).
 

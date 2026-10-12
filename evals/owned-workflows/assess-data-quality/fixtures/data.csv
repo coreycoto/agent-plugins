@@ -1,0 +1,7 @@
+source,id,revision,area,unit,status,observed_at
+north,n1,1,100,sqft,reported,2026-01-01
+north,n1,2,125,sqft,reported,2026-01-02
+south,s1,1,,sqft,not-reported,2026-01-02
+south,s1,1,,sqft,not-reported,2026-01-02
+south,s2,1,15,furlong,reported,2026-01-02
+north,n2,1,0,sqft,reported,2026-01-02

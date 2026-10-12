@@ -1,0 +1,51 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:check-protocol",
+  "grader_support": [
+    "_engineering_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "lost-ack",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Check the supplied dispatch protocol with an executable finite model exploration. Preserve its source, compare the provided control, retain actual counterexample and completion traces, and report safety and progress limits. Follow contract.md for outputs and execution.",
+      "expected_output": "An evidence-grounded bounded result; unchanged source; real execution and honest unverified limits. See grader-only assertions and rubrics.",
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/protocol.py",
+          "path": "protocol.py"
+        }
+      ],
+      "checks": [
+        {
+          "id": "artifacts-and-scope",
+          "type": "assertion",
+          "script": "oracles/check.py"
+        },
+        {
+          "id": "completed-command",
+          "type": "assertion",
+          "script": "oracles/execution.py"
+        },
+        {
+          "id": "model-correspondence",
+          "type": "rubric",
+          "text": "Inspect analysis.py and completed execution evidence. It explores the provided transition relation, actually compares repair=False and repair=True, explains reached states and finite bounds, and maps the lost-ack trace to the receiver-durable acceptance rule; it does not merely hardcode the expected trace or edit source."
+        },
+        {
+          "id": "temporal-limits",
+          "type": "rubric",
+          "text": "Does not call a completion path or a finite safety search a proof of liveness; identifies indefinite wait and absent fairness/delivery assumptions. Does not claim production correctness or hide the unknown-outcome state."
+        }
+      ]
+    }
+  ]
+}

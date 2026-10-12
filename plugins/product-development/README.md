@@ -23,6 +23,9 @@ provenance, not an installation manifest.
 | `prototype-decision` | Answer one uncertainty through a bounded disposable experiment. |
 | `improve-performance` | Identify the limiter and measure equivalent work with correctness preserved. |
 | `model-domain` | Clarify vocabulary, identity, state, invariants and boundary contracts. |
+| `check-protocol` | Explore an executable coordination model and report bounded properties, traces and assumptions. |
+| `rehearse-migration` | Exercise supported intermediate versions and recovery before a live transition. |
+| `assess-data-quality` | Assess a dataset for a declared use without silently repairing its data. |
 | `capture-solution` | Retain verified reasoning whose loss would cause recurrence or major rediscovery. |
 | `refresh-solutions` | Reconcile selected records while preserving policy, history and unknowns. |
 | `phased-refactor` | Change substantial structure in bounded phases with contract and parity evidence. |

@@ -26,6 +26,7 @@ OWNED_SKILLS = {
         "diagnose-problem", "design-change", "implement-change", "review-code", "test-behavior",
         "verify-product", "maintain-verification", "prototype-decision", "improve-performance",
         "model-domain", "capture-solution", "refresh-solutions",
+        "check-protocol", "rehearse-migration", "assess-data-quality",
     },
     "project-management": {
         "manage-codex-agents", "backlog-planning", "delivery-lifecycle", "intake",
@@ -40,7 +41,7 @@ OWNED_SKILLS = {
 
 
 def test_owned_catalog_and_attribution_survive_every_distribution() -> None:
-    assert sum(len(names) for names in OWNED_SKILLS.values()) == 33
+    assert sum(len(names) for names in OWNED_SKILLS.values()) == 36
     distributions = distribution_projection()
     for plugin, expected in OWNED_SKILLS.items():
         source = REPOSITORY / "plugins" / plugin

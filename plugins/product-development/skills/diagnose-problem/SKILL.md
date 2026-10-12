@@ -24,6 +24,11 @@ an isolated revision or add bounded temporary instrumentation. Preserve logs
 that establish sequence without capturing credentials or unrelated user data.
 Update beliefs from observations; a plausible story is not root-cause evidence.
 
+For backlog, latency or failures crossing dependencies, use the
+[systems guide](../_shared/references/judgment/systems-diagnosis.md). Separate the
+triggering defect from measured contributing conditions; test causal predictions
+and delayed effects rather than substitute a diagram or retry for evidence.
+
 Separate a product failure, harness defect, environment problem and stale
 expectation. An accepted requirement contradicted by current code may indicate
 a bug rather than an obsolete test. Preserve that decision for the owner.

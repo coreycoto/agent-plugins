@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "skill_name": "product-development:assess-data-quality",
+  "queries": [
+    {
+      "id": "train-positive",
+      "query": "Assess this imported dataset against its source-coverage and identity contract; leave data unchanged.",
+      "split": "train",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/data.csv",
+          "path": "data.csv"
+        },
+        {
+          "source": "fixtures/discovered.json",
+          "path": "discovered.json"
+        },
+        {
+          "source": "fixtures/population.json",
+          "path": "population.json"
+        }
+      ]
+    },
+    {
+      "id": "train-near-miss",
+      "query": "Review the parser implementation for code defects; no dataset is under assessment.",
+      "split": "train",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/data.csv",
+          "path": "data.csv"
+        },
+        {
+          "source": "fixtures/discovered.json",
+          "path": "discovered.json"
+        },
+        {
+          "source": "fixtures/population.json",
+          "path": "population.json"
+        }
+      ]
+    },
+    {
+      "id": "validation-positive",
+      "query": "Does this snapshot satisfy the declared analysis use? Check coverage, units and revision exceptions.",
+      "split": "validation",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/data.csv",
+          "path": "data.csv"
+        },
+        {
+          "source": "fixtures/discovered.json",
+          "path": "discovered.json"
+        },
+        {
+          "source": "fixtures/population.json",
+          "path": "population.json"
+        }
+      ]
+    },
+    {
+      "id": "validation-near-miss",
+      "query": "Write a CSV parser unit test from this specification.",
+      "split": "validation",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/contract.md",
+          "path": "contract.md"
+        },
+        {
+          "source": "fixtures/data.csv",
+          "path": "data.csv"
+        },
+        {
+          "source": "fixtures/discovered.json",
+          "path": "discovered.json"
+        },
+        {
+          "source": "fixtures/population.json",
+          "path": "population.json"
+        }
+      ]
+    }
+  ]
+}
