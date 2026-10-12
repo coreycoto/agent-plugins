@@ -15,7 +15,10 @@ Choose the user-visible entry point: browser flow, CLI command, desktop action,
 API consumer or library contract. Drive that path using actual available tools.
 Avoid internal state setters and test-only routes that bypass the behavior
 being claimed. A launch, health endpoint or import establishes readiness, not
-the user outcome.
+the user outcome. For candidate/artifact, migration or delivery-stage questions,
+use [delivery evidence](../_shared/references/testing/delivery.md). A rebuilt
+artifact, changed configuration or unavailable stage requires its own evidence;
+local success is not hosted acceptance or permission to promote.
 
 Check prerequisites and instance identity before driving it. Keep shared browser
 or app state serial; isolated independent environments may be used only within
@@ -26,7 +29,10 @@ but cannot turn that gap into a pass.
 Observe both action and result. Verify relevant persistence, generated files,
 consumer state or downstream effects as well as the visible response. Keep
 expected behavior grounded in acceptance policy; current source is evidence
-of mechanics, not permission to redefine a broken product as correct.
+of mechanics, not permission to redefine a broken product as correct. For an
+asynchronous no-effect or recovery claim, establish completion and the actual
+restart boundary using [asynchrony and persistence](../_shared/references/testing/asynchrony-persistence.md).
+An unchanged initial value can pass before any processing occurs.
 
 Retain revision, commands or interaction steps, results and redacted artifacts
 for each material claim. Preserve failure evidence before cleaning owned

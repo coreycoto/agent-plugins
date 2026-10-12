@@ -1,0 +1,288 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:test-behavior",
+  "evals": [
+    {
+      "id": "independent-checkout-oracle",
+      "execution_mode": "artifact-safe",
+      "prompt": "Strengthen test_checkout.py against policy.md using standard-library unittest. The current test gives little confidence. Change tests only, keep checkout.py and policy.md unchanged, run the tests, and report any demonstrated product defect without repairing production in this task. Keep the tests readable and independently expected.",
+      "expected_output": "A meaningful test suite uses accepted expectations, passes the corrected control and detects the threshold, membership, shipping and subtotal defects. The source defect is reported rather than blessed or fixed outside scope.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/checkout.py",
+          "path": "checkout.py"
+        },
+        {
+          "source": "fixtures/test_checkout.py",
+          "path": "test_checkout.py"
+        },
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "independent-sensitivity",
+          "type": "assertion",
+          "script": "oracles/sensitivity.py"
+        },
+        {
+          "id": "observed-evidence",
+          "type": "rubric",
+          "text": "Reports the observed behavioral failure at the accepted boundary and distinguishes it from setup or import failure; does not claim to have fixed production or completed broader checks."
+        }
+      ]
+    },
+    {
+      "id": "characterization-not-correctness",
+      "execution_mode": "artifact-safe",
+      "prompt": "A deployed report produces a surprising rounding result. There is no approved rounding change, and callers may depend on the current output. The task is to extract its formatter without changing behavior. Explain the tests and first safe steps; do not invent the correct rounding rule.",
+      "expected_output": "Separates fixed-baseline characterization from accepted specification, marks suspicious behavior, preserves observable output for extraction, and seeks a decision before changing rounding. Does not forbid characterization or silently bless it as normative correctness.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Separates fixed-baseline characterization from accepted specification, marks suspicious behavior, preserves observable output for extraction, and seeks a decision before changing rounding. Does not forbid characterization or silently bless it as normative correctness."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "negative-async-overtaking",
+      "execution_mode": "artifact-safe",
+      "prompt": "An asynchronous test submits an ignored job and immediately asserts published_count == 0. Jobs run in parallel. A proposed fix submits a harmless marker job and waits for its completion before checking the count. Review the evidence and propose a sound test boundary.",
+      "expected_output": "Identifies initial-state false pass and that a parallel marker can overtake the ignored job. Requires completion/settlement of the relevant work or a justified ordering contract, not an arbitrary sleep or unjustified serial marker.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Identifies initial-state false pass and that a parallel marker can overtake the ignored job. Requires completion/settlement of the relevant work or a justified ordering contract, not an arbitrary sleep or unjustified serial marker."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "transaction-isolation-versus-commit",
+      "execution_mode": "artifact-safe",
+      "prompt": "A suite wraps every database test in a transaction that is always rolled back. A new test claims it proves a deferred constraint is enforced on commit and a fresh process can recover the resulting record. What should change in the verification?",
+      "expected_output": "Retains rollback isolation for appropriate tests but requires actual commit, independent visibility and an actual fresh process for these claims. Distinguishes handle reopen, real SQL and process recovery without categorically banning rollback fixtures.",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Retains rollback isolation for appropriate tests but requires actual commit, independent visibility and an actual fresh process for these claims. Distinguishes handle reopen, real SQL and process recovery without categorically banning rollback fixtures."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "standard-is-not-shared",
+      "execution_mode": "artifact-safe",
+      "prompt": "Twenty tests call the same builder, which allocates a fresh nested object every time. A reviewer calls this shared-fixture leakage and demands twenty separate copies. Another proposes one mutable global object for speed. Assess both proposals.",
+      "expected_output": "Distinguishes Standard Fixture design reuse from Shared Fixture instance reuse. Keeps valid fresh builder reuse, checks nested isolation, and requires evidence/ownership/reset rules before sharing mutable state.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Distinguishes Standard Fixture design reuse from Shared Fixture instance reuse. Keeps valid fresh builder reuse, checks nested isolation, and requires evidence/ownership/reset rules before sharing mutable state."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "one-condition-multiple-observations",
+      "execution_mode": "artifact-safe",
+      "prompt": "A recovery test checks unknown state, reopens storage, checks reconciliation, and checks that a second external dispatch was not sent. A reviewer insists on one assertion per test and removing repeated-looking waits. How should it be refactored?",
+      "expected_output": "Keeps a coherent temporal condition with multiple necessary observations, identifies synchronization purpose before removal, and retains meaningful external no-duplicate assertions rather than imposing one-assertion dogma.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Keeps a coherent temporal condition with multiple necessary observations, identifies synchronization purpose before removal, and retains meaningful external no-duplicate assertions rather than imposing one-assertion dogma."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "artifact-not-source-only",
+      "execution_mode": "artifact-safe",
+      "prompt": "Acceptance passed against build A. The release job recompiles the same commit with newer dependencies into build B. Its unit suite passes. Explain which verification claims can and cannot be carried forward.",
+      "expected_output": "Distinguishes same source from same artifact, requires identifying and qualifying changed build inputs/bytes, and does not turn passing local unit tests into acceptance of build B.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Distinguishes same source from same artifact, requires identifying and qualifying changed build inputs/bytes, and does not turn passing local unit tests into acceptance of build B."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "coverage-and-redundancy",
+      "execution_mode": "artifact-safe",
+      "prompt": "A suite has high line coverage. To speed it up, a proposal deletes its only real-runtime write/read test because a fast fake covers the same lines. The fake returns whatever it was just given. Review the proposal.",
+      "expected_output": "Rejects line coverage as evidence of equivalent detection, identifies omitted real runtime/storage behavior and possible self-agreement, and asks for replacement fault evidence before retirement without banning fakes generally.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Rejects line coverage as evidence of equivalent detection, identifies omitted real runtime/storage behavior and possible self-agreement, and asks for replacement fault evidence before retirement without banning fakes generally."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "property-preconditions",
+      "execution_mode": "artifact-safe",
+      "prompt": "An agent proposes that every aggregation must produce byte-identical output when records are reordered, split into batches, or replayed next month against refreshed reference data. Assess the proposed properties before implementing them.",
+      "expected_output": "Requires domain-specific ordering/tie rules, justified numeric comparison and pinned relevant reference data. Distinguishes valid metamorphic relations from unsupported universal laws and flags exact replay assumptions.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Requires domain-specific ordering/tie rules, justified numeric comparison and pinned relevant reference data. Distinguishes valid metamorphic relations from unsupported universal laws and flags exact replay assumptions."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    },
+    {
+      "id": "minimal-seam-before-tests",
+      "execution_mode": "artifact-safe",
+      "prompt": "A legacy function constructs a live vendor client internally, and cannot run in the test harness. There are no focused tests. The requested change is a small extraction. One proposal rewrites the subsystem; another says no line may change until every test exists. Explain the first safe step.",
+      "expected_output": "Uses effect reasoning and an existing or minimally introduced seam/enabling point, retaining broader/static checks and immediate characterization. Rejects both a wholesale unprotected rewrite and an impossible absolute ban on dependency-breaking edits.",
+      "tiers": [
+        "deep"
+      ],
+      "workspace_files": [
+        {
+          "source": "fixtures/review-scope.md",
+          "path": "review-scope.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses effect reasoning and an existing or minimally introduced seam/enabling point, retaining broader/static checks and immediate characterization. Rejects both a wholesale unprotected rewrite and an impossible absolute ban on dependency-breaking edits."
+        },
+        {
+          "id": "read-only",
+          "type": "assertion",
+          "script": "oracles/unchanged.py"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "skill_name": "product-development:test-behavior",
+  "queries": [
+    {
+      "id": "train-positive",
+      "query": "Replace these circular expectations with meaningful regression tests for the documented checkout policy. Change tests only.",
+      "split": "train",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/checkout.py",
+          "path": "checkout.py"
+        },
+        {
+          "source": "fixtures/test_checkout.py",
+          "path": "test_checkout.py"
+        },
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        }
+      ]
+    },
+    {
+      "id": "train-near-miss",
+      "query": "Explain what the invoice function currently does; do not design or change tests.",
+      "split": "train",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/checkout.py",
+          "path": "checkout.py"
+        },
+        {
+          "source": "fixtures/test_checkout.py",
+          "path": "test_checkout.py"
+        },
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        }
+      ]
+    },
+    {
+      "id": "validation-positive",
+      "query": "Characterize the current report output before a behavior-preserving extraction. Keep suspected defects labeled rather than silently correcting them.",
+      "split": "validation",
+      "should_trigger": true,
+      "workspace_files": [
+        {
+          "source": "fixtures/checkout.py",
+          "path": "checkout.py"
+        },
+        {
+          "source": "fixtures/test_checkout.py",
+          "path": "test_checkout.py"
+        },
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        }
+      ]
+    },
+    {
+      "id": "validation-near-miss",
+      "query": "Correct a spelling mistake in an unrelated documentation heading. Do not add a test harness.",
+      "split": "validation",
+      "should_trigger": false,
+      "workspace_files": [
+        {
+          "source": "fixtures/checkout.py",
+          "path": "checkout.py"
+        },
+        {
+          "source": "fixtures/test_checkout.py",
+          "path": "test_checkout.py"
+        },
+        {
+          "source": "fixtures/policy.md",
+          "path": "policy.md"
+        }
+      ]
+    }
+  ]
+}
