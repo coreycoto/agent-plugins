@@ -21,7 +21,12 @@ Read selected sections of the
 [review lenses](../_shared/references/review-lenses.md) only for relevant security,
 performance, data, API or lifecycle concerns. Do not apply every lens, invent
 risk probabilities, or treat a style preference as a defect. Check whether
-existing deterministic tooling already covers a rule.
+existing deterministic tooling already covers a rule. For test, fixture or
+verification changes, select from the
+[testing decision guide](../_shared/references/testing/README.md). Check oracle
+independence or explicitly labeled characterization, executed assertions,
+meaningful double boundaries, test discovery and honest recovery/stage claims.
+Do not infer correctness from coverage, fewer files or reviewer agreement.
 
 For each retained finding, state the concrete trigger, incorrect consequence,
 location, supporting contract and smallest resolving check. Reproduce a

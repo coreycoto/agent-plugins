@@ -23,11 +23,23 @@ contracts cross components or persistence. Run a relevant fixed baseline and
 retain failures separately from regressions. Comparison artifacts belong in
 consumer-approved evidence storage, not raw public source.
 
+For unfamiliar code, separate required preservation, suspicious characterization
+and intentional changes. Use [legacy change](../_shared/references/testing/legacy-refactoring.md)
+for seams, enabling points and minimal dependency-breaking edits. Verify both
+that extracted behavior exists and that real callers still reach it. A compiler
+pass alone does not establish persisted or distributed compatibility.
+
 Sequence coherent phases around real responsibilities. Separate mechanical
 movement from semantic change where useful, preserving interfaces and runtime
 outputs. Move actual consumers before retiring legacy contracts. Give authorized
 workers independent owned files and success conditions; preserve concurrent
 work. Do not change shared candidate state while a harness reads it.
+
+For fixture or suite restructuring, use
+[suite refactoring](../_shared/references/testing/suite-refactoring.md). Keep
+fixture changes, mechanical movement and assertion/semantic changes reviewable;
+preserve test discovery, compiler roots and the distinct purpose of each layer.
+Do not create a universal fixture framework or impose a directory migration.
 
 Organize validation around behavior. Use
 [test-behavior](../test-behavior/SKILL.md) for independent oracles and meaningful
