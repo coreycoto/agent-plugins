@@ -49,3 +49,21 @@ For a later source extraction, preserve claim, locator, applicable situation,
 proposed agent behavior, counterexample and evaluation case separately. Keep
 disagreements visible. Existing private authoring/evaluation workflows own that
 work; this library introduces no second authoring runtime or automatic learning.
+
+## Pinned plugin mechanisms
+
+The version-upgrade catalog and diff-scoped simplification references adapt
+[Anthropic's Claude Code plugins at `641d925db5a662e72f8650cb1b7670a59dab1abc`](https://github.com/anthropics/claude-plugins-official/tree/641d925db5a662e72f8650cb1b7670a59dab1abc).
+Consulted paths are `plugins/code-modernization/agents/version-delta-analyst.md`,
+`plugins/code-modernization/commands/modernize-uplift.md` and
+`plugins/code-simplifier/agents/code-simplifier.md`. Exact source/destination
+paths and departures are recorded in [source lineage](../upstream-lineage.json);
+the [Apache 2.0 license](../../../../licenses/anthropic-claude-plugins-Apache-2.0.txt)
+is retained with [third-party attribution](../../../../THIRD_PARTY_NOTICES.md).
+
+These are original references within existing skills. They use consumer standards,
+available tools and existing authority/evidence conventions. They omit upstream
+style defaults, automatic cleanup, mandatory approval sequences, fixed artifact
+names, agent fan-out, telemetry and client-specific hooks. Synthetic trials
+qualify a bounded adoption decision; source inspection alone establishes no
+model-effectiveness improvement.

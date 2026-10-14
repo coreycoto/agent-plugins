@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:implement-change",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "unnecessary-wrapper",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Review case A in brief.md as the finishing pass on the accepted task diff. Recommend any worthwhile simplification and how to verify it. Return your recommendation only; do not edit files.",
+      "expected_output": "Identifies render_label as a task-owned forwarding helper with no rule or useful variation and proposes direct explicit returns while keeping Available and Disabled unchanged. Respects consumer style and the already accepted feature change. Leaves the colleague retry-policy edit and unrelated functions alone. Explains a concrete readability gain and affected final-candidate checks without adding a framework or cleanup quota.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Identifies render_label as a task-owned forwarding helper with no rule or useful variation and proposes direct explicit returns while keeping Available and Disabled unchanged. Respects consumer style and the already accepted feature change. Leaves the colleague retry-policy edit and unrelated functions alone. Explains a concrete readability gain and affected final-candidate checks without adding a framework or cleanup quota."
+        }
+      ]
+    },
+    {
+      "id": "helpful-boundary",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Evaluate the suggested simplification in case B of brief.md during the accepted finishing pass. Recommend what to retain or change and why. Return your assessment only; do not edit files.",
+      "expected_output": "Rejects writing before authorization because a denied user would cause an effect despite a later PermissionError. Preserves the shared authorized_write policy boundary and its batch caller contract rather than treating delegation or fewer functions as inherently simpler. Proposes a denied-user no-write check and preserves successful return/error behavior; does not expand into redesigning the publishers.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Rejects writing before authorization because a denied user would cause an effect despite a later PermissionError. Preserves the shared authorized_write policy boundary and its batch caller contract rather than treating delegation or fewer functions as inherently simpler. Proposes a denied-user no-write check and preserves successful return/error behavior; does not expand into redesigning the publishers."
+        }
+      ]
+    },
+    {
+      "id": "already-clear",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Finish the simplification assessment for the current task diff in case C of brief.md. Recommend any refinements that earn their cost. Return your assessment only; do not edit files.",
+      "expected_output": "Accepts no further code change: the explicit None guard clearly preserves the accepted empty-string distinction. Does not restore the old truthiness expression, introduce generic helpers or reformat solely to reduce lines. Verifies None, empty string and a present name under the existing task checks; preserves candidate behavior rather than blindly matching the pre-feature base. Reports no unnecessary cleanup or new approval ritual.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Accepts no further code change: the explicit None guard clearly preserves the accepted empty-string distinction. Does not restore the old truthiness expression, introduce generic helpers or reformat solely to reduce lines. Verifies None, empty string and a present name under the existing task checks; preserves candidate behavior rather than blindly matching the pre-feature base. Reports no unnecessary cleanup or new approval ritual."
+        }
+      ]
+    }
+  ]
+}

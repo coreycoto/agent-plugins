@@ -72,6 +72,15 @@ These tests prove that the graders accept corrected artifacts and reject
 specific broken behavior. They make no claim about skill discovery, model
 adherence, usefulness in a consumer project, or a provider session.
 
+Two reference-only adoption suites add six synthetic read-only decisions:
+[version-upgrade-catalog](version-upgrade-catalog/README.md) uses design-change,
+and [diff-scoped-simplification](diff-scoped-simplification/README.md) uses
+implement-change. They use the existing _readonly_oracle.py helper for fixture
+preservation and separate semantic rubrics for judgment. They add no discoverable
+skill or evaluation runtime and do not test execution of a simplification edit.
+Run `uv run --locked pytest tests/test_upgrade_simplification_evals.py` to qualify
+their staging and frozen-grader contracts; semantic model trials remain unrun.
+
 The evaluation runtime is maintained separately in the private Agent Plugins
 project. From that project's checkout, plan a paired baseline and candidate
 trial against this public corpus (replace the three explicit paths):

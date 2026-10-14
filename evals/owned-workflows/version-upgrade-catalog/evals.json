@@ -1,0 +1,117 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:design-change",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "silent-rounding",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Plan the RoundKit 1.4.0 to 2.0.0 upgrade described in brief.md, preserving the invoice contract. Use the supplied caller and release material and propose the smallest useful verification. Return a plan only; do not edit files.",
+      "expected_output": "Pins 1.4.0 to 2.0.0 and traces the changed quantize_money default to pricing.py invoice_amount. Uses a discriminating half-cent example such as 2.345: half_even yields 2.34 and half_up yields 2.35, unlike a non-tie such as 2.34. Proposes characterizing the preserved expectation before explicitly retaining half_even on the target. Excludes unused display_currency removal from affected sites. Distinguishes source-derived expectations from executed observations; cannot claim parity or an analyzer result. Keeps verification and fixes within this caller, with no rewrite or release.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/pricing.py",
+          "path": "pricing.py"
+        },
+        {
+          "source": "fixtures/release-notes.md",
+          "path": "release-notes.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Pins 1.4.0 to 2.0.0 and traces the changed quantize_money default to pricing.py invoice_amount. Uses a discriminating half-cent example such as 2.345: half_even yields 2.34 and half_up yields 2.35, unlike a non-tie such as 2.34. Proposes characterizing the preserved expectation before explicitly retaining half_even on the target. Excludes unused display_currency removal from affected sites. Distinguishes source-derived expectations from executed observations; cannot claim parity or an analyzer result. Keeps verification and fixes within this caller, with no rewrite or release."
+        }
+      ]
+    },
+    {
+      "id": "analyzer-unavailable",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "For the planned RoundKit 2.0.0 upgrade, assess what the analyzer can establish in the environment described in brief.md and what to do next. Return your assessment only; preserve the supplied files.",
+      "expected_output": "Separates executable presence, inability to load the project without unavailable restoration, and actual execution. Records that no analyzer or old/new suite ran; does not attribute findings to that tool or claim verification passed. Uses the supplied primary material and actual caller for a bounded provisional catalog, names missing execution evidence and proposes an appropriate permitted environment or targeted later checks without installing tools, contacting services or inventing approval gates.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/pricing.py",
+          "path": "pricing.py"
+        },
+        {
+          "source": "fixtures/release-notes.md",
+          "path": "release-notes.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Separates executable presence, inability to load the project without unavailable restoration, and actual execution. Records that no analyzer or old/new suite ran; does not attribute findings to that tool or claim verification passed. Uses the supplied primary material and actual caller for a bounded provisional catalog, names missing execution evidence and proposes an appropriate permitted environment or targeted later checks without installing tools, contacting services or inventing approval gates."
+        }
+      ]
+    },
+    {
+      "id": "routine-patch",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "The selected change is only RoundKit 1.4.0 to 1.4.1. Plan the smallest warranted work using brief.md and release-notes.md; preserve all files.",
+      "expected_output": "Uses the exact 1.4.0 to 1.4.1 pair, whose supplied notes change installation metadata without relevant runtime/default differences. Keeps a local dependency update and proportionate existing checks, leaving unavailable execution visible. Does not import 2.0.0 rounding changes into this catalog, demand a modernization project, add new abstractions, require a multi-unit pilot or claim an observed pass.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/pricing.py",
+          "path": "pricing.py"
+        },
+        {
+          "source": "fixtures/release-notes.md",
+          "path": "release-notes.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses the exact 1.4.0 to 1.4.1 pair, whose supplied notes change installation metadata without relevant runtime/default differences. Keeps a local dependency update and proportionate existing checks, leaving unavailable execution visible. Does not import 2.0.0 rounding changes into this catalog, demand a modernization project, add new abstractions, require a multi-unit pilot or claim an observed pass."
+        }
+      ]
+    }
+  ]
+}

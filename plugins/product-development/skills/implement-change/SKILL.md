@@ -25,6 +25,10 @@ reproducer; use [test-behavior](../test-behavior/SKILL.md) when independent
 regression evidence is warranted. Reversible low-impact edits need proportionate
 checks rather than tests that mirror their implementation.
 
+When the current patch has avoidable complexity, use
+[diff-scoped simplification](../_shared/references/judgment/diff-scoped-simplification.md)
+within accepted intent before final validation. Already-clear code can stay as is.
+
 When policy is tangled with orchestration, use the
 [decision/effect guide](../_shared/references/judgment/decision-effect-boundaries.md)
 for a small extraction that earns its cost. Preserve real effect-boundary tests;

@@ -127,17 +127,18 @@ description: Example
     assert not validate_portable_plugin(tmp_path, SCHEMA)
 
 
-def test_source_lineage_requires_pinned_attributed_existing_destinations(tmp_path: Path) -> None:
+@pytest.mark.parametrize("license_name", ["MIT", "Apache-2.0"])
+def test_source_lineage_requires_pinned_attributed_existing_destinations(tmp_path: Path, license_name: str) -> None:
     path = tmp_path / "skills/_shared/references/upstream-lineage.json"
     path.parent.mkdir(parents=True)
-    license_file = tmp_path / "licenses/example-MIT.txt"
+    license_file = tmp_path / f"licenses/example-{license_name}.txt"
     license_file.parent.mkdir()
-    license_file.write_text("MIT license notice")
+    license_file.write_text(f"{license_name} license notice")
     destination = tmp_path / "skills/example/SKILL.md"
     destination.parent.mkdir()
     destination.write_text("Workflow.")
     source = {"id": "example", "repository": "https://github.com/example/skills",
-              "revision": "a" * 40, "license": "MIT", "license_file": "licenses/example-MIT.txt",
+              "revision": "a" * 40, "license": license_name, "license_file": f"licenses/example-{license_name}.txt",
               "adaptations": [{"source_paths": ["skills/original/SKILL.md"],
                                "destinations": ["skills/example/SKILL.md"],
                                "mechanism": "Adapted diagnostic procedure.",
@@ -145,6 +146,10 @@ def test_source_lineage_requires_pinned_attributed_existing_destinations(tmp_pat
     data = {"schema_version": 1, "kind": "source-lineage", "runtime_dependencies": [], "sources": [source]}
     path.write_text(json.dumps(data))
     assert not validate_source_lineage(tmp_path)
+    source["license"] = "unrecognized-license"
+    path.write_text(json.dumps(data))
+    assert any("MIT or Apache-2.0" in error for error in validate_source_lineage(tmp_path))
+    source["license"] = license_name
     source["revision"] = "main"
     path.write_text(json.dumps(data))
     assert any("full lowercase Git SHA-1" in error for error in validate_source_lineage(tmp_path))

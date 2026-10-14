@@ -24,6 +24,10 @@ Tie the change to a concrete capability or maintenance cost, show representative
 caller obligations before/after, and set a stopping condition. Prefer a useful
 local seam over a framework that merely moves complexity.
 
+For a consequential runtime, framework or dependency upgrade, use the
+[version-upgrade catalog](../_shared/references/judgment/version-upgrade-catalog.md)
+to connect the exact version changes to actual uses and discriminating checks.
+
 Describe interface behavior beyond signatures: identity, state, ordering,
 errors, configuration and resource ownership. Use
 [model-domain](../model-domain/SKILL.md) when ambiguous vocabulary or invalid
