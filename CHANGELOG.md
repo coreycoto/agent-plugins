@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.1 — 2026-10-14
+
+- Add a conditional version-upgrade catalog to Product Development's design and
+  phased-refactor procedures, connecting exact-version changes to actual callers,
+  silent behavior and representative pilot evidence.
+- Add diff-scoped simplification to implement-change, preserving accepted behavior,
+  useful abstractions, concurrent edits and valid no-change outcomes.
+- Add six synthetic read-only reference trials with frozen scope assertions and
+  separate semantic rubrics; model-effectiveness trials remain unrun.
+- Retain pinned Anthropic provenance and Apache 2.0 attribution and qualify both
+  MIT and Apache-2.0 lineage entries with retained license files.
+- Publish the four public plugin packages at the coordinated 0.10.1 version.
+
+Tracking: #8; source change: #35, originating issue: #34.
+
 ## 0.10.0 — 2026-10-12
 
 - Add `check-protocol`, `rehearse-migration` and `assess-data-quality` to Product
