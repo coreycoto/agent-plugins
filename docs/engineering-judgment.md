@@ -34,7 +34,7 @@ The newly discussed books were not supplied for full-text extraction. Public
 primary material and relevant supplied-book sections are distinguished from
 original workflow adaptations; no books or private consumer code are bundled.
 
-The source candidate also adds two conditional references adapted from pinned
+Version 0.10.1 adds two conditional references adapted from pinned
 Anthropic plugin mechanisms. The
 [version-upgrade catalog](../plugins/product-development/skills/_shared/references/judgment/version-upgrade-catalog.md)
 connects exact-version changes to actual callers, silent behavior and pilot
