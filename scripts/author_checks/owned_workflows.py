@@ -93,8 +93,8 @@ def validate_source_lineage(root: Path) -> list[str]:
             errors.append(f"{path}: {identity}: revision must be a full lowercase Git SHA-1")
         if not isinstance(source.get("repository"), str) or not source["repository"].startswith("https://github.com/"):
             errors.append(f"{path}: {identity}: repository must identify its GitHub source")
-        if source.get("license") != "MIT":
-            errors.append(f"{path}: {identity}: source license must match the supported MIT attribution")
+        if source.get("license") not in ("MIT", "Apache-2.0"):
+            errors.append(f"{path}: {identity}: source license must be MIT or Apache-2.0 with retained attribution")
         license_file = source.get("license_file")
         if (not isinstance(license_file, str) or Path(license_file).is_absolute()
                 or not _contained_file(root, root / license_file)):

@@ -135,6 +135,39 @@
           "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
         }
       ]
+    },
+    {
+      "id": "anthropic-claude-plugins",
+      "repository": "https://github.com/anthropics/claude-plugins-official",
+      "revision": "641d925db5a662e72f8650cb1b7670a59dab1abc",
+      "license": "Apache-2.0",
+      "license_file": "licenses/anthropic-claude-plugins-Apache-2.0.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "plugins/code-modernization/agents/version-delta-analyst.md",
+            "plugins/code-modernization/commands/modernize-uplift.md"
+          ],
+          "destinations": [
+            "skills/_shared/references/judgment/version-upgrade-catalog.md",
+            "skills/design-change/SKILL.md",
+            "skills/phased-refactor/SKILL.md"
+          ],
+          "mechanism": "Intersect exact-version changes with actual callers; distinguish silent behavior and mechanical fixes; qualify tool findings and a representative upgrade pilot.",
+          "departures": "Conditional original reference within existing skills, with consumer artifacts, tools and authority. No fixed stack tooling, artifact names, required new approval gates, fan-out, proof runtime, telemetry or client hooks."
+        },
+        {
+          "source_paths": [
+            "plugins/code-simplifier/agents/code-simplifier.md"
+          ],
+          "destinations": [
+            "skills/_shared/references/judgment/diff-scoped-simplification.md",
+            "skills/implement-change/SKILL.md"
+          ],
+          "mechanism": "Limit refinements to the current task diff; prefer readable explicit flow while preserving behavior and helpful abstractions.",
+          "departures": "Use consumer coding standards and accepted task scope, preserve pre-existing and concurrent edits, retain useful policy boundaries, permit no change, and validate the final candidate. No forced model, JavaScript/React style defaults, automatic cleanup hook or new agent."
+        }
+      ]
     }
   ]
 }

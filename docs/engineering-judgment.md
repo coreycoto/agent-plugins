@@ -34,6 +34,16 @@ The newly discussed books were not supplied for full-text extraction. Public
 primary material and relevant supplied-book sections are distinguished from
 original workflow adaptations; no books or private consumer code are bundled.
 
+The source candidate also adds two conditional references adapted from pinned
+Anthropic plugin mechanisms. The
+[version-upgrade catalog](../plugins/product-development/skills/_shared/references/judgment/version-upgrade-catalog.md)
+connects exact-version changes to actual callers, silent behavior and pilot
+evidence in design-change and phased-refactor. The
+[diff-scoped simplification guide](../plugins/product-development/skills/_shared/references/judgment/diff-scoped-simplification.md)
+helps implement-change refine the owned patch while retaining useful boundaries
+and valid no-change outcomes. Consumer standards, artifacts and authorization
+continue to govern both; no new skill, role or runtime is added.
+
 ## Evaluate before claiming effectiveness
 
 The [specialist trial plan](../evals/owned-workflows/engineering-judgment/README.md)
@@ -55,6 +65,19 @@ release, registry acquisition, consumer pins, installation and fresh-session
 discovery require separate evidence. Nothing here changes the private Agent
 Development authoring runtime or any consumer repository's operations or
 verification policy.
+
+Six additional read-only reference trials cover silent rounding changes, an
+unavailable analyzer, a routine patch bump, an unnecessary wrapper, a helpful
+authorization boundary and already-clear code. See the
+[upgrade suite](../evals/owned-workflows/version-upgrade-catalog/README.md) and
+[simplification suite](../evals/owned-workflows/diff-scoped-simplification/README.md).
+Their frozen assertions check fixture preservation; separate rubrics judge
+recommendations. These cases do not claim execution of refinements or model
+effectiveness. Qualify their staging/grader contract with:
+
+```sh
+uv run --locked pytest tests/test_upgrade_simplification_evals.py
+```
 
 The potential Data Engineering package stays a [backlog proposal](https://github.com/coreycoto/agent-plugins/issues/30).
 Its go/no-go decision must justify independent selection and non-duplicating

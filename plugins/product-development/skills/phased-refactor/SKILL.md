@@ -13,6 +13,9 @@ Use [design-change](../design-change/SKILL.md) when technical choices remain ope
 State the concrete change cost or capability this work should improve and when
 to stop. Use the [design judgment guide](../_shared/references/judgment/modernization-and-design.md)
 when choosing scope; old technology or churn alone does not justify replacement.
+For a consequential version upgrade, retain the
+[affected-site catalog](../_shared/references/judgment/version-upgrade-catalog.md)
+and use a representative pilot to qualify wider work.
 For persistent or mixed-version transitions, retain
 [rehearsal evidence](../rehearse-migration/SKILL.md), not only destination tests.
 
