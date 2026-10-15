@@ -1,7 +1,10 @@
 # Engineering judgment and specialist trials
 
 Three new specialist suites each supply an executable artifact task and four
-selection queries. This directory supplies five read-only design judgments.
+selection queries. This directory supplies seven read-only design judgments,
+including independent status facts and a canonical ownership claim. See the
+[principle comparison plan](../engineering-principles.md) for the latter pair
+and related diagnosis, performance, refactoring and steering cases.
 These are original synthetic fixtures, not private operational data. All are
 smoke/deep cases; no claim of broader held-out coverage is made.
 

@@ -44,6 +44,29 @@ helps implement-change refine the owned patch while retaining useful boundaries
 and valid no-change outcomes. Consumer standards, artifacts and authorization
 continue to govern both; no new skill, role or runtime is added.
 
+The unreleased source for [#37](https://github.com/coreycoto/agent-plugins/issues/37)
+adds conditional pstack adaptations within the same procedures:
+
+- Diagnosis and performance work can reconsider a premise shared by repeated
+  failed fixes, inspecting distributions and work assignment without treating
+  required asymmetry or a uniform defect as a scheduling bug.
+- Benchmarking checks peak and partial-cycle resource windows against accepted
+  limits; eventual balance or a sampled maximum is a different claim.
+- Design and protocol work compare independent facts with a real canonical-state
+  invariant before adding coordination.
+- Refactoring qualifies existing mechanical tools or a small repeatable command
+  when replay earns its cost, preserving direct small edits as a valid choice.
+- Capture forensics preserves artifact/build identity, reduction and source
+  attribution while keeping observed hot paths separate from confirmed causes.
+
+The optional [steering index](../plugins/product-development/skills/_shared/references/engineering-principles.md)
+lets a user say "Attack the Premise" or "Separate Before Coordinating" and reach
+the applicable guidance. It adds no discoverable skill or mandatory reply section;
+the explanation should identify the actual changed decision. Existing consumer
+authority and scope remain intact. The
+[comparison plan](../evals/owned-workflows/engineering-principles.md) separates
+prior procedures, conditional references and references plus named steering.
+
 ## Evaluate before claiming effectiveness
 
 The [specialist trial plan](../evals/owned-workflows/engineering-judgment/README.md)

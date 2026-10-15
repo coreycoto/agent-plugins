@@ -44,6 +44,11 @@ outputs. Move actual consumers before retiring legacy contracts. Give authorized
 workers independent owned files and success conditions; preserve concurrent
 work. Do not change shared candidate state while a harness reads it.
 
+For repeated mechanical changes, use the
+[repeatable-work guide](../_shared/references/judgment/repeatable-work.md) to
+qualify an existing tool or a small transformation on representative cases
+before a wider sweep. Simple local edits can use direct focused checks.
+
 For fixture or suite restructuring, use
 [suite refactoring](../_shared/references/testing/suite-refactoring.md). Keep
 fixture changes, mechanical movement and assertion/semantic changes reviewable;

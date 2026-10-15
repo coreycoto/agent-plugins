@@ -29,6 +29,11 @@ performance work, a decision prototype, verification maintenance, a substantial
 phased refactor, or selected solution capture and refresh. A procedure may use
 another for a concrete gap; do not require a chain simply because it exists.
 
+When the user steers with a named engineering principle, use the small
+[steering index](../_shared/references/engineering-principles.md) and read only
+its applicable reference. Explain a consequential changed choice naturally;
+routine tasks need no principle list or additional procedure.
+
 Read relevant existing consumer knowledge when it can avoid repeated
 investigation; follow the [retrieval guide](../_shared/references/project-knowledge.md).
 Do not bootstrap a knowledge store or load unrelated history.

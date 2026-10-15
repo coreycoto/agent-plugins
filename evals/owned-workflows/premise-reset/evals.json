@@ -1,0 +1,205 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:diagnose-problem",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "shared-premise",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case A in brief.md. What should the next diagnostic step be, and what would its result establish?",
+      "expected_output": "Identifies the shared allocator premise behind the two observed throughput failures. Uses existing per-worker and per-role allocation/free/retention recordings to inspect distribution and assignment before another allocator change. Separates the retention mechanism from its possible scheduling cause, specifies an equivalent-work discriminating observation or isolated intervention, and preserves the throughput requirement. Does not claim a census was run or a cause was confirmed from the brief.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Identifies the shared allocator premise behind the two observed throughput failures. Uses existing per-worker and per-role allocation/free/retention recordings to inspect distribution and assignment before another allocator change. Separates the retention mechanism from its possible scheduling cause, specifies an equivalent-work discriminating observation or isolated intervention, and preserves the throughput requirement. Does not claim a census was run or a cause was confirmed from the brief."
+        }
+      ]
+    },
+    {
+      "id": "allocator-defect",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case B in brief.md and give the smallest faithful confirmation or repair check.",
+      "expected_output": "Recognizes that the list addition result is discarded and the reusable list is not updated. Proposes a focused allocate/release/reuse reproducer or regression at the actual allocator boundary. Does not prescribe role rotation, a worker census or a scheduler rewrite in a single-worker case. Distinguishes source evidence from an executed reproducer and makes no unobserved success claim.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Recognizes that the list addition result is discarded and the reusable list is not updated. Proposes a focused allocate/release/reuse reproducer or regression at the actual allocator boundary. Does not prescribe role rotation, a worker census or a scheduler rewrite in a single-worker case. Distinguishes source evidence from an executed reproducer and makes no unobserved success claim."
+        }
+      ]
+    },
+    {
+      "id": "balanced-census",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case C in brief.md. What has been ruled out, and what should be inspected next?",
+      "expected_output": "Treats the complete even census as evidence against the specific concentrated-worker-skew explanation, not proof that delayed cleanup or the shared premise is correct. Keeps uniform lifetime or ordering defects possible, states a discriminating next observation, and avoids inventing a cause or another compensating fix.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Treats the complete even census as evidence against the specific concentrated-worker-skew explanation, not proof that delayed cleanup or the shared premise is correct. Keeps uniform lifetime or ordering defects possible, states a discriminating next observation, and avoids inventing a cause or another compensating fix."
+        }
+      ]
+    },
+    {
+      "id": "required-affinity",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case D in brief.md and propose an investigation within its constraints.",
+      "expected_output": "Preserves hardware-domain isolation and key affinity. Separates arrival volume from service and release behavior and proposes a bounded rate, lifetime or ownership observation by domain. Does not infer that asymmetry itself is a defect, rotate keys across domains, weaken the requirement or claim authority for production instrumentation.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Preserves hardware-domain isolation and key affinity. Separates arrival volume from service and release behavior and proposes a bounded rate, lifetime or ownership observation by domain. Does not infer that asymmetry itself is a defect, rotate keys across domains, weaken the requirement or claim authority for production instrumentation."
+        }
+      ]
+    },
+    {
+      "id": "routine-defect",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case E in brief.md with the smallest sufficient local reproduction and repair plan.",
+      "expected_output": "Uses the documented half-open interval contract to show adjacent bookings must not conflict and proposes strict overlap comparisons with a focused boundary regression. Avoids premise-reset rituals, resource censuses, new frameworks or mandatory scripts for this routine deterministic defect. Reports planned checks as unexecuted.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses the documented half-open interval contract to show adjacent bookings must not conflict and proposes strict overlap comparisons with a focused boundary regression. Avoids premise-reset rituals, resource censuses, new frameworks or mandatory scripts for this routine deterministic defect. Reports planned checks as unexecuted."
+        }
+      ]
+    },
+    {
+      "id": "captured-profile",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case F in brief.md. Explain the supported finding and what would confirm a cause.",
+      "expected_output": "Distinguishes 600 inclusive samples from 200 leaf samples; does not add them or equate them with 30 seconds of wall time. Maps the sampled path to parser.py in abc123 using supplied symbols and retains the capture window. Identifies unobserved wait time and absent comparison or intervention, proposes a faithful confirmation within authority, and does not claim the hot function is the proven end-to-end cause.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Distinguishes 600 inclusive samples from 200 leaf samples; does not add them or equate them with 30 seconds of wall time. Maps the sampled path to parser.py in abc123 using supplied symbols and retains the capture window. Identifies unobserved wait time and absent comparison or intervention, proposes a faithful confirmation within authority, and does not claim the hot function is the proven end-to-end cause."
+        }
+      ]
+    },
+    {
+      "id": "incomplete-capture",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case G in brief.md using only the available summary and tools.",
+      "expected_output": "Reports the supplied 40 MiB reachable summary as limited evidence. Keeps retained reachability distinct from an established leak, identifies truncation, unknown build, unresolved frame, absent paired capture and unavailable parser, and avoids inventing symbols, source attribution or execution. Does not install tools, restart a process or hot-patch code under read-only capture analysis.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Reports the supplied 40 MiB reachable summary as limited evidence. Keeps retained reachability distinct from an established leak, identifies truncation, unknown build, unresolved frame, absent paired capture and unavailable parser, and avoids inventing symbols, source attribution or execution. Does not install tools, restart a process or hot-patch code under read-only capture analysis."
+        }
+      ]
+    }
+  ]
+}

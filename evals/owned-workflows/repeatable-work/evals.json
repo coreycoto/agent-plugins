@@ -1,0 +1,65 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:phased-refactor",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "mechanical-sweep",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case A in brief.md. Recommend how to perform the accepted migration and verify its boundaries.",
+      "expected_output": "Uses the existing parser-based tool for the explicit mechanical rule before manual fan-out. Qualifies representative ordinary, excluded, already-converted and rerun cases against accepted behavior, with a dry-run or bounded pilot and affected checks before widening. Preserves strings, generated files and the external adapter; retains unresolved kwargs as an explicit semantic decision. Does not invent a new framework, claim execution or silently expand scope.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses the existing parser-based tool for the explicit mechanical rule before manual fan-out. Qualifies representative ordinary, excluded, already-converted and rerun cases against accepted behavior, with a dry-run or bounded pilot and affected checks before widening. Preserves strings, generated files and the external adapter; retains unresolved kwargs as an explicit semantic decision. Does not invent a new framework, claim execution or silently expand scope."
+        }
+      ]
+    },
+    {
+      "id": "single-edit",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case B in brief.md. Recommend the smallest sufficient change and verification.",
+      "expected_output": "Prefers the direct spelling correction and existing focused test. Does not create a codemod, reusable framework, new permanent artifact or subagent sweep merely to satisfy a principle. Keeps verification proportional and distinguishes the plan from an observed test result.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Prefers the direct spelling correction and existing focused test. Does not create a codemod, reusable framework, new permanent artifact or subagent sweep merely to satisfy a principle. Keeps verification proportional and distinguishes the plan from an observed test result."
+        }
+      ]
+    }
+  ]
+}

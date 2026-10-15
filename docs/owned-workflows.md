@@ -46,6 +46,7 @@ references rather than separate entrypoints for those mechanisms:
 | Simplify agent instructions | Private Agent Development compares prior/revised instructions on routine, conditional and boundary cases, with supporting-resource observations and fresh balanced repetitions. Public skills do not depend on the private runtime. |
 | Pressure-test a product commitment | Product Discovery/Experiments expose consequential assumptions, credible alternatives and disconfirming evidence; preserve unknown costs and decision criteria. |
 | Make an explanation inspectable | Communication chooses prose, tables, diagrams or richer artifacts for the reader's task, preserving uncertainty and actual decision authority. Technical-writing guidance borrows clarity principles without claiming STE compliance. |
+| Steer an engineering decision by name | Product Development's optional [principle index](../plugins/product-development/skills/_shared/references/engineering-principles.md) selects relevant existing guidance and connects the name to a concrete changed choice. Routine work has no principle-list requirement. |
 
 Product facts, feature maps, verification commands and correction records remain
 consumer-owned. Private maintenance can connect supplied interventions to repairs

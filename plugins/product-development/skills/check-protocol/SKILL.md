@@ -10,6 +10,11 @@ validation. `model-domain` clarifies meanings; this procedure explores permitted
 executions; `test-behavior` checks implementation. Read the requested contract,
 actual callers and persistence boundaries. Preserve the task's delivery scope.
 
+Before modeling added coordination, use the
+[shared-state guide](../_shared/references/judgment/shared-state.md) to establish
+whether actors need one mutable target. Preserve canonical-state and reader
+consistency obligations; model the actual chosen boundary, not an assumed lock.
+
 Name actors, identities, durable and volatile state, initial conditions and
 external observations. Separate acceptance from completion and unknown outcomes
 from known failure. Identify which events can be delayed, duplicated, reordered

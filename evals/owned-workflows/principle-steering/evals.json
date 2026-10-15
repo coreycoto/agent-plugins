@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:engineering-workflow",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "named-premise",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Use Attack the Premise for case A in brief.md. Recommend the next step and explain the choice it changes.",
+      "expected_output": "Routes to diagnosis and the applicable premise-reset guidance rather than another shared-buffer rewrite. Explains that producer equality is the shared untested assumption and uses available per-producer/role flow and retention records to distinguish assignment from buffering causes. Connects the requested principle name to that concrete changed choice without pretending to have loaded or executed anything. Does not recite unused principles or start an implementation.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Routes to diagnosis and the applicable premise-reset guidance rather than another shared-buffer rewrite. Explains that producer equality is the shared untested assumption and uses available per-producer/role flow and retention records to distinguish assignment from buffering causes. Connects the requested principle name to that concrete changed choice without pretending to have loaded or executed anything. Does not recite unused principles or start an implementation."
+        }
+      ]
+    },
+    {
+      "id": "ordinary-task",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "For case B in brief.md, recommend the smallest sufficient implementation and check.",
+      "expected_output": "Routes the understood spelling correction directly to implementation and its existing focused test. Avoids unrelated references, mandatory design, principle enumeration, new tools or delegation. Makes no claim that checks ran. The routine request need not load the steering index.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Routes the understood spelling correction directly to implementation and its existing focused test. Avoids unrelated references, mandatory design, principle enumeration, new tools or delegation. Makes no claim that checks ran. The routine request need not load the steering index."
+        }
+      ]
+    },
+    {
+      "id": "named-coordination",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Apply Separate Before Coordinating to case C in brief.md. Recommend a design and explain its limits.",
+      "expected_output": "Recognizes independent status facts can use independently owned write targets and be combined for readers, preserving the stated independent freshness contract. Explains how that changes the choice from shared read-modify-write coordination, names reader/version and reconciliation limits, and stays at recommendation scope. Does not edit another team files, create worktrees or claim all concurrency is solved. Uses the requested name only to explain the actual decision.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Recognizes independent status facts can use independently owned write targets and be combined for readers, preserving the stated independent freshness contract. Explains how that changes the choice from shared read-modify-write coordination, names reader/version and reconciliation limits, and stays at recommendation scope. Does not edit another team files, create worktrees or claim all concurrency is solved. Uses the requested name only to explain the actual decision."
+        }
+      ]
+    }
+  ]
+}

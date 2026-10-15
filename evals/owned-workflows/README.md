@@ -81,6 +81,15 @@ skill or evaluation runtime and do not test execution of a simplification edit.
 Run `uv run --locked pytest tests/test_upgrade_simplification_evals.py` to qualify
 their staging and frozen-grader contracts; semantic model trials remain unrun.
 
+The [engineering-principles comparison](engineering-principles.md) adds 17
+read-only judgments across diagnosis, performance, refactoring, routing and
+design. It covers failed shared premises, legitimate exceptions, transient
+resource limits, captured-profile evidence, proportional automation and named
+steering. The new suites reuse the frozen scope helper and separate semantic
+rubrics. They add no discoverable skills or evaluation runtime. The same
+reference-trial test command above qualifies their staging and scope graders;
+it does not execute or calibrate model outcomes.
+
 The evaluation runtime is maintained separately in the private Agent Plugins
 project. From that project's checkout, plan a paired baseline and candidate
 trial against this public corpus (replace the three explicit paths):

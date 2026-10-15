@@ -11,6 +11,11 @@ Use actual measurements rather than assume the largest function is the limiter.
 A hypothetical retry loop can amplify load after a slowdown; verify the mechanism
 and its ordering before calling it the cause.
 
+When repeated repairs fail under one assumption, use the
+[premise-reset guide](premise-reset.md). Inspect relevant distributions and
+role assignment before compensating for an assumed local defect. A balanced
+census does not rule out a uniform defect or establish the premise.
+
 Distinguish elapsed time, service time and waiting. Do not sum overlapping spans
 as wall time. Check load-generator limits, caches, unfinished work and errors.
 A fast timeout does not establish faster useful completion. A longer timeout
@@ -22,6 +27,9 @@ Observe or perturb one bounded condition in an authorized isolated environment.
 Include delayed feedback: an immediate local improvement can coincide with
 later backlog growth. Compare steady state and recovery where relevant. A causal
 diagram is a hypothesis, not measured proof or permission to alter capacity.
+For cyclic assignment or cleanup, inspect peaks and partial-cycle windows as
+well as net change. Full-cycle cancellation may arrive after a resource limit
+is exceeded. Keep required affinity and ordering intact when comparing designs.
 
 Separate the triggering defect from conditions that allowed it to spread.
 Repair a concrete bug when assigned; investigate systemic contributors only as

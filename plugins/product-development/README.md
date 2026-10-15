@@ -37,6 +37,13 @@ references are read only for relevant techniques; they add no discoverable skill
 or mandatory specialist agents. Procedures remain usable in the parent without
 delegation. Use actual available tools rather than client-specific commands.
 
+When the user names an engineering principle, the optional
+[steering index](skills/_shared/references/engineering-principles.md) links a
+small vocabulary to existing procedures. Conditional references cover resetting
+a failed premise, peak resource windows, independent versus canonical state,
+repeatable mechanical work and captured-profile forensics. Explain consequential
+choices naturally; routine work needs no extra checklist or principles footer.
+
 Verification distinguishes executed user behavior from liveness and synthetic
 checks. Knowledge uses existing consumer conventions, deduplicates first and
 captures selectively; it does not set up a database, mine transcripts or update
