@@ -22,6 +22,13 @@ so warmup or machine drift does not consistently favor one side. Record independ
 wall time rather than summing nested event durations. Preserve raw measurements,
 errors, work count and outputs in bounded local artifacts.
 
+For accumulating resources or cyclic work, record peak usage and the relevant
+window: startup, a burst, partial cycle, steady state or recovery. Compare with
+accepted resource bounds. Net-zero growth over a complete cycle does not bound
+the peak before that cycle finishes. Separate an observed maximum from a proven
+worst-case bound; sparse samples or a short run may miss the peak. Do not invent
+a universal soak duration or infer unbounded safety from a finite run.
+
 Scale replication to the decision. Label a requested one-run ballpark honestly;
 for a meaningful comparison, repeat enough to characterize variation and report
 run count, central tendency and spread. Do not declare improvement when the
@@ -32,3 +39,6 @@ Report the measure and units, provenance, equivalent work, correctness and error
 results, limiter evidence and user-path relevance. A micro result and an observed
 end-to-end result answer different questions. Keep or discard a candidate from
 supported evidence and preserve required behavior independently of timing.
+Assess the whole accepted contract: a functionally correct result can still
+fail an explicit latency, resource, compatibility or scope constraint. Explain
+complexity through actual caller or operating burden, not a universal LOC score.

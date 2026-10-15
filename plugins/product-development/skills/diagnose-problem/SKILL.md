@@ -24,6 +24,13 @@ an isolated revision or add bounded temporary instrumentation. Preserve logs
 that establish sequence without capturing credentials or unrelated user data.
 Update beliefs from observations; a plausible story is not root-cause evidence.
 
+When repeated fixes fail the same requirement under one assumption, use the
+[premise-reset guide](../_shared/references/judgment/premise-reset.md) before
+another repair on that premise. A routine defect needs no such detour.
+For a supplied profile, trace or heap, use
+[capture forensics](../_shared/references/judgment/trace-forensics.md); preserve
+capture identity and distinguish observations from confirmed causes.
+
 For backlog, latency or failures crossing dependencies, use the
 [systems guide](../_shared/references/judgment/systems-diagnosis.md). Separate the
 triggering defect from measured contributing conditions; test causal predictions

@@ -23,6 +23,17 @@ callers can plan against the same observation. The accepted rule permits at
 most one committed owner. There is no atomicity guarantee connecting planning
 to apply; no claim about an actual race reproduction has been made.
 
+F. Index and metrics workers independently update last_indexed and last_sampled
+through read-modify-write operations on one status.json file. Readers accept the
+most recent independent value for each field; there is no atomic-snapshot or
+cross-field invariant. A proposed repair introduces a distributed lock service.
+
+G. Two workers reserve units from one capacity pool. The accepted contract is
+at most one active owner per unit. A proposal replaces the shared conditional
+claim with separate per-worker files, each recording that worker's view of free
+capacity. There is no merge-time conflict check before work starts, and no
+existing mechanism makes the separate claims atomic with each other.
+
 Assess only the named case. Do not change files or invent requirements, runtimes,
 measurements, authors' motives or approvals. A no-structural-change recommendation
 is valid when supported. The final response is the only requested output.

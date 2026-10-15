@@ -168,6 +168,51 @@
           "departures": "Use consumer coding standards and accepted task scope, preserve pre-existing and concurrent edits, retain useful policy boundaries, permit no change, and validate the final candidate. No forced model, JavaScript/React style defaults, automatic cleanup hook or new agent."
         }
       ]
+    },
+    {
+      "id": "pstack-engineering-judgment",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "6ce45c59b9301a638c1fe1a7b8dc2a82b650898f",
+      "license": "MIT",
+      "license_file": "licenses/pstack-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "pstack/skills/principle-attack-the-premise/SKILL.md",
+            "pstack/skills/principle-explain-the-number/SKILL.md",
+            "pstack/skills/poteto-mode/playbooks/trace-forensics.md"
+          ],
+          "destinations": [
+            "skills/diagnose-problem/SKILL.md",
+            "skills/improve-performance/SKILL.md",
+            "skills/_shared/references/benchmarking.md",
+            "skills/_shared/references/judgment/systems-diagnosis.md",
+            "skills/_shared/references/judgment/premise-reset.md",
+            "skills/_shared/references/judgment/trace-forensics.md"
+          ],
+          "mechanism": "Reconsider a premise shared by repeated failed repairs; inspect distributions and work assignment; reduce captured artifacts and attribute findings to their source build. Original transient-bound examples distinguish partial-window peaks from eventual balance.",
+          "departures": "Conditional guidance with competing explanations, comparable completed failures, legitimate required asymmetry and uniform defects. A balanced census does not clear a premise; a paired capture alone does not establish causation. No forced census for routine bugs, live hot-patching, automatic tools or provider operations."
+        },
+        {
+          "source_paths": [
+            "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
+            "pstack/skills/principle-build-the-lever/SKILL.md",
+            "pstack/skills/poteto-mode/SKILL.md",
+            "pstack/docs/guide/08-principles.md"
+          ],
+          "destinations": [
+            "skills/design-change/SKILL.md",
+            "skills/check-protocol/SKILL.md",
+            "skills/phased-refactor/SKILL.md",
+            "skills/engineering-workflow/SKILL.md",
+            "skills/_shared/references/judgment/shared-state.md",
+            "skills/_shared/references/judgment/repeatable-work.md",
+            "skills/_shared/references/engineering-principles.md"
+          ],
+          "mechanism": "Question unnecessary shared write targets before coordination; qualify reusable transformations and diagnostic commands; use a short named steering index to explain concrete changed decisions.",
+          "departures": "Preserve canonical-state invariants, reader consistency and accepted scope. Prefer existing tools and allow direct small edits without scripts. Optional references within existing skills, no new discoverable principle skills, mandatory reply footer, model selection, delegation, transcript mining or authority expansion."
+        }
+      ]
     }
   ]
 }

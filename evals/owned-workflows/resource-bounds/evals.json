@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:improve-performance",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "partial-cycle-peak",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case A in brief.md. Does the proposed acceptance check establish the resource budget?",
+      "expected_output": "Derives net zero at step 16 but a 96 MiB peak after step 8, exceeding the 64 MiB budget; the sequence first exceeds it at step 6 with 72 MiB. Rejects end-of-cycle observation as sufficient. Derives a 12 MiB peak for the alternating ordering under the supplied updates, preserves equivalent work, and distinguishes fixture-derived bounds from an observed process kill or general runtime proof.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Derives net zero at step 16 but a 96 MiB peak after step 8, exceeding the 64 MiB budget; the sequence first exceeds it at step 6 with 72 MiB. Rejects end-of-cycle observation as sufficient. Derives a 12 MiB peak for the alternating ordering under the supplied updates, preserves equivalent work, and distinguishes fixture-derived bounds from an observed process kill or general runtime proof."
+        }
+      ]
+    },
+    {
+      "id": "whole-contract",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case B in brief.md and recommend a disposition for each repair against the supplied requirements.",
+      "expected_output": "Rejects the shared-pool repair despite correct outputs and reduced peak memory because roughly 45 percent slower execution violates the 5 percent budget. Finds assignment repair consistent with the supplied output, work, error, peak and timing observations, with broader workload qualification still unverified. Does not claim a statistically established speedup or invent a LOC or design-pattern prohibition. Keeps functional correctness separate from complete task acceptance.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Rejects the shared-pool repair despite correct outputs and reduced peak memory because roughly 45 percent slower execution violates the 5 percent budget. Finds assignment repair consistent with the supplied output, work, error, peak and timing observations, with broader workload qualification still unverified. Does not claim a statistically established speedup or invent a LOC or design-pattern prohibition. Keeps functional correctness separate from complete task acceptance."
+        }
+      ]
+    },
+    {
+      "id": "sampled-maximum",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case C in brief.md. What conclusion follows, and what evidence would close any gap?",
+      "expected_output": "Distinguishes the 18 MiB observed sample maximum from a worst-case peak or full-minute qualification. Identifies missed inter-sample peaks and missing workload coverage, and proposes appropriately bounded peak tracking, finer sampling with justified rate bounds, or a faithful analytic limit. Does not claim a finite sample proves unbounded safety or invent a universal soak duration.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Distinguishes the 18 MiB observed sample maximum from a worst-case peak or full-minute qualification. Identifies missed inter-sample peaks and missing workload coverage, and proposes appropriately bounded peak tracking, finer sampling with justified rate bounds, or a faithful analytic limit. Does not claim a finite sample proves unbounded safety or invent a universal soak duration."
+        }
+      ]
+    }
+  ]
+}

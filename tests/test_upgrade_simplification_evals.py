@@ -13,7 +13,16 @@ EVALS = Path(__file__).resolve().parents[1] / "evals/owned-workflows"
 SUITES = {
     "version-upgrade-catalog": "design-change",
     "diff-scoped-simplification": "implement-change",
+    "premise-reset": "diagnose-problem",
+    "resource-bounds": "improve-performance",
+    "repeatable-work": "phased-refactor",
+    "principle-steering": "engineering-workflow",
 }
+CASES = [
+    (name, index)
+    for name in SUITES
+    for index, _ in enumerate(json.loads((EVALS / name / "evals.json").read_text())["evals"])
+]
 
 
 def stage(tmp_path, suite_name, case_index=0):
@@ -77,8 +86,7 @@ def test_reference_trials_use_existing_skills_and_separate_semantic_grading(suit
                 assert check["text"] == case["expected_output"]
 
 
-@pytest.mark.parametrize("suite_name", SUITES)
-@pytest.mark.parametrize("case_index", range(3))
+@pytest.mark.parametrize(("suite_name", "case_index"), CASES)
 def test_every_case_accepts_unchanged_inputs_without_importing_the_fixture(tmp_path, suite_name, case_index):
     suite, target, response, events = stage(tmp_path, suite_name, case_index)
     grade(suite, target, response, events)

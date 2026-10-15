@@ -144,6 +144,62 @@
           "text": "A pure planner is not an atomic claim. Identifies an apply-time conflict/ownership obligation and a competing-call test or bounded protocol check. Does not assert an unobserved production defect or prescribe a distributed service unnecessarily."
         }
       ]
+    },
+    {
+      "id": "independent-facts",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case F and compare the proposed coordination with simpler designs.",
+      "expected_output": "Recognizes index and metrics status are independent facts with no cross-field atomicity requirement. Compares separately owned write targets combined at the reader with the distributed lock proposal, retaining reader freshness, ownership and reconciliation semantics. Does not claim two fields in one read-modify-written file are already isolated or prescribe a new service unnecessarily.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Recognizes index and metrics status are independent facts with no cross-field atomicity requirement. Compares separately owned write targets combined at the reader with the distributed lock proposal, retaining reader freshness, ownership and reconciliation semantics. Does not claim two fields in one read-modify-written file are already isolated or prescribe a new service unnecessarily."
+        }
+      ]
+    },
+    {
+      "id": "canonical-claim",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case G and identify the obligation that the proposed split must preserve.",
+      "expected_output": "Preserves at most one active owner per unit and rejects independent per-worker views as sufficient for an atomic unique claim. Identifies the shared conditional claim, transaction or equivalent serialization obligation and a competing-claim check. Does not assume partitioning alone solves the real invariant or claim an unobserved production race.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "scope",
+          "type": "assertion",
+          "script": "oracles/scope.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Preserves at most one active owner per unit and rejects independent per-worker views as sufficient for an atomic unique claim. Identifies the shared conditional claim, transaction or equivalent serialization obligation and a competing-claim check. Does not assume partitioning alone solves the real invariant or claim an unobserved production race."
+        }
+      ]
     }
   ]
 }

@@ -35,6 +35,11 @@ states drive the design. Read the
 [impact guide](../_shared/references/change-impact.md) for cross-component,
 serialization, persistence or migration changes.
 
+For concurrent writes, use the
+[shared-state guide](../_shared/references/judgment/shared-state.md) to compare
+independent write targets with the invariant requiring one canonical object
+before introducing coordination. Partitioning must preserve reader consistency.
+
 Identify the assumption on which safety depends and how to check it. If a
 small experiment can settle a key uncertainty, use
 [prototype-decision](../prototype-decision/SKILL.md). A prototype result does

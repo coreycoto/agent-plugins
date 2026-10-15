@@ -67,3 +67,29 @@ style defaults, automatic cleanup, mandatory approval sequences, fixed artifact
 names, agent fan-out, telemetry and client-specific hooks. Synthetic trials
 qualify a bounded adoption decision; source inspection alone establishes no
 model-effectiveness improvement.
+
+## Pstack engineering judgment and steering
+
+The premise-reset, shared-state, repeatable-work and trace-forensics references,
+plus the optional engineering-principles index, adapt
+[pstack at `6ce45c59b9301a638c1fe1a7b8dc2a82b650898f`](https://github.com/cursor/plugins/tree/6ce45c59b9301a638c1fe1a7b8dc2a82b650898f/pstack).
+Consulted mechanisms are Attack the Premise, Explain the Number, Separate Before
+Serializing Shared State, Build the Lever, the poteto-mode principle index and
+the captured-trace forensics playbook. The
+[lineage record](../upstream-lineage.json) retains earlier pins alongside this
+revision, exact paths and departures. Lauren Tan's
+[MIT notice](../../../../licenses/pstack-MIT.txt) remains bundled.
+
+These are conditional original procedures within existing skills. They preserve
+uniform-defect and required-affinity exceptions, canonical ownership and reader
+consistency, useful direct edits, and the difference between observation and
+causal confirmation. A balanced census does not clear a premise, and a paired
+capture alone does not prove a cause. They require no new script for every task,
+principle footer, automatic delegation, transcript mining, live hot-patching or
+provider operation. Peak/partial-window resource examples and evaluation cases
+are original synthetic adaptations; the supplied discussion is motivation, not
+independently reproduced benchmark evidence or a universal scheduling recipe.
+
+Names help steer an existing procedure. A name-drop is not proof of body use,
+adherence or a useful outcome. Source, package and author-test qualification stay
+distinct from the paired model/client trials needed to establish effectiveness.

@@ -21,6 +21,10 @@ For queueing, retries or distributed work, use the
 [systems guide](../_shared/references/judgment/systems-diagnosis.md). Separate
 requests from attempts, service from waiting, and throughput from timely useful
 completion. Check downstream accumulation and recovery, not only local speed.
+If repeated fixes share a failed premise, use the
+[premise-reset guide](../_shared/references/judgment/premise-reset.md). For a
+captured profile or trace, use
+[capture forensics](../_shared/references/judgment/trace-forensics.md).
 
 Choose a bounded hypothesis and change only the relevant variable where
 practical. Preserve output semantics, failure behavior and resource limits.
@@ -33,6 +37,8 @@ cold and warm states when both matter. Record wall time, work count, errors,
 run variation and revision or artifact identity. A single requested ballpark
 can be labeled as one observation; an adoption decision needs evidence
 proportionate to the uncertainty, not an arbitrary run quota.
+For accumulating or cyclic resources, check peak use and relevant partial
+windows against accepted limits; eventual balance does not bound the transient.
 
 Retain an improvement only when the relevant measure supports it and regression
 checks pass. Report inconclusive results when noise or mismatched workloads

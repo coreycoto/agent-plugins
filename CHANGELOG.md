@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Strengthen existing Product Development procedures with conditional premise
+  resets, transient resource bounds, shared-state design, repeatable work and
+  captured-profile forensics, retaining legitimate exceptions and task scope.
+- Add an optional seven-name steering index that explains concrete changed
+  decisions without new discoverable skills or mandatory reply sections.
+- Add 17 synthetic read-only judgment cases and a three-arm comparison plan.
+  Deterministic checks qualify fixture and scope contracts; model-effectiveness
+  trials and consumer activation remain separate, unrun qualifications.
+- Preserve previous source pins and add the reviewed pstack revision with MIT
+  attribution and explicit adaptations.
+
+Tracking: #37. Source preparation does not publish changed package bytes under
+the existing 0.10.1 version.
+
 ## 0.10.1 — 2026-10-14
 
 - Add a conditional version-upgrade catalog to Product Development's design and
