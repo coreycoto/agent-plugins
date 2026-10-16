@@ -50,5 +50,5 @@ Fixture-preservation checks and package qualification do not establish native
 selection, body use, adherence, comprehension or useful model outcomes. Paired
 model/client trials remain unrun until separately authorized and observed.
 
-This is unreleased source. Release, acquisition, installation, trust review and
-fresh-session activation remain separate endpoints.
+This guidance is included in version 0.10.2. Release, acquisition, installation,
+trust review and fresh-session activation remain separate endpoints.

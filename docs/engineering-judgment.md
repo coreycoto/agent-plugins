@@ -44,8 +44,8 @@ helps implement-change refine the owned patch while retaining useful boundaries
 and valid no-change outcomes. Consumer standards, artifacts and authorization
 continue to govern both; no new skill, role or runtime is added.
 
-The unreleased source for [#37](https://github.com/coreycoto/agent-plugins/issues/37)
-adds conditional pstack adaptations within the same procedures:
+Version 0.10.2 includes [#37](https://github.com/coreycoto/agent-plugins/issues/37),
+adding conditional pstack adaptations within the same procedures:
 
 - Diagnosis and performance work can reconsider a premise shared by repeated
   failed fixes, inspecting distributions and work assignment without treating

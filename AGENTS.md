@@ -4,6 +4,13 @@ Use a current issue for substantive work. Respect the requested delivery stage
 and preserve consumer authority. Installation, source preparation and merge do
 not authorize provider operations, deployment, releases or data publication.
 
+For requests to update Agent Plugins, the default delivery workflow is commit
+and push, open a PR, verify exact-head CI and merge readiness, merge qualified
+source, publish and verify a new version, then open a private dotfiles PR with
+the released source revision and plugin versions. Honor a narrower requested
+endpoint. Follow CONTRIBUTING.md; dotfiles merge and real-home activation remain
+separate actions.
+
 Portable plugin identity lives in root `plugin.json`. Skills use the fixed
 `skills/` directory. Client metadata belongs under namespaced `extensions` and
 client files under the matching directory. Preserve immutable upstream source

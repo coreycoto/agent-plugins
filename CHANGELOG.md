@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.10.2 — 2026-10-15
+
+- Add conditional task-depth references to existing Product Development,
+  Product Management and Communication workflows, improving source, method and
+  independent-check selection within the same requested outcome and scope.
+- Preserve direct routine work and prompt-only versus already-authorized
+  execution endpoints; add no discoverable skill, role or runtime.
+- Add ten synthetic read-only depth cases and a comparison plan, with pinned
+  Dan McAteer provenance and MIT attribution. Model-effectiveness trials remain
+  unrun and separate from deterministic author qualification.
 
 - Strengthen existing Product Development procedures with conditional premise
   resets, transient resource bounds, shared-state design, repeatable work and
@@ -13,8 +22,12 @@
 - Preserve previous source pins and add the reviewed pstack revision with MIT
   attribution and explicit adaptations.
 
-Tracking: #37. Source preparation does not publish changed package bytes under
-the existing 0.10.1 version.
+- Establish the standard update workflow from source PR and exact-head CI through
+  verified release and a private dotfiles version-update PR, retaining separate
+  dotfiles merge, installation and activation endpoints.
+- Publish all four public plugin packages at the coordinated 0.10.2 version.
+
+Tracking: #8, #37 and #39; source changes: #38 and #40.
 
 ## 0.10.1 — 2026-10-14
 
