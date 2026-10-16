@@ -97,6 +97,13 @@ and requested delivery stages. The same reference-trial tests qualify their
 frozen scope assertions; semantic quality and actual execution remain separate
 unrun observations. No discoverable skill or runtime is added.
 
+The [pstack reasoning pilot](pstack-reasoning/README.md) defines a bounded
+prior/candidate/no-procedure comparison, semantic calibration controls and the
+current private runtime's staging contract. Additional premise-reset cases cover
+time and configuration identity; research-coverage cases assess conflicting
+rationale, bounded negative searches and routine explanations. Deterministic
+fixture checks remain separate from observed model outcomes.
+
 The evaluation runtime is maintained separately in the private Agent Plugins
 project. From that project's checkout, plan a paired baseline and candidate
 trial against this public corpus (replace the three explicit paths):

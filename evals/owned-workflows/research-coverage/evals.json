@@ -1,0 +1,93 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:understand-codebase",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "conflicting-rationale",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case A in brief.md. Explain the rationale and the decision limits.",
+      "expected_output": "Separates the current 100-row behavior and accepted compatibility contract from historical intent. Cites the 2024 vendor-limit decision and the 2026 convenience account without treating the newer PR as definitive or a live vendor verification. Reports the bounded index search and inaccessible current vendor specification accurately; retains the limit and identifies authoritative vendor/contract evidence needed before a change.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Separates the current 100-row behavior and accepted compatibility contract from historical intent. Cites the 2024 vendor-limit decision and the 2026 convenience account without treating the newer PR as definitive or a live vendor verification. Reports the bounded index search and inaccessible current vendor specification accurately; retains the limit and identifies authoritative vendor/contract evidence needed before a change."
+        }
+      ]
+    },
+    {
+      "id": "missing-rationale",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case B in brief.md. What can be concluded and what remains unknown?",
+      "expected_output": "Reports three attempts as current behavior, not proof of intent or a reliability commitment. Limits the no-result finding to the supplied commit-subject search and distinguishes unsearched PR bodies from inaccessible incident records. Keeps the caller hypothesis unconfirmed, does not conclude that no rationale ever existed, and suggests a focused relevant PR/decision lookup without claiming execution, requesting broad access or inventing a result.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Reports three attempts as current behavior, not proof of intent or a reliability commitment. Limits the no-result finding to the supplied commit-subject search and distinguishes unsearched PR bodies from inaccessible incident records. Keeps the caller hypothesis unconfirmed, does not conclude that no rationale ever existed, and suggests a focused relevant PR/decision lookup without claiming execution, requesting broad access or inventing a result."
+        }
+      ]
+    },
+    {
+      "id": "routine-explanation",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case C in brief.md. Answer at the requested scope.",
+      "expected_output": "Explains that twice returns twice the integer input, with a correct example if useful. Keeps the requested two-sentence explanation and avoids a coverage table, historical investigation, confidence ritual, additional tool work or invented intent.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Explains that twice returns twice the integer input, with a correct example if useful. Keeps the requested two-sentence explanation and avoids a coverage table, historical investigation, confidence ritual, additional tool work or invented intent."
+        }
+      ]
+    }
+  ]
+}

@@ -11,13 +11,13 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The 0.10.2 release contains 36 public skills across four independently selectable
+The 0.10.3 release contains 36 public skills across four independently selectable
 packages, including 19 Product Development skills. See
 [engineering judgment and verification](docs/engineering-judgment.md),
 [workflow selection and migration](docs/owned-workflows.md),
 [conditional task depth](docs/task-depth.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
-The four public packages use version 0.10.2. See [release notes](CHANGELOG.md)
+The four public packages use version 0.10.3. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest
 specification 1.0.0. Verify registry availability and installed contents when upgrading.
 
@@ -32,6 +32,16 @@ the complete portable bundles under `dist/plugin-packages/portable/plugins/<name
 All workflow bodies and their supporting references ship in the selected package.
 Upstream repositories are attribution sources, not runtime skill dependencies.
 Existing consumer-restored skill copies remain untouched by this source migration.
+
+In Codex, public workflow skills support implicit selection from their descriptions;
+you can also name a skill explicitly when you want a particular procedure.
+Codex initially exposes names/descriptions and reads the full body when selected.
+Public skills either enable `policy.allow_implicit_invocation` or use its enabled
+default. A matching task does not prove that selection or body use occurred.
+Native roles name an applicable procedure and ask the parent to supply its current
+packaged path; role selection alone does not establish skill loading or adherence.
+Private Agent Development authoring/experiment skills retain their own explicit
+invocation policy. See [OpenAI's skill invocation documentation](https://learn.chatgpt.com/docs/build-skills).
 
 Project Management uses [gh-steward](https://github.com/coreycoto/gh-steward) for
 qualified GitHub composition and durable execution. Ordinary GitHub operations

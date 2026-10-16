@@ -93,3 +93,15 @@ independently reproduced benchmark evidence or a universal scheduling recipe.
 Names help steer an existing procedure. A name-drop is not proof of body use,
 adherence or a useful outcome. Source, package and author-test qualification stay
 distinct from the paired model/client trials needed to establish effectiveness.
+
+The reasoning and research follow-up consults
+[pstack at `e5136d82418d2db3165ea1050d17577cd618cc05`](https://github.com/cursor/plugins/tree/e5136d82418d2db3165ea1050d17577cd618cc05/pstack):
+`principle-attack-the-premise/SKILL.md` and `why/references/epistemics.md`.
+The former motivates a discriminating observation before choosing a mechanism;
+the latter distinguishes documented intent, interpretations and missing or
+conflicting evidence. The local research-coverage reference is optional and
+bounded to sources that can change the answer. It adds no confidence taxonomy,
+mandatory investigation panel, transcript access or new permission.
+Upstream PR #633 reports model trials; those results are author-reported and
+are not evidence for this publisher's candidate. Local trial scope and limits
+live in the author-only comparison record.

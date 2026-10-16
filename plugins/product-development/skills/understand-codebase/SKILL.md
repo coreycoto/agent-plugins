@@ -29,6 +29,9 @@ relevant decisions or focused Git history; cite evidence for intentional
 tradeoffs. History can explain when a change occurred but does not prove its
 author's motive. If no rationale survives, label a plausible explanation as
 inference. Source behavior may conflict with accepted product policy.
+For consequential rationale or conflicting historical evidence, use the optional
+[research coverage guide](../_shared/references/research-coverage.md) to make
+searched, unavailable and contradictory evidence inspectable.
 
 Explain in the reader's domain vocabulary, with a concrete example and current
 file references. A small diagram can clarify relationships or lifecycle when

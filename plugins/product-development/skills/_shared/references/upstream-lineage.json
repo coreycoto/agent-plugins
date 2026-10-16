@@ -233,6 +233,28 @@
           "departures": "Conditional domain-specific reference within existing skills, not a discoverable command. Preserve routine direct work, consumer policy, available tools and resource limits. Prompt rewriting stops at the rewrite; already-authorized execution continues without another confirmation. No fixed four-part response, expert role-play, automatic delegation, access expansion, invented targets or effectiveness claim. Felix Rieseberg article inspiration is linked in the reference, not treated as benchmark evidence."
         }
       ]
+    },
+    {
+      "id": "pstack-reasoning-and-research",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "e5136d82418d2db3165ea1050d17577cd618cc05",
+      "license": "MIT",
+      "license_file": "licenses/pstack-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "pstack/skills/principle-attack-the-premise/SKILL.md",
+            "pstack/skills/why/references/epistemics.md"
+          ],
+          "destinations": [
+            "skills/_shared/references/judgment/premise-reset.md",
+            "skills/understand-codebase/SKILL.md",
+            "skills/_shared/references/research-coverage.md"
+          ],
+          "mechanism": "Lead with falsifiable predictions rather than a prescribed actor census; distinguish documented intent, inference, contradictory sources and bounded negative searches.",
+          "departures": "Conditional original guidance within existing procedures. Preserve legitimate asymmetry, uniform defects, routine direct work and accepted constraints. No required confidence taxonomy, broad source fan-out, transcript mining, new access or mandatory coverage artifact. Synthetic cases and local comparisons do not reproduce upstream effectiveness claims."
+        }
+      ]
     }
   ]
 }

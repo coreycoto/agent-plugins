@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "disposition": "discard_pruning_candidate",
+  "baseline_revision": "6523011c94f94afb716d51efcf4ed5be09a3e203",
+  "model": "gpt-6.1-sol",
+  "codex_version": "0.162.1",
+  "unique_tasks": 3,
+  "repetitions_per_arm": 2,
+  "comparison_design": "two paired comparisons; repeated candidate; not one randomized three-arm trial",
+  "calibration": {
+    "permitted_controls": 6,
+    "qualified_controls": 6,
+    "initial_unavailable_controls": 6,
+    "limitation": "Controls did not exercise legitimate tool-observed facts absent from grader context."
+  },
+  "comparisons": {
+    "prior": {
+      "with_skill": {
+        "attempts": 6,
+        "target_exit_zero": 6,
+        "graded_attempts": 5,
+        "unqualified_raw_checks_passed": 12,
+        "unqualified_raw_checks_total": 15,
+        "task_wall_ms_mean": 21497.938492830144,
+        "event_reported_total_tokens_mean": 43676.5,
+        "entry_body_observations": 5,
+        "catalogs_verified": 6,
+        "procedure_sha256": [
+          "4120596048313361799d2b3e37e8997e333e22de23d3a293f066c045f772e0aa"
+        ]
+      },
+      "baseline": {
+        "attempts": 6,
+        "target_exit_zero": 6,
+        "graded_attempts": 6,
+        "unqualified_raw_checks_passed": 14,
+        "unqualified_raw_checks_total": 18,
+        "task_wall_ms_mean": 21561.3262289844,
+        "event_reported_total_tokens_mean": 44017.166666666664,
+        "entry_body_observations": 5,
+        "catalogs_verified": 6,
+        "procedure_sha256": [
+          "15643c1ea2e142b9d88c12b0d254b295b45fe3e48942853ca69edd5df4177ded"
+        ]
+      },
+      "fixture_sha256": "c48144ea00b8368eab8506bc1c4bb038063f3b5218f1a766b76578b367744301",
+      "oracle_sha256": "1c8ffff55d906d185199582d98677f355b3ab3bc3f04bba78856e2c763de128d",
+      "evaluation_definition_sha256": "f81faff49bca1f3c9386706d8080dee3d707b4c50a2ad0328cb3c981b809023f"
+    },
+    "control": {
+      "with_skill": {
+        "attempts": 6,
+        "target_exit_zero": 6,
+        "graded_attempts": 6,
+        "unqualified_raw_checks_passed": 15,
+        "unqualified_raw_checks_total": 18,
+        "task_wall_ms_mean": 23762.331596992834,
+        "event_reported_total_tokens_mean": 46324.5,
+        "entry_body_observations": 5,
+        "catalogs_verified": 6,
+        "procedure_sha256": [
+          "4120596048313361799d2b3e37e8997e333e22de23d3a293f066c045f772e0aa"
+        ]
+      },
+      "baseline": {
+        "attempts": 6,
+        "target_exit_zero": 6,
+        "graded_attempts": 6,
+        "unqualified_raw_checks_passed": 11,
+        "unqualified_raw_checks_total": 18,
+        "task_wall_ms_mean": 18152.19101383506,
+        "event_reported_total_tokens_mean": 45007.333333333336,
+        "entry_body_observations": 0,
+        "catalogs_verified": 6,
+        "procedure_sha256": [
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        ]
+      },
+      "fixture_sha256": "c48144ea00b8368eab8506bc1c4bb038063f3b5218f1a766b76578b367744301",
+      "oracle_sha256": "1c8ffff55d906d185199582d98677f355b3ab3bc3f04bba78856e2c763de128d",
+      "evaluation_definition_sha256": "f81faff49bca1f3c9386706d8080dee3d707b4c50a2ad0328cb3c981b809023f"
+    }
+  },
+  "limitations": [
+    "Raw semantic grades are unqualified: the judge lacked task tool events and rejected observed workspace facts and in-memory checks.",
+    "The frozen routine-case rubric incorrectly required all checks to remain unexecuted; the general corpus was corrected prospectively.",
+    "One rubric call timed out; all 24 target processes exited zero. The runner labels that grading timeout as execution failure; stages are separated here.",
+    "Catalog controls verified invocation-local enabled skills, not filesystem read security.",
+    "Supporting-reference content was found but the qualified adapter did not attribute its multi-file command reads.",
+    "Concurrent comparisons and two repetitions on three synthetic known tasks cannot establish latency, cost or general effectiveness gains.",
+    "The shipped additive reasoning frame and research reference were not compared by this pilot."
+  ],
+  "reference_sha256": {
+    "prior": "606e5fa4b4791557d55e8ef989b5785334f5670e5dca0010110968d28e2a3282",
+    "candidate": "f91dcc1c095021d1f1c4e3cef0336dec56cfacb7e2e850ee260cd74b590ce990",
+    "shipped": "91e0a83dd56fe0be20a294821a3046653f0ad996b060cceecb46a5a9bac6e6b7"
+  },
+  "private_evaluator_module_sha256": "01bc33a63d7d5f425f152a26f3189f7e81acc16adf5785659e8e7cd71eead6d4"
+}

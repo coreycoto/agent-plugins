@@ -73,3 +73,10 @@ response wording. It does not calibrate semantic judges or establish model
 effectiveness, actual body exposure, native discovery or consumer activation.
 Provider-funded trials need separately authorized execution through the existing
 workflow; these qualifications remain unrun until observed.
+
+The later [bounded reasoning comparison](pstack-reasoning/README.md) freezes
+three selected tasks and an instruction-pruning hypothesis against the existing
+reference. Its smaller scope, staging adaptations and repeated candidate arm
+remain separate from this broader 17-case adoption plan. Two additional
+premise-reset cases cover time boundaries and served configuration; three
+research-coverage cases cover conflicting, missing and routine evidence.

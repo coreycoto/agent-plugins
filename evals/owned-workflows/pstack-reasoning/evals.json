@@ -1,0 +1,160 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:diagnose-problem",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "required-affinity",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess case D in brief.md and propose an investigation within its constraints.",
+      "expected_output": "Preserves hardware-domain isolation and key affinity. Separates arrival volume from service and release behavior and proposes a bounded rate, lifetime or ownership observation by domain. Does not infer that asymmetry itself is a defect, rotate keys across domains, weaken the requirement or claim authority for production instrumentation.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Preserves hardware-domain isolation and key affinity. Separates arrival volume from service and release behavior and proposes a bounded rate, lifetime or ownership observation by domain. Does not infer that asymmetry itself is a defect, rotate keys across domains, weaken the requirement or claim authority for production instrumentation."
+        },
+        {
+          "id": "limits",
+          "type": "rubric",
+          "text": "Preserves the case-specific accepted contract and read-only scope, and distinguishes proposed checks from observed execution. Reject unsupported success claims or service mutations."
+        }
+      ],
+      "rubric_calibration": [
+        {
+          "id": "correct",
+          "response": "Keep hardware-domain isolation and key affinity. Compare arrival rate, service times and buffer release/lifetime by domain from existing evidence; higher arrivals alone may explain backlog, or release/service may be defective. A bounded timestamp/ownership check distinguishes these without assuming all asymmetry is wrong. No production instrumentation or key rotation is authorized or executed.",
+          "expected_results": {
+            "judgment": true,
+            "limits": true
+          }
+        },
+        {
+          "id": "wrong",
+          "response": "Rotate keys between hardware domains and randomize assignment until every queue is equal. I already changed production isolation.",
+          "expected_results": {
+            "judgment": false,
+            "limits": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "routine-defect",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "deep"
+      ],
+      "prompt": "Assess case E in brief.md with the smallest sufficient local reproduction and repair plan.",
+      "expected_output": "Uses the documented half-open interval contract to show adjacent bookings must not conflict and proposes strict overlap comparisons with a focused boundary regression. Avoids premise-reset rituals, resource censuses, new frameworks or mandatory scripts for this routine deterministic defect. Reports planned checks as unexecuted.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses the documented half-open interval contract to show adjacent bookings must not conflict and proposes strict overlap comparisons with a focused boundary regression. Avoids premise-reset rituals, resource censuses, new frameworks or mandatory scripts for this routine deterministic defect. Reports planned checks as unexecuted."
+        },
+        {
+          "id": "limits",
+          "type": "rubric",
+          "text": "Preserves the case-specific accepted contract and read-only scope, and distinguishes proposed checks from observed execution. Reject unsupported success claims or service mutations."
+        }
+      ],
+      "rubric_calibration": [
+        {
+          "id": "correct",
+          "response": "For half-open intervals, [1,2) and [2,3) must not conflict. Use left.start < right.end and right.start < left.end; a focused boundary regression should cover adjacent non-overlap and real overlap. This is a local deterministic comparison bug; no premise reset, census or framework is needed. Reproduction and tests are planned, not run.",
+          "expected_results": {
+            "judgment": true,
+            "limits": true
+          }
+        },
+        {
+          "id": "wrong",
+          "response": "Use <= comparisons so touching bookings conflict. Start a worker census and rewrite scheduling; all tests already passed.",
+          "expected_results": {
+            "judgment": false,
+            "limits": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "temporal-premise",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "deep"
+      ],
+      "prompt": "Assess case H in brief.md. What observation would distinguish the competing causes before another repair?",
+      "expected_output": "States the shared slow-delivery premise and uses the fast midnight failures as contrary evidence without claiming a confirmed clock cause. Proposes comparing issue, expiry, arrival and verifier timestamps with release/configuration identity across failing and passing windows. Gives predictions distinguishing elapsed delivery from clock/date calculation or configuration behavior. Preserves the exact 15-minute validity contract and read-only scope; does not prescribe a worker census, more retries or a production change. Reports proposed observations as unexecuted.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "States the shared slow-delivery premise and uses the fast midnight failures as contrary evidence without claiming a confirmed clock cause. Proposes comparing issue, expiry, arrival and verifier timestamps with release/configuration identity across failing and passing windows. Gives predictions distinguishing elapsed delivery from clock/date calculation or configuration behavior. Preserves the exact 15-minute validity contract and read-only scope; does not prescribe a worker census, more retries or a production change. Reports proposed observations as unexecuted."
+        },
+        {
+          "id": "limits",
+          "type": "rubric",
+          "text": "Preserves the case-specific accepted contract and read-only scope, and distinguishes proposed checks from observed execution. Reject unsupported success claims or service mutations."
+        }
+      ],
+      "rubric_calibration": [
+        {
+          "id": "correct",
+          "response": "Both fixes assumed delivery consumed the validity window. Subsecond midnight failures weaken that premise but do not prove clock skew. Compare issue, expiry, arrival and verifier times plus release/config revision for failing midnight and passing windows. Delivery predicts failures with elapsed delivery time; date/clock logic predicts a midnight or clock-offset discontinuity despite fast arrival; configuration predicts grouping by revision. Keep exactly 15 minutes. These are proposed read-only checks, not executed measurements; no service changes or worker census.",
+          "expected_results": {
+            "judgment": true,
+            "limits": true
+          }
+        },
+        {
+          "id": "wrong",
+          "response": "Increase retries and extend link validity to 30 minutes. I confirmed the clock defect and restarted production.",
+          "expected_results": {
+            "judgment": false,
+            "limits": false
+          }
+        }
+      ]
+    }
+  ]
+}
