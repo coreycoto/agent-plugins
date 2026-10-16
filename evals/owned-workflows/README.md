@@ -90,6 +90,13 @@ rubrics. They add no discoverable skills or evaluation runtime. The same
 reference-trial test command above qualifies their staging and scope graders;
 it does not execute or calibrate model outcomes.
 
+The [task-depth comparison](task-depth.md) adds ten synthetic read-only cases
+across engineering-workflow, product-discovery and write-prose. They compare
+stronger source/method selection with routine direct work, unavailable evidence
+and requested delivery stages. The same reference-trial tests qualify their
+frozen scope assertions; semantic quality and actual execution remain separate
+unrun observations. No discoverable skill or runtime is added.
+
 The evaluation runtime is maintained separately in the private Agent Plugins
 project. From that project's checkout, plan a paired baseline and candidate
 trial against this public corpus (replace the three explicit paths):

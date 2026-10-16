@@ -1,0 +1,6 @@
+request_id,attempt,observed_at,observed_state
+r1,1,11:50,timeout
+r2,1,11:51,delivered
+r1,2,11:55,delivered
+r3,1,11:56,queued
+r4,1,11:57,timeout

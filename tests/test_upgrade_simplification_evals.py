@@ -11,12 +11,15 @@ import pytest
 
 EVALS = Path(__file__).resolve().parents[1] / "evals/owned-workflows"
 SUITES = {
-    "version-upgrade-catalog": "design-change",
-    "diff-scoped-simplification": "implement-change",
-    "premise-reset": "diagnose-problem",
-    "resource-bounds": "improve-performance",
-    "repeatable-work": "phased-refactor",
-    "principle-steering": "engineering-workflow",
+    "version-upgrade-catalog": "product-development:design-change",
+    "diff-scoped-simplification": "product-development:implement-change",
+    "premise-reset": "product-development:diagnose-problem",
+    "resource-bounds": "product-development:improve-performance",
+    "repeatable-work": "product-development:phased-refactor",
+    "principle-steering": "product-development:engineering-workflow",
+    "task-depth-development": "product-development:engineering-workflow",
+    "task-depth-product": "product-management:product-discovery",
+    "task-depth-writing": "communication:write-prose",
 }
 CASES = [
     (name, index)
@@ -62,7 +65,7 @@ def test_reference_trials_use_existing_skills_and_separate_semantic_grading(suit
     suite = EVALS / suite_name
     data = json.loads((suite / "evals.json").read_text())
     assert data["schema_version"] == 3
-    assert data["skill_name"] == "product-development:" + SUITES[suite_name]
+    assert data["skill_name"] == SUITES[suite_name]
     assert data["grader_support"] == ["_readonly_oracle.py"]
     assert len({case["id"] for case in data["evals"]}) == len(data["evals"])
     for case in data["evals"]:

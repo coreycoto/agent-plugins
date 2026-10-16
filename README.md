@@ -14,7 +14,8 @@ live under `extensions.com.openai` and files under `com.openai/`.
 The 0.10.1 release contains 36 public skills across four independently selectable
 packages, including 19 Product Development skills. See
 [engineering judgment and verification](docs/engineering-judgment.md),
-[workflow selection and migration](docs/owned-workflows.md)
+[workflow selection and migration](docs/owned-workflows.md),
+[conditional task depth](docs/task-depth.md)
 and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-candidate-trial).
 The four public packages use version 0.10.1. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest

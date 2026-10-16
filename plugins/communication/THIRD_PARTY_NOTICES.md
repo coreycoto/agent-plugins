@@ -10,5 +10,7 @@ The original MIT license texts and copyright notices are retained.
 - [Lauren Tan: cursor/plugins](https://github.com/cursor/plugins/tree/d0ef80d86795816da932a153458c5dbe192d294e) — [MIT notice](licenses/pstack-MIT.txt).
 - [Every, Inc.: EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin/tree/cef001f7b1c2e4a21516e3abd60252798d4b67c5) — [MIT notice](licenses/compound-engineering-MIT.txt).
 
+- [Dan McAteer: DannyMac180/skills, be-ambitious](https://github.com/DannyMac180/skills/tree/7dc63b7a748b8bd14bf213c15ecddd4536409407/be-ambitious) — [MIT notice](licenses/danny-skills-MIT.txt). Based on Felix Rieseberg's depth prompt; adapted conditionally within existing workflows.
+
 Repository product policy and live task authorization remain authoritative.
 These source pins describe provenance, not active runtime dependencies.

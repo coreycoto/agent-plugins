@@ -10,6 +10,11 @@ product decisions. Use `product-discovery` or `product-prioritization` when the
 problem or choice is unsettled. A useful provisional draft can expose gaps
 without pretending the decision is accepted.
 
+When a consequential requirement rests on summarized evidence or an unexamined
+method, use [research depth](../_shared/references/research-depth.md) to strengthen
+its basis. Preserve settled direction and accepted constraints; a deeper
+requirement need not become a larger initiative.
+
 Before requirements turn a contested idea into a delivery commitment, read
 [decision pressure-testing](../_shared/references/decision-pressure-testing.md).
 Keep requirements provisional where a consequential assumption remains open.
