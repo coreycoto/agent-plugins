@@ -31,5 +31,11 @@ Management and code changes to Product Development. Campaign strategy and brand
 positioning need their own context. These skills do not grant messaging or
 publication authority.
 
+For public release notes and changelogs, the writing and editing skills apply
+[consumer audience guidance](skills/_shared/references/public-release-writing.md):
+retain useful capabilities, compatibility, migration and material limitations;
+keep internal conversations, authority history and qualification receipts in
+internal handoffs. Review the final public body before publication.
+
 Communication's optional prose and handoff hook routes are documented in the
 [workflow hooks guide](https://github.com/coreycoto/agent-plugins/blob/main/docs/workflow-hooks.md).

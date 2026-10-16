@@ -10,6 +10,24 @@ and current candidate. Establish which endpoint the user requested: commit,
 push, pull request, merge, release or distribution verification. Readiness for
 one endpoint does not establish the next.
 
+For public release notes and changelogs, apply available Communication
+`write-prose` or `edit-prose` audience guidance before release. Review the final
+public body, including generated or appended text, for useful capabilities,
+compatibility, installation/migration and material limitations. Keep internal
+conversations, approval history, operational boundaries, unrelated exclusions
+and qualification/release-gate commentary in internal handoffs and receipts.
+If Communication is unavailable, perform this editorial check directly;
+Project Management remains independently selectable.
+
+For release mutations, follow [draft and published releases](references/release-lifecycle.md).
+Permit authorized draft edits and explicitly approved draft publication only
+after verifying exact repository, release identity, current `isDraft`, source,
+artifacts and action. Refuse changes to already published releases, including
+prereleases with `isDraft=false`. Missing state or identity drift requires a
+fresh read and resolution before writing. Existing executable denials remain
+binding across tools; instructions and prefix rules do not establish state-aware
+enforcement or eliminate concurrent-publication races.
+
 Prepare the concrete candidate before asking about an uncovered promotion.
 Check the final diff, relevant validation, unresolved findings and source or
 artifact identity. Describe the problem and resulting behavior in reviewer-facing

@@ -1,0 +1,10 @@
+# Inert template: not installed or loaded from the plugin by onboarding.
+# Command-prefix review only; cannot distinguish draft from published releases.
+# Existing forbidden rules remain binding. No broad allow is supplied.
+prefix_rule(
+    pattern = ["gh", "release", ["edit", "delete", "upload", "create"]],
+    decision = "prompt",
+    justification = "Review release identity, draft state, payload and action authority before mutation.",
+    match = ["gh release edit v2 --draft=false", "gh release upload v2 artifact.tgz"],
+    not_match = ["gh release view v2", "gh --repo example/project release edit v2"],
+)

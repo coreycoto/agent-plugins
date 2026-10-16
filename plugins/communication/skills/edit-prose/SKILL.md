@@ -8,6 +8,11 @@ Preserve intended position, audience, terminology, factual qualifiers and
 consumer style. Improving clarity does not authorize a new thesis or stronger
 claims. Inspect context for factual answers before questioning the author.
 
+For public release notes or changelogs, apply
+[public release writing](../_shared/references/public-release-writing.md).
+Preserve useful compatibility and migration conditions while moving internal
+task, approval and qualification context to its internal record.
+
 When matching an author's voice or learning from supplied draft-to-final edits,
 read [voice calibration](../_shared/references/voice-calibration.md). Distinguish
 style preferences from factual corrections and choices specific to one audience

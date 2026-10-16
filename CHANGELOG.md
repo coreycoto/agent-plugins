@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.4 — Unreleased
+
+- Write public release notes for consumers, retaining compatibility, installation,
+  migration steps and material limitations.
+- Guide draft edits and explicitly approved draft publication with exact release
+  and artifact checks; protect published stable and prerelease releases.
+- Include an optional command-review rule template for release work. The template
+  requires separate setup and provides command-prefix review only.
+
 ## 0.10.3 — 2026-10-15
 
 - Generalize premise-reset guidance around falsifiable predictions while keeping
