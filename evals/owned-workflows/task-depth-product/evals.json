@@ -1,0 +1,105 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-management:product-discovery",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "cohort-composition",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Use brief.md to assess the onboarding-redesign recommendation in case A. Deepen the evidence and method for this same decision.",
+      "expected_output": "Reconstructs the supplied aggregate counts of 4/6 then 3/6 and compares entry paths: organic use is 4/5 then 2/2, imports 0/1 then 1/4. Retains both paths in the population and notes the changed composition, complete comparable observation windows and small sample. Treats the causal onboarding claim as unsupported rather than proving a different cause or manufacturing demand. Connects a proportionate method and potentially disconfirming observation to the commitment decision while preserving unknown thresholds and the no-outreach scope.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/adoption.csv",
+          "path": "adoption.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Reconstructs the supplied aggregate counts of 4/6 then 3/6 and compares entry paths: organic use is 4/5 then 2/2, imports 0/1 then 1/4. Retains both paths in the population and notes the changed composition, complete comparable observation windows and small sample. Treats the causal onboarding claim as unsupported rather than proving a different cause or manufacturing demand. Connects a proportionate method and potentially disconfirming observation to the commitment decision while preserving unknown thresholds and the no-outreach scope."
+        }
+      ]
+    },
+    {
+      "id": "settled-requirement",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "For case B in brief.md, draft the requested acceptance and failure examples.",
+      "expected_output": "Provides a valid YYYY-MM-DD acceptance example and an impossible-calendar-date failure example consistent with the accepted rule. Does not reopen the format, demand more discovery, invent metrics or delivery commitments, or add unrelated research and role-play. Does not claim examples were executed.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/adoption.csv",
+          "path": "adoption.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Provides a valid YYYY-MM-DD acceptance example and an impossible-calendar-date failure example consistent with the accepted rule. Does not reopen the format, demand more discovery, invent metrics or delivery commitments, or add unrelated research and role-play. Does not claim examples were executed."
+        }
+      ]
+    },
+    {
+      "id": "unavailable-retention",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess the proposed method and validation in case C of brief.md. Recommend the strongest useful next step within this task.",
+      "expected_output": "Distinguishes seven-day adoption observations from absent retention/cancellation evidence, and descriptive comparison from causal identification. Rejects fitting an unjustified complex model or using a second model agreement as proof. Gives a useful bounded assessment or names the missing evidence and decision check without assuming access, collecting data, inventing numeric thresholds, or claiming causality or completed research.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/adoption.csv",
+          "path": "adoption.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Distinguishes seven-day adoption observations from absent retention/cancellation evidence, and descriptive comparison from causal identification. Rejects fitting an unjustified complex model or using a second model agreement as proof. Gives a useful bounded assessment or names the missing evidence and decision check without assuming access, collecting data, inventing numeric thresholds, or claiming causality or completed research."
+        }
+      ]
+    }
+  ]
+}

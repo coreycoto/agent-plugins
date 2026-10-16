@@ -72,6 +72,26 @@
           "departures": "Locally maintained task procedures with consumer-owned policy, available native tools, scoped authority and conditional references. No upstream orchestration runtime, forced model, global ritual, automatic publication or implicit access grant."
         }
       ]
+    },
+    {
+      "id": "danny",
+      "repository": "https://github.com/DannyMac180/skills",
+      "revision": "7dc63b7a748b8bd14bf213c15ecddd4536409407",
+      "license": "MIT",
+      "license_file": "licenses/danny-skills-MIT.txt",
+      "adaptations": [
+        {
+          "source_paths": [
+            "be-ambitious/SKILL.md"
+          ],
+          "destinations": [
+            "skills/write-prose/SKILL.md",
+            "skills/_shared/references/substantive-depth.md"
+          ],
+          "mechanism": "Choose professional practice, useful primary material, concrete methods and an independent check that can reject the result, within the same requested outcome.",
+          "departures": "Conditional domain-specific reference within existing skills, not a discoverable command. Preserve routine direct work, consumer policy, available tools and resource limits. Prompt rewriting stops at the rewrite; already-authorized execution continues without another confirmation. No fixed four-part response, expert role-play, automatic delegation, access expansion, invented targets or effectiveness claim. Felix Rieseberg article inspiration is linked in the reference, not treated as benchmark evidence."
+        }
+      ]
     }
   ]
 }

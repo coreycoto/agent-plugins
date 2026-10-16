@@ -11,6 +11,11 @@ host tools. This router chooses a primary procedure; it is not a checklist to
 run every skill. A tiny understood change can go directly to implementation
 and focused validation without a design document or new tests.
 
+When the user asks for greater depth, or a consequential task rests on summarized
+evidence or an unexamined method, use [task depth](../_shared/references/judgment/task-depth.md)
+to improve the approach within the same outcome. Routine settled work needs no
+reframing exercise.
+
 Choose by the unresolved task:
 
 - Explain a code path or assess requested maintainability: [understand-codebase](../understand-codebase/SKILL.md).

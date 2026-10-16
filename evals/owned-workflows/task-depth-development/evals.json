@@ -1,0 +1,137 @@
+{
+  "schema_version": 3,
+  "skill_name": "product-development:engineering-workflow",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "equivalent-work",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess the shorter-build proposal in case A of brief.md. Be ambitious about the depth of the assessment. Recommend the next step and what would count as convincing evidence.",
+      "expected_output": "Uses ci_runs.csv to reject the current speedup claim as a comparison of different completed work: each candidate run completes 60/100 units with 40 errors, while the baseline completes all 100 with zero errors. Selects a concrete bounded source or method such as per-unit work accounting or cache/timing inspection and an equivalent successful-work comparison with correctness checks. Does not require one particular tool, invent captured traces, treat normalized time as proof of equivalent work, edit the workflow, claim a measured cause, or add an expert-persona report.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/ci_runs.csv",
+          "path": "ci_runs.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses ci_runs.csv to reject the current speedup claim as a comparison of different completed work: each candidate run completes 60/100 units with 40 errors, while the baseline completes all 100 with zero errors. Selects a concrete bounded source or method such as per-unit work accounting or cache/timing inspection and an equivalent successful-work comparison with correctness checks. Does not require one particular tool, invent captured traces, treat normalized time as proof of equivalent work, edit the workflow, claim a measured cause, or add an expert-persona report."
+        }
+      ]
+    },
+    {
+      "id": "routine-label",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "For case B in brief.md, recommend the smallest sufficient implementation and verification.",
+      "expected_output": "Recommends the accepted spelling correction and the existing focused exact-label test directly. Does not reopen design, require research or a four-question report, create a new benchmark, add tools or agents, or claim implementation and checks already occurred.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/ci_runs.csv",
+          "path": "ci_runs.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Recommends the accepted spelling correction and the existing focused exact-label test directly. Does not reopen design, require research or a four-question report, create a new benchmark, add tools or agents, or claim implementation and checks already occurred."
+        }
+      ]
+    },
+    {
+      "id": "unavailable-profile",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Assess what can responsibly be concluded and done next for case C in brief.md. Raise the methodological standard within the stated scope.",
+      "expected_output": "Keeps the latency cause, feasibility and trustworthy baseline unresolved because the reported average lacks workload/window and production evidence is unavailable. Treats 200 ms as a stretch hypothesis, not accepted policy. Proposes a bounded useful local assessment or names the specific missing observation without presenting a synthetic local fixture as production evidence. Respects the five-minute budget and installed tools, does not seek credentials, install software, start load, change capacity, or assert that extra agents supply independent truth.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/ci_runs.csv",
+          "path": "ci_runs.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Keeps the latency cause, feasibility and trustworthy baseline unresolved because the reported average lacks workload/window and production evidence is unavailable. Treats 200 ms as a stretch hypothesis, not accepted policy. Proposes a bounded useful local assessment or names the specific missing observation without presenting a synthetic local fixture as production evidence. Respects the five-minute budget and installed tools, does not seek credentials, install software, start load, change capacity, or assert that extra agents supply independent truth."
+        }
+      ]
+    },
+    {
+      "id": "requested-delivery-stage",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "For the two situations in case D of brief.md, explain the next action and how a stronger approach changes it, if at all.",
+      "expected_output": "For the prompt-only request, recommends a copyable rewrite connected to source evidence, method and a falsifiable acceptance check, then stops without execution. For the already-authorized label fix, recommends continuing directly with the accepted edit and existing test without a fresh approval or forced rewrite. Preserves the exercise recommendation-only scope, makes no execution claim, and accepts that the existing routine approach needs no change.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/ci_runs.csv",
+          "path": "ci_runs.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "For the prompt-only request, recommends a copyable rewrite connected to source evidence, method and a falsifiable acceptance check, then stops without execution. For the already-authorized label fix, recommends continuing directly with the accepted edit and existing test without a fresh approval or forced rewrite. Preserves the exercise recommendation-only scope, makes no execution claim, and accepts that the existing routine approach needs no change."
+        }
+      ]
+    }
+  ]
+}

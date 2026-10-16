@@ -68,6 +68,39 @@ portable client boundaries. Put GitHub execution contracts and their tests in
 gh-steward, and keep consumer policy out of this catalog. A release requires a
 clean reviewed revision, matching package versions and fresh acquisition proof.
 
+## Standard update workflow
+
+A request to update Agent Plugins normally continues through a verified release
+and an open version-update PR in the private dotfiles repository. A user may
+narrow the endpoint, such as assessment, source preparation or PR readiness.
+Keep this project policy here rather than adding it to portable plugin skills.
+
+1. Use a current issue, preserve unrelated edits, and implement the change on a
+   branch. Prepare the next coordinated version in all four public manifests
+   and marketplace entries, the changelog and current-version documentation.
+2. Run the complete locally runnable CI-selected checks for the final candidate.
+   Commit with native Git, push the branch and open a reviewer-facing PR.
+3. Verify the pushed SHA, completed hosted CI, unresolved review threads,
+   required reviews and mergeability. Repair relevant failures and requalify a
+   revised head. Merge only the qualified expected head through the connector,
+   then verify the exact merge commit's main CI before publication.
+4. Build from clean generated output, preserving earlier candidate artifacts
+   separately. Dispatch the publication workflow once for the reviewed main SHA
+   and new version. Follow the registry qualification and recovery rules below.
+5. Verify all four package identities, public visibility, repository association,
+   registry checksums and fresh authenticated acquisition. Publish the annotated
+   version tag and GitHub release, then download and compare release assets with
+   the exact prepared bytes and SHA-256 digests.
+6. In an isolated checkout of the private dotfiles repository, read its guidance
+   and update the public publisher revision and selected plugin versions to the
+   verified release. Preserve other selections and local configuration. Run its
+   complete checks and staged secret scan, commit and push, then open a PR and
+   verify that PR's CI and merge readiness.
+7. Report source PR/merge, release and distribution receipts, and the open
+   dotfiles PR separately. Leave dotfiles merge, real-home application, plugin
+   installation, trust review and active-session reload to their own requested
+   endpoints. Do not infer activation from either source or package publication.
+
 ## GitHub Packages release
 
 GitHub Packages (`https://npm.pkg.github.com`) is the sole package registry.

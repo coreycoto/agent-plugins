@@ -11,6 +11,11 @@ for factual answers first. Ask focused questions about product choices or
 material evidence gaps; do not require an interview when context already
 supports useful work.
 
+When asked to deepen the work, or a consequential framing depends on a summary
+or an untested research method, use [research depth](../_shared/references/research-depth.md).
+Improve the evidence and method for the same decision; routine settled work
+needs no additional discovery exercise.
+
 Inventory evidence before interpreting it. Preserve origin, date or period,
 collection method, sample and selection limits. Separate observed behavior,
 customer statements, interpretations and hypotheses. Keep conflicting and

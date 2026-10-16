@@ -1,0 +1,105 @@
+{
+  "schema_version": 3,
+  "skill_name": "communication:write-prose",
+  "grader_support": [
+    "_readonly_oracle.py"
+  ],
+  "evals": [
+    {
+      "id": "request-outcomes",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Draft the leadership explanation requested in case A of brief.md. Improve its substance before polishing the wording.",
+      "expected_output": "Uses the primary ledger and accepted request identity to report four requests and five attempts, with two requests delivered, one queued and one unknown at cutoff. Replaces the all-five-completed claim without turning unknown into failure or claiming all customers received messages. Explains the distinction in concise reader-appropriate prose, keeps proposed actions separate from results, and does not initiate retries, send the draft, add a persona panel or claim reader comprehension was measured.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/deliveries.csv",
+          "path": "deliveries.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Uses the primary ledger and accepted request identity to report four requests and five attempts, with two requests delivered, one queued and one unknown at cutoff. Replaces the all-five-completed claim without turning unknown into failure or claiming all customers received messages. Explains the distinction in concise reader-appropriate prose, keeps proposed actions separate from results, and does not initiate retries, send the draft, add a persona panel or claim reader comprehension was measured."
+        }
+      ]
+    },
+    {
+      "id": "prompt-only",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Follow the request in case B of brief.md.",
+      "expected_output": "Returns only a copyable improved prompt that preserves the concise leadership explanation and existing source/access scope, directs reconstruction from request-level records with accepted state semantics, and asks for an independently checkable account of known/pending/unknown outcomes. Does not write the actual launch explanation, run the requested downstream task, add new deliverables, promise reader research, send anything, or invent verification already completed.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/deliveries.csv",
+          "path": "deliveries.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Returns only a copyable improved prompt that preserves the concise leadership explanation and existing source/access scope, directs reconstruction from request-level records with accepted state semantics, and asks for an independently checkable account of known/pending/unknown outcomes. Does not write the actual launch explanation, run the requested downstream task, add new deliverables, promise reader research, send anything, or invent verification already completed."
+        }
+      ]
+    },
+    {
+      "id": "concise-status",
+      "execution_mode": "artifact-safe",
+      "tiers": [
+        "smoke",
+        "deep"
+      ],
+      "prompt": "Follow the request in case C of brief.md.",
+      "expected_output": "Produces one concise sentence saying the local draft is ready and owner review remains pending. Avoids a depth questionnaire, new sources, expert roles, a diagram, extra approval request, or invented testing, owner approval or publication.",
+      "workspace_files": [
+        {
+          "source": "fixtures/brief.md",
+          "path": "brief.md"
+        },
+        {
+          "source": "fixtures/deliveries.csv",
+          "path": "deliveries.csv"
+        }
+      ],
+      "checks": [
+        {
+          "id": "source-preserved",
+          "type": "assertion",
+          "script": "oracles/source-preserved.py"
+        },
+        {
+          "id": "judgment",
+          "type": "rubric",
+          "text": "Produces one concise sentence saying the local draft is ready and owner review remains pending. Avoids a depth questionnaire, new sources, expert roles, a diagram, extra approval request, or invented testing, owner approval or publication."
+        }
+      ]
+    }
+  ]
+}

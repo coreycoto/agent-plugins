@@ -1,0 +1,5 @@
+run_id,variant,workload_revision,requested_units,completed_units,errors,wall_seconds
+b1,baseline,w7,100,100,0,22
+c1,candidate,w7,100,60,40,12
+b2,baseline,w7,100,100,0,23
+c2,candidate,w7,100,60,40,11

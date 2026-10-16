@@ -13,5 +13,7 @@ The original license texts and supplied copyright notices are retained.
 - [Every, Inc.: EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin/tree/cef001f7b1c2e4a21516e3abd60252798d4b67c5) — [MIT notice](licenses/compound-engineering-MIT.txt).
 - [Anthropic: anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official/tree/641d925db5a662e72f8650cb1b7670a59dab1abc) — [Apache 2.0 license](licenses/anthropic-claude-plugins-Apache-2.0.txt). The version-upgrade catalog and diff-scoped simplification references are original adaptations; source paths and departures appear in source lineage.
 
+- [Dan McAteer: DannyMac180/skills, be-ambitious](https://github.com/DannyMac180/skills/tree/7dc63b7a748b8bd14bf213c15ecddd4536409407/be-ambitious) — [MIT notice](licenses/danny-skills-MIT.txt). Based on Felix Rieseberg's depth prompt; adapted conditionally within existing workflows.
+
 Repository product policy and live task authorization remain authoritative.
 These source pins describe provenance, not active runtime dependencies.

@@ -8,6 +8,10 @@ routine choices from context. Inspect supplied facts first; ask about a missing
 choice only if it materially changes the result. Preserve domain terminology,
 authorial position and the requested medium.
 
+When asked for greater substance, or a consequential argument rests on a summary
+or an unexamined method, use [substantive depth](../_shared/references/substantive-depth.md)
+before polishing the prose. Routine drafting needs no additional research ritual.
+
 When asked to match an author's voice or develop a style profile, read
 [voice calibration](../_shared/references/voice-calibration.md). Use supplied
 preferences and examples; keep personal rules and writing samples in the

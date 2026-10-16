@@ -1,0 +1,13 @@
+account_id,cohort_week,entry_path,used_by_day_7
+a1,one,organic,1
+a2,one,organic,1
+a3,one,organic,1
+a4,one,organic,1
+a5,one,organic,0
+a6,one,import,0
+b1,two,organic,1
+b2,two,organic,1
+b3,two,import,1
+b4,two,import,0
+b5,two,import,0
+b6,two,import,0
