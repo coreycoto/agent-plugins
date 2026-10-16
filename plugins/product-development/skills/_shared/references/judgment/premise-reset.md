@@ -6,7 +6,14 @@ that line of repair, not a universal attempt quota. A routine bug does not need
 this procedure. Keep failed, interrupted and unknown results distinct.
 
 Write the shared premise in one sentence. Separate the observed mechanism from
-the assumption about why it occurs. For example, worker-local free lists can
+the assumption about why it occurs. Before choosing a mechanism, state a
+competing explanation and an observation that would differ if the premise were
+false. Failed fixes motivate this test; they do not by themselves disprove the
+premise or establish another cause. Match the observation to the failure:
+time boundaries may need timestamp comparisons, and stale output may need
+artifact/configuration identities. A worker census is one conditional method.
+
+For example, worker-local free lists can
 explain where reusable memory remains without explaining why the same workers
 always receive more frees than allocations. A more elaborate allocator might
 compensate for work assignment that creates the imbalance.

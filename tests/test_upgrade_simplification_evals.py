@@ -14,6 +14,8 @@ SUITES = {
     "version-upgrade-catalog": "product-development:design-change",
     "diff-scoped-simplification": "product-development:implement-change",
     "premise-reset": "product-development:diagnose-problem",
+    "research-coverage": "product-development:understand-codebase",
+    "pstack-reasoning": "product-development:diagnose-problem",
     "resource-bounds": "product-development:improve-performance",
     "repeatable-work": "product-development:phased-refactor",
     "principle-steering": "product-development:engineering-workflow",
@@ -68,9 +70,24 @@ def test_reference_trials_use_existing_skills_and_separate_semantic_grading(suit
     assert data["skill_name"] == SUITES[suite_name]
     assert data["grader_support"] == ["_readonly_oracle.py"]
     assert len({case["id"] for case in data["evals"]}) == len(data["evals"])
+    if suite_name == "pstack-reasoning":
+        # The existing private runner rejects multiple smoke cases or fewer
+        # than three checks; keep this public pilot consumable without it.
+        assert sum("smoke" in case["tiers"] for case in data["evals"]) == 1
+        for case in data["evals"]:
+            assert len(case["checks"]) >= 3
+            rubric_ids = {check["id"] for check in case["checks"] if check["type"] == "rubric"}
+            controls = case["rubric_calibration"]
+            assert {control["id"] for control in controls} == {"correct", "wrong"}
+            for control in controls:
+                assert set(control["expected_results"]) == rubric_ids
+                assert all(type(value) is bool for value in control["expected_results"].values())
+            assert {tuple(control["expected_results"].values()) for control in controls} == {
+                (True,) * len(rubric_ids), (False,) * len(rubric_ids),
+            }
     for case in data["evals"]:
         assert case["execution_mode"] == "artifact-safe"
-        assert case["tiers"] == ["smoke", "deep"]
+        assert "deep" in case["tiers"] and set(case["tiers"]) <= {"smoke", "deep"}
         assert case["expected_output"] not in case["prompt"]
         assert data["skill_name"] not in case["prompt"]
         files = set()
@@ -86,7 +103,8 @@ def test_reference_trials_use_existing_skills_and_separate_semantic_grading(suit
             if check["type"] == "assertion":
                 assert (suite / check["script"]).is_file()
             else:
-                assert check["text"] == case["expected_output"]
+                assert isinstance(check["text"], str) and check["text"].strip()
+        assert any(check.get("text") == case["expected_output"] for check in case["checks"])
 
 
 @pytest.mark.parametrize(("suite_name", "case_index"), CASES)

@@ -59,3 +59,21 @@ include a second capture or allocation/free history. The source checkout is
 newer than the capture's unknown build. No compatible parser is available in
 this environment. The request is what can be reported from the supplied
 summary and what remains unavailable; do not install tools or restart anything.
+
+H. A signed download link must remain valid for exactly 15 minutes after issue.
+Two completed repairs assumed slow network delivery and increased retry counts;
+both still failed the same expiry test. The failures cluster at midnight UTC,
+including requests delivered in under a second. There is one request worker.
+Existing read-only recordings contain issuer time, verifier time, expiry, request
+arrival, release and configuration revision. Only total failures are summarized.
+The request is a next diagnostic observation and competing predictions before
+another repair. Do not change the validity contract, restart services or run a
+production experiment.
+
+I. A report shows old labels after two completed frontend repairs and rebuilds.
+Both assumed the browser was rendering the new label catalog. The catalog is
+selected by an environment setting at process start. There is one browser and
+one server, and no build, served-asset or effective-configuration identities
+have been compared. Available read-only tools can inspect those identities.
+The request is what evidence would distinguish a rendering defect from the
+wrong catalog being served. Do not deploy, clear caches or change configuration.

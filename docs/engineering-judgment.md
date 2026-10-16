@@ -69,6 +69,15 @@ prior procedures, conditional references and references plus named steering.
 
 ## Evaluate before claiming effectiveness
 
+Version 0.10.3 follows the pstack report with reasoning-led premise tests and an
+optional [research-coverage reference](../plugins/product-development/skills/_shared/references/research-coverage.md).
+Time and served-configuration cases complement the existing distribution cases;
+historical investigations distinguish conflicting rationale, bounded no-result
+searches and inaccessible sources while routine explanations stay direct.
+The [bounded pruning comparison](../evals/owned-workflows/pstack-reasoning/README.md)
+defines its component scope, baseline, calibration, staging adaptations and
+keep/discard rule separately from the broader adoption plan below.
+
 The [specialist trial plan](../evals/owned-workflows/engineering-judgment/README.md)
 compares the prior skills, improved general skills with references, and specialist
 entrypoints. Synthetic author fixtures cover lost acknowledgment, migration

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.10.3 — 2026-10-15
+
+- Generalize premise-reset guidance around falsifiable predictions while keeping
+  distribution checks conditional and preserving legitimate constraints.
+- Add optional research coverage for consequential historical investigations,
+  distinguishing documented intent, conflicting accounts and unavailable evidence.
+- Add time/configuration and research-evidence cases, a bounded pruning
+  comparison with calibration controls, and explicit effectiveness limits.
+  Discard the pruning candidate after an inconclusive comparison, a timeout and
+  a grader evidence gap; preserve the prior detail with the new reasoning frame.
+- Document public implicit skill selection and parent-to-role skill binding;
+  preserve private authoring invocation policy and all 36 public skill identities.
+- Retain previous lineage and add pstack's reviewed reasoning/epistemics revision
+  with its MIT attribution. Coordinate the four package versions at 0.10.3.
+
+Tracking: #41.
+
 ## 0.10.2 — 2026-10-15
 
 - Add conditional task-depth references to existing Product Development,
