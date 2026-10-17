@@ -8,6 +8,11 @@ routine choices from context. Inspect supplied facts first; ask about a missing
 choice only if it materially changes the result. Preserve domain terminology,
 authorial position and the requested medium.
 
+For public release notes or changelogs, use
+[public release writing](../_shared/references/public-release-writing.md).
+Select consumer-relevant facts from development material and review the actual
+final public body before handing it to the publication workflow.
+
 When asked for greater substance, or a consequential argument rests on a summary
 or an unexamined method, use [substantive depth](../_shared/references/substantive-depth.md)
 before polishing the prose. Routine drafting needs no additional research ritual.

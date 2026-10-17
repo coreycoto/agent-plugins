@@ -90,3 +90,8 @@ any new or changed hook definition in Codex when prompted; unchanged trusted
 definitions do not need another approval. This flow upgrades generated
 roles; it does not update marketplace refs or install upstream skill dependencies.
 Cloud/ChatGPT Work discovery is a separate qualification and remains pending.
+
+This onboarding tool manages role files only. Bundled release-policy templates
+are inert assets; do not install them, change active command rules, or register
+release guards as part of role setup. Rule installation and hook trust require
+their own reviewed scope, consent and runtime verification.

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "json-export",
+    "development": "Adds JSON coverage export. Requires Runner 2.4 or newer. Replace coveragePath with coverage.output. Reports are buffered in memory. The owner approved release after our chat. We did not deploy the dashboard. Adapter qualification is incomplete; this evidence does not establish a consumer release gate.",
+    "public": "Adds JSON coverage export. Requires Runner 2.4 or newer. Replace coveragePath with coverage.output. Reports are buffered in memory; allow memory for the full report when exporting large runs.",
+    "retain": [
+      "JSON coverage export",
+      "Runner 2.4 or newer",
+      "Replace coveragePath with coverage.output",
+      "Reports are buffered in memory"
+    ],
+    "reject": [
+      "The owner approved release after our chat.",
+      "We did not deploy the dashboard.",
+      "Adapter qualification is incomplete; this evidence does not establish a consumer release gate."
+    ],
+    "rubric": "Keep the minimum version, actionable migration and memory limit. Reject conversation, permission, unrelated deployment boundary and release-gate ending. Do not reinterpret internal qualification as supported-adapter facts."
+  },
+  {
+    "id": "compatibility-exception",
+    "development": "The new importer reads schema 3. Node 22 or newer is required. Migrate schema 2 files with import-tool convert before upload. Windows ARM is unsupported in this version. We discussed whether to ship today. Permission was granted for publication only. Qualification checks passed on the reviewed head.",
+    "public": "The new importer reads schema 3. Node 22 or newer is required. Migrate schema 2 files with import-tool convert before upload. Windows ARM is unsupported in this version.",
+    "retain": [
+      "schema 3",
+      "Node 22 or newer",
+      "import-tool convert before upload",
+      "Windows ARM is unsupported in this version."
+    ],
+    "reject": [
+      "We discussed whether to ship today.",
+      "Permission was granted for publication only.",
+      "Qualification checks passed on the reviewed head."
+    ],
+    "rubric": "Preserve a material unsupported platform and usable conversion step while excluding discussion, authority and verification commentary."
+  }
+]

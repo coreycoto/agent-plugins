@@ -30,6 +30,18 @@ guidance. Use `review-closeout` to assess the requested endpoint and
 preserve existing authorization; changing scope or promotion stage needs its
 own task authority.
 
+`publish-change` applies consumer release-writing guidance and
+[draft-state safeguards](skills/publish-change/references/release-lifecycle.md).
+Authorized draft edits and explicitly approved draft publication require exact
+identity and payload checks. Already published stable and prerelease releases
+are protected. Existing executable denials remain binding.
+
+The optional `com.openai/release-policy/review-release.rules` template is inert
+and provides prefix review only. Setup currently installs agents, not rules or
+a state-aware release guard. No automatic rule loading is assumed. See the
+[distribution and enforcement assessment](https://github.com/coreycoto/agent-plugins/blob/main/docs/release-safeguards.md)
+for coverage, races and unqualified integration stages.
+
 A local result, reviewable candidate, merged source, published artifact and
 verified live behavior have different evidence. `handoff-work` makes incomplete
 work resumable with exact state and a next action. Durable solution capture is
