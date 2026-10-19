@@ -35,6 +35,23 @@ requires the corresponding delivery authority.
 
 ## Improving the environment and human decisions
 
+Product Development's existing entry points conditionally load
+[development tool references](../plugins/product-development/skills/_shared/references/tooling/README.md)
+for search/navigation, runtime/dependency ownership, secret and shell checks,
+LFS, browsers, Turbo, Vercel and Neon. Project Management's delivery and publish
+procedures load their contained
+[GitHub tool reference](../plugins/project-management/skills/_shared/references/github-tools.md).
+These replace portable guidance previously supplied by standalone personal
+tool skills; personal tool requests, paths and update settings remain consumer
+configuration. Select only the relevant reference during a task.
+
+The same selection principles apply to local and cloud development. Check the
+actual runtime's plugin loading, process and hook support instead of treating
+all hosted environments as one client. Package installation, session discovery
+and useful execution require distinct verification. Keep existing local copies
+until the replacement release and consumer discovery have been verified; do not
+delete vendor skills or modify trust as part of this guidance migration.
+
 The existing entry points support six additional mechanisms through conditional
 references rather than separate entrypoints for those mechanisms:
 

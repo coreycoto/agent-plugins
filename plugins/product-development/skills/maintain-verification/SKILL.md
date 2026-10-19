@@ -21,6 +21,11 @@ tools over a new wrapper. If a new consumer skill is requested, follow available
 skill-authoring guidance for frontmatter and placement. A document or harness
 can suffice where that is the consumer's convention.
 
+Use [repository checks](../_shared/references/tooling/checks.md) for secret-scan
+boundaries, shell dialects and LFS content, and the relevant
+[tool/environment reference](../_shared/references/tooling/README.md) when launch
+or hosted setup depends on runtime, browser or task-runner selection.
+
 Read the [verification guide](../_shared/references/product-verification.md).
 Instructions must name exact commands or UI steps, safe prerequisites,
 readiness and instance checks, acceptance observations, evidence location and

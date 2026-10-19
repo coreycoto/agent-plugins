@@ -1,6 +1,20 @@
 # Changelog
 
-## 0.10.4 — Unreleased
+## 0.10.5 — Unreleased
+
+- Add portable search, runtime/dependency, secret-scan, shell and Git LFS guidance
+  to existing Product Development workflows.
+- Include browser, Turbo, Vercel and Neon tool selection for local and hosted
+  development while respecting project versions and environment configuration.
+- Add GitHub connector/CLI selection and exact-candidate delivery evidence to
+  Project Management, including Actions diagnostics and post-merge checks.
+- Existing skill names remain compatible. Consumers can replace standalone
+  search, runtime, repository-check and GitHub guidance with these plugin-owned
+  references after verifying the new installation and session discovery.
+- Tool, process, hook and plugin-loading availability still depends on the
+  selected host runtime; package declarations alone do not establish discovery.
+
+## 0.10.4
 
 - Write public release notes for consumers, retaining compatibility, installation,
   migration steps and material limitations.

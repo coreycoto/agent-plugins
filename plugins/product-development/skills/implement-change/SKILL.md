@@ -11,6 +11,11 @@ Resolve factual questions from source first. Return consequential unsettled
 product or architecture choices; do not reopen settled decisions or require
 a plan document for an understood small task.
 
+When setup or tool choice is part of the change, load the relevant
+[development tool reference](../_shared/references/tooling/README.md) for runtime
+ownership, locked dependencies, checks, browser or service tools. Preserve the
+consumer's versions and host configuration across local and cloud execution.
+
 Make the smallest complete change. For substantial work, use vertical slices
 that exercise useful behavior through the relevant layers, with prerequisites
 and focused validation. Follow repository generators, inventories and tests

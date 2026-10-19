@@ -10,6 +10,10 @@ and task authority. Use the consumer's existing verification instructions or
 harness where available. Read the
 [verification guide](../_shared/references/product-verification.md) for launch,
 interaction, evidence and cleanup details; do not invent credentials or setup.
+For browser automation, Turbo selection or Vercel/Neon inspection, consult the
+conditional [browser and service tool guide](../_shared/references/tooling/services.md).
+Verify the chosen host's actual capabilities rather than inferring them from
+local installation or the environment's cloud label.
 
 Choose the user-visible entry point: browser flow, CLI command, desktop action,
 API consumer or library contract. Drive that path using actual available tools.

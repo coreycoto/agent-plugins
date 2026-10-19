@@ -2,6 +2,8 @@
 
 Read this when the requested endpoint includes hosted review or promotion.
 Scale checks to the change and consumer rules; unrelated gates are not a ritual.
+Use [GitHub tools](../../_shared/references/github-tools.md) when selecting a
+connector or CLI and matching hosted checks to the exact candidate.
 
 | Endpoint | Evidence to retain |
 | --- | --- |

@@ -10,6 +10,10 @@ and current candidate. Establish which endpoint the user requested: commit,
 push, pull request, merge, release or distribution verification. Readiness for
 one endpoint does not establish the next.
 
+For GitHub PRs, checks and remote evidence, follow the contained
+[GitHub tool guide](../_shared/references/github-tools.md). Inspect the current
+head, reviews and merge requirements; report provider state separately from CI.
+
 For public release notes and changelogs, apply available Communication
 `write-prose` or `edit-prose` audience guidance before release. Review the final
 public body, including generated or appended text, for useful capabilities,

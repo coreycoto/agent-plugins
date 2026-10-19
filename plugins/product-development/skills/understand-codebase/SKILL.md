@@ -8,6 +8,8 @@ description: Explain a bounded code path or architectural decision, or assess re
 Identify the question and bound the path or component to explain. Read consumer
 guidance, relevant domain terms and supplied artifacts. Inspect entry points,
 public contracts and callers before expanding into implementation details.
+Use [search and navigation](../_shared/references/tooling/search.md) when choosing
+content/path searches, unattended candidate selection or bounded previews.
 Search relevant existing solution records when a prior decision could explain
 the shape; use the [retrieval guide](../_shared/references/project-knowledge.md).
 
