@@ -9,6 +9,7 @@ verification needs a tool choice. Load only the relevant topic:
 | Resolve runtimes, package managers or locked environments | [Runtimes and dependencies](runtimes.md) |
 | Scan secrets, validate shell scripts or retrieve LFS content | [Repository checks](checks.md) |
 | Inspect a browser, monorepo graph, deployment or database branch | [Browser and service tools](services.md) |
+| Use Clerk, Stripe or Cloudflare specialist skills and official guidance | [Vendor-owned platform guidance](providers.md) |
 
 Read the consumer's scripts, manifests, lockfiles and environment setup first.
 Prefer its project-pinned executable and existing workflow. An installed global
