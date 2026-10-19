@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.10.5 — Unreleased
+## Unreleased
+
+- Add Clerk, Stripe and Cloudflare skill references to Product Development's
+  existing tooling guidance, with official documentation fallbacks.
+- Existing skill names remain compatible. Provider skills remain independently
+  installed; consumers select and verify the versions their environment uses.
+
+## 0.10.5
 
 - Add portable search, runtime/dependency, secret-scan, shell and Git LFS guidance
   to existing Product Development workflows.

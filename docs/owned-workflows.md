@@ -38,7 +38,11 @@ requires the corresponding delivery authority.
 Product Development's existing entry points conditionally load
 [development tool references](../plugins/product-development/skills/_shared/references/tooling/README.md)
 for search/navigation, runtime/dependency ownership, secret and shell checks,
-LFS, browsers, Turbo, Vercel and Neon. Project Management's delivery and publish
+LFS, browsers, Turbo, Vercel and Neon. A conditional
+[provider reference](../plugins/product-development/skills/_shared/references/tooling/providers.md)
+routes Clerk, Stripe and Cloudflare tasks to vendor-owned skills and official
+documentation without automatically installing dependencies.
+Project Management's delivery and publish
 procedures load their contained
 [GitHub tool reference](../plugins/project-management/skills/_shared/references/github-tools.md).
 These replace portable guidance previously supplied by standalone personal
