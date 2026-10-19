@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.6 — 2026-10-19
 
 - Add Clerk, Stripe and Cloudflare skill references to Product Development's
   existing tooling guidance, with official documentation fallbacks.
