@@ -11,6 +11,11 @@ host tools. This router chooses a primary procedure; it is not a checklist to
 run every skill. A tiny understood change can go directly to implementation
 and focused validation without a design document or new tests.
 
+For search, runtime setup, repository checks or browser/service tool selection,
+use the conditional [development tool references](../_shared/references/tooling/README.md).
+Inspect the actual local or cloud host and consumer pins; portable guidance
+does not install tools or change personal defaults.
+
 When the user asks for greater depth, or a consequential task rests on summarized
 evidence or an unexamined method, use [task depth](../_shared/references/judgment/task-depth.md)
 to improve the approach within the same outcome. Routine settled work needs no

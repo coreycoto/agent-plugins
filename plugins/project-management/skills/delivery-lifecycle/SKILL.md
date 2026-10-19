@@ -12,6 +12,11 @@ contracts, exact checkout and existing edits. Establish the requested endpoint:
 local result, reviewable candidate, merged source, release, or verified live
 behavior. Keep these states distinguishable in evidence and tracking.
 
+For GitHub tool selection, Actions diagnostics or PR evidence, use
+[GitHub tools and exact-candidate evidence](../_shared/references/github-tools.md).
+Prefer available connector capabilities and native Git; use gh for Actions or
+a concrete connector gap with an explicit repository and revision.
+
 Make the work dependency-ready before execution. Identify prerequisites and
 split substantial work into small vertical slices that demonstrate an observable
 result through the relevant layers. Give each slice an acceptance example,

@@ -5,6 +5,11 @@ description: Reproduce a reported software failure, distinguish competing causes
 
 # Diagnose Problem
 
+For executable selection, dependency setup or host-specific tool failures,
+consult [development tools and environment](../_shared/references/tooling/README.md).
+Separate missing capability, runtime selection, network and authentication from
+a product defect before changing installations or global settings.
+
 Record the exact symptom, expected behavior, checkout and environment. Preserve
 the original failure evidence and redact sensitive diagnostic output. Inspect
 available errors and relevant consumer solution records before repeating work;
