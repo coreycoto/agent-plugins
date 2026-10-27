@@ -1,5 +1,10 @@
 # Owned workflow trial corpus
 
+The [PR continuation and review trials](pr-continuation-review.md) add eleven
+synthetic decisions for stale PRs, contributor provenance, bounded review and
+open-PR handoffs. Their semantic rubrics remain separate from deterministic
+fixture and grader qualification.
+
 The deterministic portion supplies one small artifact task for each of five Product
 Development procedures: diagnosis, direct implementation, review, product
 verification, and refreshing existing knowledge. Each task belongs to both

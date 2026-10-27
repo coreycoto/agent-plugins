@@ -45,6 +45,12 @@ For authorized independent review, use `pd_reviewer` on the fixed candidate with
 read-only scope. Use actual native tools rather than model-name commands or an
 external review service. Review does not authorize shipping or credential access.
 
+When review requires several passes, use the
+[bounded review procedure](../_shared/references/review-iterations.md). Keep
+finding identities and candidate evidence stable, review affected changes and
+open findings on later passes, and report unresolved decisions when the budget
+ends. Routine reviews do not require a loop.
+
 Complete with supported findings, relevant checked surfaces and material
 coverage limits. State whether acceptance remains blocked and why. Apply fixes
 only when already requested, through

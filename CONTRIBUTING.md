@@ -71,7 +71,7 @@ clean reviewed revision, matching package versions and fresh acquisition proof.
 ## Standard update workflow
 
 A request to update Agent Plugins normally continues through a verified release
-and an open version-update PR in the private dotfiles repository. A user may
+and an open version-update PR in the dotfiles repository. A user may
 narrow the endpoint, such as assessment, source preparation or PR readiness.
 Keep this project policy here rather than adding it to portable plugin skills.
 
@@ -91,7 +91,7 @@ Keep this project policy here rather than adding it to portable plugin skills.
    registry checksums and fresh authenticated acquisition. Publish the annotated
    version tag and GitHub release, then download and compare release assets with
    the exact prepared bytes and SHA-256 digests.
-6. In an isolated checkout of the private dotfiles repository, read its guidance
+6. In an isolated checkout of the dotfiles repository, read its guidance
    and update the public publisher revision and selected plugin versions to the
    verified release. Preserve other selections and local configuration. Run its
    complete checks and staged secret scan, commit and push, then open a PR and

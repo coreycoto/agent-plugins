@@ -44,6 +44,11 @@ work. Inspect the starting ref and existing edits; reuse a suitable checkout
 when possible. Preserve unrelated work. Creating isolation does not authorize
 later cleanup or deleting branches.
 
+When resuming an older PR or inheriting a branch, use the
+[PR continuation guide](../_shared/references/pr-continuation.md) before
+rebasing. Check that the goal remains useful, reconcile newer contracts and
+preserve contributor credit and concurrent work.
+
 Continue ordinary repairs, relevant checks and review responses within the
 existing scope and authorized stage. A CI failure or comment is evidence to
 assess, not permission for unrelated changes. Reproduce material failures and

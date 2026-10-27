@@ -35,6 +35,13 @@ revision, environment and time; revalidate stale or invalidated claims before
 relying on them. Preserve existing authorization when the scope and stage still
 match, and return only material changes or uncovered actions for decision.
 
+For continuation of an existing PR or branch, use the
+[PR continuation guide](../_shared/references/pr-continuation.md) to reassess
+the original goal against current behavior before updating the branch. Preserve
+verified authorship, co-author trailers and links to inherited work, including
+human credit when preparing a squash. A handoff does not prove the old approach
+is still appropriate or authorize changing the original PR.
+
 Complete the handoff when a next owner can identify the exact state and take
 the next action. Preparing a pause record does not itself stop active work or
 scheduled jobs; honor an explicit stop request using the task's available

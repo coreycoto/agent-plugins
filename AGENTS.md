@@ -6,7 +6,7 @@ not authorize provider operations, deployment, releases or data publication.
 
 For requests to update Agent Plugins, the default delivery workflow is commit
 and push, open a PR, verify exact-head CI and merge readiness, merge qualified
-source, publish and verify a new version, then open a private dotfiles PR with
+source, publish and verify a new version, then open a dotfiles PR with
 the released source revision and plugin versions. Honor a narrower requested
 endpoint. Follow CONTRIBUTING.md; dotfiles merge and real-home activation remain
 separate actions.
