@@ -22,6 +22,9 @@ SUITES = {
     "task-depth-development": "product-development:engineering-workflow",
     "task-depth-product": "product-management:product-discovery",
     "task-depth-writing": "communication:write-prose",
+    "pr-continuation": "project-management:handoff-work",
+    "review-iterations": "product-development:review-code",
+    "ready-pr-handoff": "project-management:delivery-lifecycle",
 }
 CASES = [
     (name, index)
@@ -70,7 +73,9 @@ def test_reference_trials_use_existing_skills_and_separate_semantic_grading(suit
     assert data["skill_name"] == SUITES[suite_name]
     assert data["grader_support"] == ["_readonly_oracle.py"]
     assert len({case["id"] for case in data["evals"]}) == len(data["evals"])
-    if suite_name == "pstack-reasoning":
+    if suite_name in {
+        "pstack-reasoning", "pr-continuation", "review-iterations", "ready-pr-handoff",
+    }:
         # The existing private runner rejects multiple smoke cases or fewer
         # than three checks; keep this public pilot consumable without it.
         assert sum("smoke" in case["tiers"] for case in data["evals"]) == 1

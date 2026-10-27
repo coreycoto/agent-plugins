@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.10.7 — 2026-10-26
+
+- Reassess older PRs against current behavior and architecture before rebasing,
+  compare commit series and protect concurrent branch updates.
+- Preserve verified contributor authorship and co-author credit through PR
+  continuations and squash preparation.
+- Bound repeated reviews, retain finding identities and focus follow-up on
+  changed behavior and affected callers while preserving serious defect severity.
+- Check auto-merge and merge-queue state before handing off an open ready PR.
+  Existing skill names and package selection remain compatible.
+
 ## 0.10.6 — 2026-10-19
 
 - Add Clerk, Stripe and Cloudflare skill references to Product Development's

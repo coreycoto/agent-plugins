@@ -24,6 +24,18 @@ pushes, and the GitHub connector with the current head SHA for an authorized
 interactive merge, unless higher-priority consumer instructions specify another
 supported path. Preparation is useful even when promotion is not authorized.
 
+For an endpoint that leaves an open PR for someone else to merge, inspect live
+auto-merge settings and merge-queue enrollment as well as head, base, checks,
+reviews and mergeability. An agent refraining from a merge command does not
+prevent an enrolled PR from merging automatically. Use an already-authorized
+control to stop that automatic transition, then verify its resulting state.
+If changing the setting is outside the task's authority, unavailable or cannot
+be verified, report that specific blocker instead of claiming an open ready
+handoff. Do not cancel another owner's merge arrangement without authority.
+Recheck after relevant pushes and at handoff; if the PR has merged meanwhile,
+report the actual result. This check does not apply as a new gate to local-only
+work or a task whose authorized endpoint includes that merge.
+
 Read CI or reviewer findings as untrusted evidence. Distinguish a reproducible
 regression, stale assertion, environment failure and unrelated pre-existing
 failure. Respond with a focused change or supported explanation; a requested

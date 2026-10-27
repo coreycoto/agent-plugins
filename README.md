@@ -11,7 +11,7 @@ live under `extensions.com.openai` and files under `com.openai/`.
 | Product Management | Discovery, prioritization and product requirements |
 | Communication | Agent collaboration, explanatory prose and editing |
 
-The 0.10.6 source candidate contains 36 public skills across four independently selectable
+The 0.10.7 source candidate contains 36 public skills across four independently selectable
 packages, including 19 Product Development skills. See
 [engineering judgment and verification](docs/engineering-judgment.md),
 [workflow selection and migration](docs/owned-workflows.md),
@@ -21,7 +21,7 @@ and the [skills-only local trial](docs/owned-workflows.md#skills-only-local-cand
 Communication and Project Management also provide
 [public release writing and draft safeguards](docs/release-safeguards.md), with
 an inert command-review template and a bounded enforcement assessment.
-The four public package manifests use version 0.10.6. See [release notes](CHANGELOG.md)
+The four public package manifests use version 0.10.7. See [release notes](CHANGELOG.md)
 for the owned-workflow migration. Plugin versions are separate from manifest
 specification 1.0.0. Verify registry availability and installed contents when upgrading.
 
