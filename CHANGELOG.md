@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.8 — 2026-10-27
+
+- Guide engineering work toward the smallest complete agreed outcome, early
+  useful progress and proportionate delegation while preserving required checks
+  and existing authorization.
+
 ## 0.10.7 — 2026-10-26
 
 - Reassess older PRs against current behavior and architecture before rebasing,
