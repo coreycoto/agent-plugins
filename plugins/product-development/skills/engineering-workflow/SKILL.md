@@ -11,6 +11,14 @@ host tools. This router chooses a primary procedure; it is not a checklist to
 run every skill. A tiny understood change can go directly to implementation
 and focused validation without a design document or new tests.
 
+For accepted implementation work, deliver the smallest complete change that
+meets the agreed outcome while preserving correctness, maintainability and
+required safeguards. Leave optional improvements in the backlog or report them
+separately. Use focused checks during iteration and complete required verification
+at the authorized delivery stage. Show useful working progress early when
+practical, then continue authorized work without turning the checkpoint into a
+new approval stop.
+
 For search, runtime setup, repository checks or browser/service tool selection,
 use the conditional [development tool references](../_shared/references/tooling/README.md).
 Inspect the actual local or cloud host and consumer pins; portable guidance
@@ -48,8 +56,8 @@ Read relevant existing consumer knowledge when it can avoid repeated
 investigation; follow the [retrieval guide](../_shared/references/project-knowledge.md).
 Do not bootstrap a knowledge store or load unrelated history.
 
-If delegation is authorized and useful, follow the
-[native role guide](../_shared/references/native-roles.md). Otherwise complete
+If delegation is authorized and its expected benefit justifies coordination,
+follow the [native role guide](../_shared/references/native-roles.md). Otherwise complete
 the procedure in the parent. Preserve existing authorization across routine
 repairs and checks; return changed scope or uncovered promotion for decision.
 For delivery tracking or publication, use available
