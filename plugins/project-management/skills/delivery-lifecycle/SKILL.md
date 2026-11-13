@@ -27,7 +27,8 @@ Technical implementation belongs to the available Product Development workflow
 or the parent following repository guidance. For authorized delegation, assign
 bounded scope, owned files and a success condition. Use
 `pm_dependency_maintainer` for accepted dependency maintenance and
-`pm_merge_reviewer` for review of an exact candidate; consult the
+`pm_merge_reviewer` for review of an exact candidate, including its context and
+briefing guidance; consult the
 [agent routing guide](../_shared/references/codex-agent-routing.md).
 
 For an opted-in task with available `codex_workflow_*` tools, keep its source,

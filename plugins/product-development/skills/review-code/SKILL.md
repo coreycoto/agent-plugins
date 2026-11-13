@@ -42,8 +42,11 @@ required repairs from optional improvements and unrelated existing issues.
 Deduplicate findings without losing distinct failure scenarios.
 
 For authorized independent review, use `pd_reviewer` on the fixed candidate with
-read-only scope. Use actual native tools rather than model-name commands or an
-external review service. Review does not authorize shipping or credential access.
+read-only scope. Prefer a new reviewer with fresh conversation context for the
+initial pass where supported; prepare the self-contained brief described in the
+[native role guide](../_shared/references/native-roles.md). Use actual native
+tools rather than model-name commands or an external review service. Review
+does not authorize shipping or credential access.
 
 When review requires several passes, use the
 [bounded review procedure](../_shared/references/review-iterations.md). Keep

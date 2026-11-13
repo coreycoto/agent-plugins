@@ -57,7 +57,9 @@ hosted-only qualification pending until separately observed.
 
 For authorized delegation, assign `pd_implementer` bounded intent, owned files
 and success conditions; `pd_transformer` suits explicit mechanical rules with
-deterministic completion. Both preserve concurrent work. Use native Git
+deterministic completion. Choose agent reuse and conversation context using the
+[native role guide](../_shared/references/native-roles.md); related repairs can
+benefit from retained context. Both preserve concurrent work. Use native Git
 isolation when the consumer or task requires it; cleanup is a separate action.
 
 Complete the authorized endpoint and report changed behavior, files, validation

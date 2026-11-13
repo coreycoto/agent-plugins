@@ -19,6 +19,17 @@ policy, composed GitHub plans, merges and publication. Choosing a role does
 not grant a credential or provider capability. The role's sandbox default
 does not override the parent's live permissions.
 
+For an initial independent merge review, prefer a new reviewer with fresh
+conversation context when supported. Brief it on the exact candidate and base,
+acceptance and merge contracts, accepted decisions, relevant evidence, authority
+and read-only scope; ask it to inspect the candidate and report missing context.
+If fresh context is unavailable, report the limitation. A fresh conversation is
+not proof of an unbiased review or a separate sandbox. For distinct assignments,
+consider a new agent when accumulated context may mislead it; a related follow-up
+may benefit from reuse. A new agent can inherit the parent conversation, while a
+reused agent retains its own prior context. Carry current constraints and
+candidate evidence in either case.
+
 If these roles are unavailable, perform the authorized workflow in the
 parent. Inspect the current spawn selector before claiming role usability.
 Do not silently install another plugin or use its agents as a substitute.

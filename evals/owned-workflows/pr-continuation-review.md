@@ -1,11 +1,11 @@
 # PR continuation and bounded review trials
 
-These eleven synthetic read-only cases exercise existing skills:
+These fourteen synthetic read-only cases exercise existing skills:
 
 | Suite | Procedure | Decisions |
 | --- | --- | --- |
 | `pr-continuation` | `project-management:handoff-work` | Already-solved goal, changed invariant ownership, valid rebase with concurrent remote work, verified human contributor credit |
-| `review-iterations` | `product-development:review-code` | Affected follow-up scope, serious rare defect at the pass limit, resolved review with only optional feedback |
+| `review-iterations` | `product-development:review-code` | Affected follow-up scope, review budget and completion, fresh initial review, useful follow-up reuse, missing context and unavailable client control |
 | `ready-pr-handoff` | `project-management:delivery-lifecycle` | Queued PR without control authority, stale control result, verified open ready PR, local-only endpoint |
 
 The fixtures supply facts and task boundaries, not expected recommendations.
