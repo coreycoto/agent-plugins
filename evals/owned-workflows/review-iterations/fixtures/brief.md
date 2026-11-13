@@ -24,3 +24,22 @@ and checks on H2, which pass two reviewed. Pass two suggests only renaming a
 private local variable. The author declines that optional suggestion with a
 reason. A punctuation-only edit since H2 changes no contract or behavior.
 The agreed maximum is three passes, and the task requests a local review only.
+
+## D: Initial independent review
+The user authorized an independent read-only review of candidate H3 against B3.
+The acceptance contract requires tenant isolation on every recovery path. The
+parent believes H3 is safe but has not checked recovery. A native reviewer and
+a fresh-conversation option are available; repository instructions still apply.
+No push, merge, provider access or additional work is authorized.
+
+## E: Related follow-up
+A reviewer examined H3, recorded R9 and identified an affected recovery caller.
+The authorized H4 repair changes the cache key. A focused pass is available;
+the reviewer's earlier context is useful, and the user has not requested an
+independent new assessment. The candidate must stay fixed during review.
+
+## F: Missing context and separate assignment
+A new review of candidate H5 is authorized, but the intended behavior and
+applicable acceptance contract are not supplied or discoverable in the fixture.
+The only available agent reviewed an unrelated ticket earlier. The client does
+not expose a fresh-conversation control. Do not infer authority to ship.

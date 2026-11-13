@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.9 — Unreleased
+
+- Guide independent reviewers toward a self-contained fresh-context brief where
+  supported, and choose agent reuse deliberately for related follow-up and
+  distinct assignments. Keep client and isolation limits explicit.
+
 ## 0.10.8 — 2026-10-27
 
 - Guide engineering work toward the smallest complete agreed outcome, early

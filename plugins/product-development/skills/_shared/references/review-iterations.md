@@ -29,8 +29,10 @@ consequence and contract: an infrequent authorization bypass or data-loss path
 does not become cosmetic because it is rare.
 
 After an authorized repair, run affected checks and identify the new candidate.
-Send the reviewer the change since its previous pass, remaining finding IDs and
-their evidence. Concentrate follow-up on those surfaces and their affected
+Reuse the reviewer for a focused follow-up when its prior context is useful, or
+brief a new reviewer when a fresh assessment is warranted. Supply the change
+since the previous pass, remaining finding IDs and their evidence. Concentrate
+follow-up on those surfaces and their affected
 callers. A changed invariant, dependency or conflict resolution may invalidate
 earlier conclusions outside the edited lines; expand that affected review
 instead of assuming the previous verdict still applies. A new candidate does
